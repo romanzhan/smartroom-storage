@@ -1,0 +1,427 @@
+@font-face {
+  font-family: "Lexend";
+  src: url("https://smartroom.co.uk/wp-content/themes/hello-elementor/assets/fonts/Lexend-Thin.woff2")
+    format("woff2");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("https://smartroom.co.uk/wp-content/themes/hello-elementor/assets/fonts/Lexend-ExtraLight.woff2")
+    format("woff2");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("https://smartroom.co.uk/wp-content/themes/hello-elementor/assets/fonts/Lexend-Light.woff2")
+    format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("https://smartroom.co.uk/wp-content/themes/hello-elementor/assets/fonts/Lexend-Regular.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("https://smartroom.co.uk/wp-content/themes/hello-elementor/assets/fonts/Lexend-Medium.woff2")
+    format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("https://smartroom.co.uk/wp-content/themes/hello-elementor/assets/fonts/Lexend-SemiBold.woff2")
+    format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("https://smartroom.co.uk/wp-content/themes/hello-elementor/assets/fonts/Lexend-Bold.woff2")
+    format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("https://smartroom.co.uk/wp-content/themes/hello-elementor/assets/fonts/Lexend-ExtraBold.woff2")
+    format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("https://smartroom.co.uk/wp-content/themes/hello-elementor/assets/fonts/Lexend-Black.woff2")
+    format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --color-primary: #0d0b9c;
+  --color-primary-dark: #090787;
+  --color-secondary: #eea243;
+  --color-text-primary: #333;
+  --color-text-secondary: #555;
+  --color-text-light: #fff;
+  --color-background: #ffffff;
+  --color-background-light: #f8f9fa;
+  --color-background-accent: #eef2ff;
+  --color-border: #e0e0e0;
+  --color-star: #ffd700;
+  --font-family-base: "Lexend", sans-serif;
+  --border-radius: 8px;
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --global-padding: 30px;
+  --mobile-breakpoint: 768px;
+  --header-height: 80px;
+  --transition-speed: 0.3s;
+
+  /* Переменные для каруселей и футера можно оставить здесь, если они общие,
+       или перенести в специфичные файлы, если они используются только там.
+       Для примера, оставим некоторые здесь, если они могут быть переиспользованы. */
+  --carousel-slide-gap: 16px;
+  --pagination-dot-size: 8px;
+  --pagination-dot-color-inactive: #ccc;
+  --pagination-dot-color-active: var(--color-primary);
+  --pagination-dot-active-width: 24px;
+  --pagination-dot-margin: 5px;
+
+  --footer-bg-color: var(--color-background);
+  --footer-text-color: #000000;
+  --footer-link-color: #000000;
+  --footer-link-hover-color: var(--color-primary);
+  --footer-border-color: var(--color-border);
+  --footer-padding-vertical: 3rem;
+  --footer-padding-horizontal: var(--global-padding);
+  --footer-section-gap: 2rem;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.smartroom-calc-app {
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  line-height: 1.7;
+  font-weight: 400;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Применяем фон и скроллбары только для локальной разработки (где класс висит на body) */
+body.smartroom-calc-app {
+  background-color: var(--color-background-light);
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+/* --- Общий контейнер для страниц --- */
+.page-container {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding-left: var(--global-padding);
+  padding-right: var(--global-padding);
+}
+/* Вы можете применять этот класс к вашему <main> элементу или другим основным оберткам контента */
+/* Например, <main class="page-container page-bloomsbury"> */
+
+/* --- Базовая типографика --- */
+:where(.smartroom-calc-app) h1,
+:where(.smartroom-calc-app) h2,
+:where(.smartroom-calc-app) h3,
+:where(.smartroom-calc-app) h4 {
+  font-weight: 600;
+  line-height: 1.3;
+  color: #1a1a1a;
+}
+:where(.smartroom-calc-app) h1 {
+  font-size: 2.8rem;
+  margin-bottom: 1.5rem; /* Базовый отступ для H1 */
+}
+:where(.smartroom-calc-app) h2 {
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+:where(.smartroom-calc-app) h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+:where(.smartroom-calc-app) h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+:where(.smartroom-calc-app) p {
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+:where(.smartroom-calc-app) p:last-child {
+  margin-bottom: 0;
+}
+
+:where(.smartroom-calc-app) a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+:where(.smartroom-calc-app) a:hover {
+  text-decoration: underline;
+  color: var(--color-primary-dark);
+}
+
+:where(.smartroom-calc-app) strong {
+  font-weight: 600;
+}
+:where(.smartroom-calc-app) em {
+  font-style: italic;
+}
+
+:where(.smartroom-calc-app) ul,
+:where(.smartroom-calc-app) ol {
+  /* Можно добавить базовые стили для списков, если нужно */
+  /* Например, убрать маркеры по умолчанию для некоторых контекстов */
+}
+
+:where(.smartroom-calc-app) img {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Убирает лишние отступы под изображением */
+}
+
+/* --- Общие компоненты --- */
+.content-block {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 2.5rem;
+  margin-bottom: 2.5rem;
+  box-shadow: var(--shadow-light);
+}
+
+.button {
+  display: inline-block;
+  padding: 0.9rem 2rem;
+  border-radius: 6px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.1s ease;
+  border: 1px solid transparent;
+  font-family: var(--font-family-base);
+  text-decoration: none; /* Для кнопок-ссылок */
+}
+.button:hover {
+  text-decoration: none; /* Для кнопок-ссылок */
+}
+
+.button--primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+}
+.button--primary:hover {
+  background-color: var(--color-primary-dark);
+  color: var(--color-text-light);
+}
+.button--primary:active {
+  transform: translateY(1px);
+}
+.button--primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(13, 11, 156, 0.3);
+}
+
+/* --- Базовые стили для аккордеона (могут быть переопределены в специфичных файлах) --- */
+.accordion-item {
+  border-bottom: 1px solid var(--color-border);
+}
+.accordion-container .accordion-item:first-child {
+  /* Общий для всех аккордеонов в .accordion-container */
+  border-top: 1px solid var(--color-border);
+}
+
+.accordion-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1.25rem 0.5rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit; /* Наследуем размер шрифта */
+  color: inherit; /* Наследуем цвет текста */
+}
+.accordion-item__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: var(--color-text-primary);
+  padding-right: 1rem;
+}
+.accordion-item__icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  position: relative;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+.accordion-item__icon::before,
+.accordion-item__icon::after {
+  content: "";
+  position: absolute;
+  background-color: var(--color-text-primary);
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+.accordion-item__icon::before {
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 2px;
+  margin-top: -1px;
+}
+.accordion-item__icon::after {
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  margin-left: -1px;
+}
+.accordion-item__header[aria-expanded="true"] .accordion-item__icon::after {
+  transform: rotate(90deg);
+  opacity: 0;
+}
+.accordion-item__header[aria-expanded="true"] .accordion-item__title {
+  color: var(--color-primary);
+}
+
+.accordion-item__content {
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.35s ease-out,
+    padding-top 0.35s ease-out,
+    padding-bottom 0.35s ease-out;
+  background-color: var(--color-background-accent);
+}
+.accordion-item__content-inner {
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+}
+.accordion-item__content-inner p {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+.accordion-item__content-inner p:last-child {
+  margin-bottom: 0;
+}
+.accordion-item__content-inner ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.accordion-item__content-inner ul li {
+  margin-bottom: 0.75rem;
+}
+.accordion-item__content-inner ul a {
+  color: var(--footer-link-color); /* Пример, если используется в футере */
+  font-size: 0.95rem;
+}
+.accordion-item__content-inner ul a:hover {
+  color: var(--footer-link-hover-color);
+}
+
+/* --- Адаптация глобальных стилей типографики --- */
+@media (max-width: 768px) {
+  .smartroom-calc-app {
+    font-size: 15px;
+  }
+  :where(.smartroom-calc-app) h1 {
+    font-size: 1.9rem;
+  }
+  :where(.smartroom-calc-app) h2 {
+    font-size: 1.65rem;
+  }
+  :where(.smartroom-calc-app) h3 {
+    font-size: 1.2rem;
+  }
+  :where(.smartroom-calc-app) h4 {
+    font-size: 1.05rem;
+  }
+  :where(.smartroom-calc-app) p {
+    line-height: 1.6;
+    margin-bottom: 0.9rem;
+    font-size: 0.925rem;
+  }
+  .content-block {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .button {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .smartroom-calc-app {
+    font-size: 14px;
+  }
+  :where(.smartroom-calc-app) h1 {
+    font-size: 1.7rem;
+  }
+  :where(.smartroom-calc-app) h2 {
+    font-size: 1.45rem;
+  }
+  :where(.smartroom-calc-app) h3 {
+    font-size: 1.1rem;
+  }
+  :where(.smartroom-calc-app) h4 {
+    font-size: 1rem;
+  }
+  :where(.smartroom-calc-app) p {
+    line-height: 1.55;
+  }
+}

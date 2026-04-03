@@ -1,0 +1,1201 @@
+<section class="storage-hero smartroom-calc-app">
+  <video class="storage-hero__video" autoplay loop muted playsinline>
+    <source
+      src="https://smartroom.co.uk/wp-content/themes/hello-elementor/4569931-uhd_4096_2160_25fps.mp4"
+      type="video/mp4"
+    />
+  </video>
+
+  <div class="storage-hero__overlay"></div>
+
+  <div class="storage-hero__content">
+    <h1 class="storage-hero__title">
+      Storage with home collection and delivery
+    </h1>
+
+    <form class="storage-form" id="storageForm" action="#" novalidate>
+      <div class="storage-form__panel" id="formPanel">
+        <div class="calc-initial-view" id="initialView">
+          <div class="storage-form__toggle" id="sharedToggle">
+            <button
+              type="button"
+              class="storage-toggle-btn is-active"
+              data-value="boxes"
+            >
+              For boxes
+            </button>
+            <button
+              type="button"
+              class="storage-toggle-btn"
+              data-value="furniture"
+            >
+              For furniture and boxes
+            </button>
+            <input
+              type="hidden"
+              name="storage_type"
+              id="storageType"
+              value="boxes"
+            />
+          </div>
+
+          <div class="storage-form__divider"></div>
+
+          <div class="storage-form__action-group">
+            <div class="storage-form__input-wrapper">
+              <input
+                type="text"
+                id="postcode"
+                name="postcode"
+                class="storage-form__input"
+                placeholder="Enter postcode"
+                autocomplete="off"
+                value="SW1A 1AA"
+              />
+              <ul class="autocomplete-list main-autocomplete"></ul>
+            </div>
+
+            <button
+              type="submit"
+              class="storage-form__submit"
+              aria-label="Get prices"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 12H19M19 12L12 5M19 12L12 19"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="calc-expanded-view" id="expandedView" style="display: none">
+          <div class="panel-top-bar" id="panelTopBar">
+            <button
+              type="button"
+              class="calc-back-btn"
+              aria-label="Close calculator"
+            >
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div
+              class="toggle-container-expanded"
+              id="toggleExpandedSlot"
+            ></div>
+
+            <div class="calc-postcode-display">
+              <div class="postcode-pill" id="postcodePill">
+                <svg
+                  class="pill-icon"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                <span class="calc-postcode-text">SW1A 1AA</span>
+                <button
+                  type="button"
+                  class="calc-edit-btn"
+                  aria-label="Edit postcode"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"
+                    />
+                    <path d="m15 5 4 4" />
+                  </svg>
+                </button>
+              </div>
+              <div
+                class="postcode-search-mode"
+                id="postcodeSearchMode"
+                style="display: none"
+              >
+                <svg
+                  class="search-icon"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input
+                  type="text"
+                  class="calc-edit-input"
+                  autocomplete="off"
+                  placeholder="Enter postcode"
+                />
+                <ul class="autocomplete-list edit-autocomplete"></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-content">
+            <div class="calc-steps" id="calcStepsHeader">
+              <div class="step is-active">
+                <span class="step-num">1</span>
+                <span class="step-text">Storage</span>
+              </div>
+              <div class="step-divider"></div>
+              <div class="step">
+                <span class="step-num">2</span>
+                <span class="step-text">Address</span>
+              </div>
+              <div class="step-divider"></div>
+              <div class="step">
+                <span class="step-num">3</span>
+                <span class="step-text">Date</span>
+              </div>
+              <div class="step-divider"></div>
+              <div class="step">
+                <span class="step-num">4</span>
+                <span class="step-text">Checkout</span>
+              </div>
+            </div>
+
+            <div class="calc-layout" id="calcLayoutArea">
+              <div class="calc-main">
+                <div id="step1Container">
+                  <div class="calc-wrapper" id="calcBoxesView">
+                    <section class="calc-section">
+                      <h3 class="calc-section-title">
+                        How long are you storing?
+                      </h3>
+                      <div class="duration-card" id="durationCard">
+                        <div class="duration-card__header">
+                          <p class="duration-card__promo" id="durationPromo">
+                            The longer you store, the more you save. Enjoy a
+                            <strong>45% discount!</strong>
+                          </p>
+                          <p
+                            class="duration-card__rolling-text"
+                            id="rollingText"
+                            style="display: none"
+                          >
+                            You've selected a rolling monthly plan, order your
+                            boxes back anytime.
+                          </p>
+                        </div>
+                        <div class="duration-card__controls">
+                          <div class="qty-control duration-qty">
+                            <button
+                              type="button"
+                              class="qty-btn"
+                              id="durationMinus"
+                            >
+                              −
+                            </button>
+                            <input
+                              type="number"
+                              class="qty-input"
+                              id="durationInput"
+                              value="6"
+                              min="1"
+                              max="36"
+                              readonly
+                            />
+                            <span class="qty-label">months</span>
+                            <button
+                              type="button"
+                              class="qty-btn"
+                              id="durationPlus"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            class="btn-text"
+                            id="rollingPlanToggle"
+                          >
+                            Not sure how long?
+                          </button>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section class="calc-section">
+                      <h3 class="calc-section-title">What are you storing?</h3>
+                      <div class="items-list" id="boxesItemsList"></div>
+                    </section>
+                  </div>
+
+                  <div
+                    class="calc-wrapper"
+                    id="calcFurnitureView"
+                    style="display: none; opacity: 0"
+                  >
+                    <section class="calc-section">
+                      <h3 class="calc-section-title">
+                        How long are you storing?
+                      </h3>
+                      <div class="duration-card" id="durationCardFurn">
+                        <div class="duration-card__header">
+                          <p
+                            class="duration-card__promo"
+                            id="durationPromoFurn"
+                          >
+                            The longer you store, the more you save. Enjoy a
+                            <strong>45% discount!</strong>
+                          </p>
+                          <p
+                            class="duration-card__rolling-text"
+                            id="rollingTextFurn"
+                            style="display: none"
+                          >
+                            You've selected a rolling monthly plan, order your
+                            boxes back anytime.
+                          </p>
+                        </div>
+                        <div class="duration-card__controls">
+                          <div
+                            class="qty-control duration-qty"
+                            id="qtyWrapFurn"
+                          >
+                            <button
+                              type="button"
+                              class="qty-btn"
+                              id="durationMinusFurn"
+                            >
+                              −
+                            </button>
+                            <input
+                              type="number"
+                              class="qty-input"
+                              id="durationInputFurn"
+                              value="6"
+                              min="1"
+                              max="36"
+                              readonly
+                            />
+                            <span class="qty-label">months</span>
+                            <button
+                              type="button"
+                              class="qty-btn"
+                              id="durationPlusFurn"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            class="btn-text"
+                            id="rollingPlanToggleFurn"
+                          >
+                            Not sure how long?
+                          </button>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section class="calc-section">
+                      <h3 class="calc-section-title">Select your unit size</h3>
+                      <div class="units-grid" id="unitsListContainer"></div>
+                    </section>
+                  </div>
+                </div>
+
+                <div
+                  id="step2Container"
+                  class="calc-wrapper"
+                  style="display: none; opacity: 0"
+                >
+                  <section class="calc-section">
+                    <h3 class="calc-section-title">
+                      How would you like to store?
+                    </h3>
+                    <div class="units-grid mb-4">
+                      <label
+                        class="unit-card is-selected"
+                        id="cardModeCollection"
+                      >
+                        <input
+                          type="radio"
+                          name="delivery_mode"
+                          value="collection"
+                          class="unit-card__radio"
+                          checked
+                        />
+                        <div class="unit-card__icon">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <rect x="1" y="3" width="15" height="13"></rect>
+                            <polygon
+                              points="16 8 20 8 23 11 23 16 16 16 16 8"
+                            ></polygon>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                          </svg>
+                        </div>
+                        <div class="unit-card__info">
+                          <div class="unit-card__title">Collection</div>
+                          <div class="unit-card__size">
+                            We collect from your place, as soon as tomorrow.
+                          </div>
+                        </div>
+                      </label>
+                      <label class="unit-card" id="cardModeDropoff">
+                        <input
+                          type="radio"
+                          name="delivery_mode"
+                          value="dropoff"
+                          class="unit-card__radio"
+                        />
+                        <div class="unit-card__icon">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <path
+                              d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                            ></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                          </svg>
+                        </div>
+                        <div class="unit-card__info">
+                          <div class="unit-card__title">Drop-off</div>
+                          <div class="unit-card__size">
+                            Drop off for free, anytime at WC1N 3QA or N16 8DR.
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </section>
+
+                  <div id="collectionBlock">
+                    <section class="calc-section">
+                      <h3 class="calc-section-title">Collection Details</h3>
+                      <div class="form-group mb-4">
+                        <label class="form-label">Full Address</label>
+                        <input
+                          type="text"
+                          class="storage-form__input-box"
+                          id="fullAddress"
+                          placeholder="Start typing your address..."
+                        />
+                      </div>
+                      <div class="form-row split-2 mb-4">
+                        <div class="form-group">
+                          <label class="form-label">Property type</label>
+                          <div class="radio-pill-group">
+                            <label class="radio-pill"
+                              ><input
+                                type="radio"
+                                name="prop_type"
+                                value="ground"
+                                checked
+                              /><span>Ground Floor</span></label
+                            >
+                            <label class="radio-pill"
+                              ><input
+                                type="radio"
+                                name="prop_type"
+                                value="apartment"
+                              /><span>Apartment</span></label
+                            >
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">Movers needed</label>
+                          <div class="radio-pill-group">
+                            <label class="radio-pill"
+                              ><input
+                                type="radio"
+                                name="movers"
+                                value="1"
+                                checked
+                              /><span>1 Mover</span></label
+                            >
+                            <label class="radio-pill"
+                              ><input
+                                type="radio"
+                                name="movers"
+                                value="2"
+                              /><span>2 Movers</span></label
+                            >
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="form-row split-2 mb-4"
+                        id="apartmentFields"
+                        style="display: none"
+                      >
+                        <div class="form-group">
+                          <label class="form-label">Floor</label>
+                          <input
+                            type="number"
+                            id="aptFloor"
+                            class="storage-form__input-box"
+                            min="1"
+                            value="1"
+                            placeholder="e.g. 3"
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">Is there a lift?</label>
+                          <div class="radio-pill-group">
+                            <label class="radio-pill"
+                              ><input
+                                type="radio"
+                                name="lift"
+                                value="yes"
+                                checked
+                              /><span>Yes</span></label
+                            >
+                            <label class="radio-pill"
+                              ><input
+                                type="radio"
+                                name="lift"
+                                value="no"
+                              /><span>No</span></label
+                            >
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label"
+                          >Special instructions (optional)</label
+                        >
+                        <textarea
+                          id="specialInstructions"
+                          class="storage-form__textarea"
+                          rows="3"
+                          placeholder="Parking details, access codes, etc."
+                        ></textarea>
+                      </div>
+                    </section>
+                  </div>
+
+                  <div id="dropoffBlock" style="display: none">
+                    <section class="calc-section">
+                      <h3 class="calc-section-title">Select Facility</h3>
+                      <div class="units-grid">
+                        <label class="unit-card is-selected" id="facBloomsbury">
+                          <input
+                            type="radio"
+                            name="facility"
+                            value="bloomsbury"
+                            class="unit-card__radio"
+                            checked
+                          />
+                          <div class="unit-card__info">
+                            <div class="unit-card__title">
+                              Bloomsbury Facility
+                            </div>
+                            <div class="unit-card__size">
+                              20 Emerald St, WC1N 3QA
+                            </div>
+                          </div>
+                        </label>
+                        <label class="unit-card" id="facHackney">
+                          <input
+                            type="radio"
+                            name="facility"
+                            value="hackney"
+                            class="unit-card__radio"
+                          />
+                          <div class="unit-card__info">
+                            <div class="unit-card__title">Hackney Facility</div>
+                            <div class="unit-card__size">
+                              35 Stoke Newington High St, N16 8DR
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+
+                <div
+                  id="step3Container"
+                  class="calc-wrapper"
+                  style="display: none; opacity: 0"
+                >
+                  <section class="calc-section">
+                    <h3 class="calc-section-title">
+                      When do you want to move?
+                    </h3>
+
+                    <div class="date-summary-box" id="dateSummaryBox">
+                      <div class="date-summary-box__info">
+                        <span class="date-summary-box__label"
+                          >Collection Date</span
+                        >
+                        <div
+                          class="date-summary-box__value"
+                          id="currentDateDisplay"
+                        >
+                          Sunday, 5 April 2026
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn-secondary btn-sm"
+                        id="btnOpenCalendar"
+                      >
+                        Change Date
+                      </button>
+                    </div>
+
+                    <div
+                      class="custom-calendar-wrapper"
+                      id="calendarWrapper"
+                      style="display: none"
+                    >
+                      <div class="custom-calendar__header">
+                        <button
+                          type="button"
+                          class="custom-calendar__nav"
+                          id="calPrevMonth"
+                        >
+                          ❮
+                        </button>
+                        <div class="custom-calendar__month" id="calMonthYear">
+                          April 2026
+                        </div>
+                        <button
+                          type="button"
+                          class="custom-calendar__nav"
+                          id="calNextMonth"
+                        >
+                          ❯
+                        </button>
+                      </div>
+                      <div class="custom-calendar__days-row">
+                        <span>Mon</span><span>Tue</span><span>Wed</span
+                        ><span>Thu</span><span>Fri</span><span>Sat</span
+                        ><span>Sun</span>
+                      </div>
+                      <div
+                        class="custom-calendar__grid"
+                        id="calendarGrid"
+                      ></div>
+                      <div
+                        class="custom-calendar__footer"
+                        style="margin-top: 16px; text-align: right"
+                      >
+                        <button
+                          type="button"
+                          class="btn-primary btn-sm"
+                          id="btnSaveDate"
+                        >
+                          Save Date
+                        </button>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="calc-section">
+                    <h3 class="calc-section-title">Preferred Start Time</h3>
+
+                    <h4
+                      class="calc-section-subtitle"
+                      style="font-size: 1rem; margin-bottom: 8px"
+                    >
+                      6-Hour Window <span style="color: #059669">(Free)</span>
+                    </h4>
+                    <div class="radio-pill-group time-slots-group mb-4">
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="8:00 AM - 2:00 PM"
+                          data-type="6-hour"
+                          checked
+                        /><span>8:00 AM - 2:00 PM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="2:00 PM - 8:00 PM"
+                          data-type="6-hour"
+                        /><span>2:00 PM - 8:00 PM</span></label
+                      >
+                    </div>
+
+                    <h4
+                      class="calc-section-subtitle"
+                      style="font-size: 1rem; margin-bottom: 8px"
+                    >
+                      2-Hour Window <span style="color: #ef4444">(+10%)</span>
+                    </h4>
+                    <div class="radio-pill-group time-slots-group is-grid mb-4">
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="8:00 AM - 10:00 AM"
+                          data-type="2-hour"
+                        /><span>8:00 AM - 10:00 AM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="10:00 AM - 12:00 PM"
+                          data-type="2-hour"
+                        /><span>10:00 AM - 12:00 PM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="12:00 PM - 2:00 PM"
+                          data-type="2-hour"
+                        /><span>12:00 PM - 2:00 PM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="2:00 PM - 4:00 PM"
+                          data-type="2-hour"
+                        /><span>2:00 PM - 4:00 PM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="4:00 PM - 6:00 PM"
+                          data-type="2-hour"
+                        /><span>4:00 PM - 6:00 PM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="6:00 PM - 8:00 PM"
+                          data-type="2-hour"
+                        /><span>6:00 PM - 8:00 PM</span></label
+                      >
+                    </div>
+                  </section>
+                </div>
+
+                <div
+                  id="step4Container"
+                  class="calc-wrapper"
+                  style="display: none; opacity: 0"
+                >
+                  <section class="calc-section mb-5">
+                    <h3 class="calc-section-title">Booking Summary</h3>
+                    <div
+                      class="checkout-summary-box"
+                      id="checkoutSummaryBox"
+                    ></div>
+                  </section>
+
+                  <section class="calc-section">
+                    <h3 class="calc-section-title">Your Contact Details</h3>
+                    <div class="form-row split-2 mb-4">
+                      <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input
+                          type="text"
+                          class="storage-form__input-box"
+                          id="contactName"
+                          placeholder="John Doe"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Phone Number *</label>
+                        <input
+                          type="tel"
+                          class="storage-form__input-box"
+                          id="contactPhone"
+                          placeholder="+44 7700 900077"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group mb-4">
+                      <label class="form-label">Email Address *</label>
+                      <input
+                        type="email"
+                        class="storage-form__input-box"
+                        id="contactEmail"
+                        placeholder="john@example.com"
+                        required
+                      />
+                    </div>
+                    <div class="form-group mb-4">
+                      <label class="form-label">Notes (optional)</label>
+                      <textarea
+                        id="contactNotes"
+                        class="storage-form__textarea"
+                        rows="2"
+                        placeholder="Any details for the driver..."
+                      ></textarea>
+                    </div>
+                    <p
+                      class="text-xs text-gray-500"
+                      style="
+                        font-size: 0.8rem;
+                        color: #6b7280;
+                        line-height: 1.4;
+                      "
+                    >
+                      It's your responsibility to inform this person that our
+                      driver will contact them during the job. By clicking 'Book
+                      Now', you authorise us to share essential booking details
+                      with them and the driver.
+                    </p>
+                  </section>
+                </div>
+
+                <div
+                  id="successContainer"
+                  class="calc-wrapper"
+                  style="
+                    display: none;
+                    opacity: 0;
+                    text-align: center;
+                    padding-top: 40px;
+                  "
+                >
+                  <div
+                    class="success-icon-wrap"
+                    style="
+                      margin: 0 auto 24px auto;
+                      width: 64px;
+                      height: 64px;
+                      background: #10b981;
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      color: white;
+                    "
+                  >
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <h2
+                    style="
+                      font-family: &quot;Lexend&quot;, sans-serif;
+                      font-size: 1.75rem;
+                      color: #111827;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Payment Successful!
+                  </h2>
+                  <p
+                    style="color: #4b5563; font-size: 1rem; margin-bottom: 32px"
+                  >
+                    Your booking has been confirmed. We've sent a receipt to
+                    your email.
+                  </p>
+
+                  <div
+                    id="inventoryBlock"
+                    style="
+                      display: none;
+                      text-align: left;
+                      background: #f9fafb;
+                      padding: 24px;
+                      border-radius: 12px;
+                      border: 1px solid #e5e7eb;
+                      max-width: 480px;
+                      margin: 0 auto;
+                    "
+                  >
+                    <h3
+                      style="
+                        font-family: &quot;Lexend&quot;, sans-serif;
+                        font-size: 1.25rem;
+                        margin-bottom: 8px;
+                        color: #111827;
+                      "
+                    >
+                      What are we picking up?
+                    </h3>
+                    <p
+                      style="
+                        font-size: 0.9rem;
+                        color: #4b5563;
+                        margin-bottom: 16px;
+                      "
+                    >
+                      To help our team prepare, please list the main items
+                      (e.g., 1 sofa, 2 chairs, 5 large boxes).
+                    </p>
+                    <textarea
+                      id="inventoryList"
+                      class="storage-form__textarea"
+                      rows="4"
+                      placeholder="List your items here..."
+                    ></textarea>
+                    <button
+                      type="button"
+                      class="btn-primary"
+                      id="btnSubmitInventory"
+                      style="width: 100%; margin-top: 16px"
+                    >
+                      Send List
+                    </button>
+                    <p
+                      id="inventorySuccessMsg"
+                      style="
+                        display: none;
+                        color: #10b981;
+                        font-weight: 500;
+                        text-align: center;
+                        margin-top: 16px;
+                      "
+                    >
+                      Thanks! We got your list.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="calc-sidebar" id="calcSidebar">
+                <div class="summary-card" id="summaryCard">
+                  <div class="summary-mobile-header" id="summaryMobileToggle">
+                    <div class="summary-mobile-info">
+                      <span class="summary-mobile-label">Total due</span>
+                      <div class="summary-mobile-price-row">
+                        <span
+                          class="summary-mobile-total"
+                          id="mobileSummaryTotal"
+                          >£0.00</span
+                        >
+                        <svg
+                          class="summary-mobile-icon"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="summary-actions-mobile">
+                      <button
+                        type="button"
+                        class="btn-step-back"
+                        id="mobileStepBackBtn"
+                        style="display: none"
+                        aria-label="Go back"
+                      >
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="m15 18-6-6 6-6" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-continue"
+                        id="mobileContinueBtn"
+                        disabled
+                      >
+                        Continue
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="summary-card__content">
+                    <h3 class="summary-card__title">
+                      Due now - upfront payment
+                    </h3>
+                    <div class="summary-card__items" id="summaryItems">
+                      <div class="summary-empty">
+                        Please select items to store.
+                      </div>
+                    </div>
+
+                    <div class="summary-card__totals">
+                      <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="summarySubtotal">£0.00</span>
+                      </div>
+                      <div class="summary-row summary-total">
+                        <span>Total</span>
+                        <span id="summaryTotal">£0.00</span>
+                      </div>
+                    </div>
+
+                    <div class="summary-card__info">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 16v-4" />
+                        <path d="M12 8h.01" />
+                      </svg>
+                      <p>
+                        <strong>Flexible & Transparent.</strong> Cancel or
+                        modify your collection for free up to 24 hours before
+                        your scheduled slot. No hidden fees.
+                      </p>
+                    </div>
+
+                    <div
+                      class="sidebar-terms-box"
+                      id="sidebarTermsBox"
+                      style="
+                        display: none;
+                        margin-bottom: 16px;
+                        background: #f8fafc;
+                        padding: 12px;
+                        border-radius: 8px;
+                        border: 1px solid #e2e8f0;
+                      "
+                    >
+                      <label
+                        class="custom-terms-label"
+                        style="
+                          display: flex;
+                          align-items: flex-start;
+                          gap: 10px;
+                          cursor: pointer;
+                        "
+                      >
+                        <input
+                          type="checkbox"
+                          id="termsCheckbox"
+                          style="
+                            margin-top: 3px;
+                            width: 16px;
+                            height: 16px;
+                            accent-color: #0d0b9c;
+                            cursor: pointer;
+                          "
+                        />
+                        <span
+                          style="
+                            font-size: 0.8rem;
+                            color: #4b5563;
+                            line-height: 1.4;
+                          "
+                        >
+                          I agree to the
+                          <a
+                            href="#"
+                            style="color: #0d0b9c; text-decoration: underline"
+                            >Terms & Conditions</a
+                          >,
+                          <a
+                            href="#"
+                            style="color: #0d0b9c; text-decoration: underline"
+                            >Insurance</a
+                          >
+                          &
+                          <a
+                            href="#"
+                            style="color: #0d0b9c; text-decoration: underline"
+                            >Privacy Policy</a
+                          >
+                        </span>
+                      </label>
+                    </div>
+
+                    <div class="summary-actions">
+                      <button
+                        type="button"
+                        class="btn-step-back"
+                        id="desktopStepBackBtn"
+                        style="display: none"
+                        aria-label="Go back"
+                      >
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="m15 18-6-6 6-6" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-continue desktop-continue"
+                        id="continueBtn"
+                        disabled
+                      >
+                        <span class="btn-text-content">Continue</span>
+                        <svg
+                          class="btn-spinner"
+                          style="
+                            display: none;
+                            animation: spin 1s linear infinite;
+                          "
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke-dasharray="30"
+                            stroke-dashoffset="10"
+                          ></circle>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="storage-form__messages">
+        <p class="storage-form__helper">
+          Select storage type, enter your Postcode and click the arrow to see
+          prices.
+        </p>
+        <p class="storage-form__error-text">
+          Please enter your Postcode to continue
+        </p>
+      </div>
+
+      <div class="calc-modal-overlay" id="confirmDateModal">
+        <div class="calc-modal">
+          <h3 class="calc-modal__title">Confirm Move Date</h3>
+          <p class="calc-modal__text">
+            Your move date is set to
+            <strong id="modalDateDisplay">Sunday, 5 April 2026</strong>. Is this
+            correct?
+          </p>
+          <div class="calc-modal__actions">
+            <button type="button" class="btn-secondary" id="modalBtnChange">
+              Change Date</button
+            ><button type="button" class="btn-primary" id="modalBtnConfirm">
+              Yes, Continue
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="calc-modal-overlay" id="exitWarningModal">
+        <div class="calc-modal">
+          <h3 class="calc-modal__title">Close Calculator?</h3>
+          <p class="calc-modal__text">
+            Are you sure you want to close? Your unsaved data will be lost
+            unless you save it.
+          </p>
+          <div class="calc-modal__actions">
+            <button type="button" class="btn-secondary" id="btnExitDiscard">
+              Close without saving</button
+            ><button type="button" class="btn-primary" id="btnExitSave">
+              Save & Close
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="calc-modal-overlay" id="switchTypeModal">
+        <div class="calc-modal">
+          <h3 class="calc-modal__title">Change Storage Type?</h3>
+          <p class="calc-modal__text">
+            Switching between "Boxes" and "Furniture" will reset your current
+            progress. Are you sure?
+          </p>
+          <div class="calc-modal__actions">
+            <button type="button" class="btn-secondary" id="btnCancelSwitch">
+              Cancel</button
+            ><button type="button" class="btn-primary" id="btnConfirmSwitch">
+              Yes, Start Over
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

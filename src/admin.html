@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculator Settings - Admin</title>
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="admin-wrapper">
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar__logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9"/><path d="M9 22V12h6v10z"/><path d="M2 10.6L12 2l10 8.6"/></svg>
+          SmartRoom Admin
+        </div>
+        <nav class="admin-nav">
+          <a href="#general" class="admin-nav__link is-active">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            General Settings
+          </a>
+          <a href="#prices" class="admin-nav__link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Pricing & Discounts
+          </a>
+          <a href="#locations" class="admin-nav__link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Locations (Postcodes)
+          </a>
+          <a href="#items" class="admin-nav__link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            Items Manager
+          </a>
+        </nav>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-header">
+          <div>
+            <h1 class="admin-title">Calculator Settings</h1>
+            <p class="admin-subtitle">Manage prices, items, and available postcodes for the frontend calculator.</p>
+          </div>
+          <button class="btn btn-primary" id="saveSettingsBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Changes
+          </button>
+        </header>
+
+        <div class="admin-content">
+          <!-- Prices Section -->
+          <section class="admin-card" id="section-prices">
+            <h2 class="admin-card__title">Pricing & Discounts</h2>
+            <div class="admin-grid">
+              <div class="form-group">
+                <label class="form-label">Global Discount (%)</label>
+                <div class="input-wrapper">
+                  <span class="input-prefix">%</span>
+                  <input type="number" class="form-input" id="globalDiscount" value="45" />
+                </div>
+                <p class="form-help">Displayed in the duration card as an active discount.</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Base Fee (Box Collection) £</label>
+                <div class="input-wrapper">
+                  <span class="input-prefix">£</span>
+                  <input type="number" class="form-input" id="baseFeeBoxes" value="0.00" step="0.01" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Base Fee (Furniture) £</label>
+                <div class="input-wrapper">
+                  <span class="input-prefix">£</span>
+                  <input type="number" class="form-input" id="baseFeeFurniture" value="25.00" step="0.01" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Locations Section -->
+          <section class="admin-card" id="section-locations">
+            <h2 class="admin-card__title">Allowed Postcodes</h2>
+            <p class="form-help">Enter one postcode per line. Only these will validate successfully.</p>
+            <div class="form-group mt-1">
+              <textarea class="form-textarea" id="allowedPostcodes" rows="6">
+SW1A 1AA
+SW1A 2AA
+SW1A 2AB
+SW1P 3PA
+EC1A 1BB
+W1A 0AX
+E1 6AN
+SE1 9SG
+N1 9GU</textarea>
+            </div>
+          </section>
+
+          <!-- Items Manager -->
+          <section class="admin-card" id="section-items">
+            <div class="admin-card__header-flex">
+              <h2 class="admin-card__title">Storable Items</h2>
+              <button class="btn btn-secondary btn-sm" id="addItemBtn">Add Item</button>
+            </div>
+            
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price (£)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="itemsTableBody">
+                  <!-- JS Data -->
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+        
+        <!-- Simulation Toast Notification -->
+        <div class="toast" id="toast">Settings saved to WP Database ✓</div>
+      </main>
+    </div>
+
+    <script type="module" src="/js/admin.js"></script>
+  </body>
+</html>

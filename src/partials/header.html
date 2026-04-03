@@ -1,0 +1,126 @@
+    <header class="site-header">
+      <div class="site-header__container">
+        <a
+          href="<?php echo esc_url(home_url('/')); ?>"
+          class="site-header__logo logo"
+          rel="home"
+        >
+          <img
+            src="https://smartroom.co.uk/wp-content/uploads/2025/06/logo.svg"
+            alt="<?php echo esc_attr(get_bloginfo('name', 'display')); ?>"
+            width="200"
+            height="26"
+          />
+        </a>
+
+        <nav
+          class="site-header__nav site-header__nav--desktop"
+          aria-label="Main Navigation"
+        >
+          <ul class="site-header__menu-list">
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/bloomsbury-self-storage')); ?>"
+                class="site-header__menu-link"
+                >Bloomsbury</a
+              >
+            </li>
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/stoke-newington-high-st')); ?>"
+                class="site-header__menu-link"
+                >Hackney</a
+              >
+            </li>
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/london-self-storage/')); ?>"
+                class="site-header__menu-link"
+                >Storage</a
+              >
+            </li>
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/moving/')); ?>"
+                class="site-header__menu-link"
+                >Moving</a
+              >
+            </li>
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/about/')); ?>"
+                class="site-header__menu-link"
+                >About</a
+              >
+            </li>
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/contact/')); ?>"
+                class="site-header__menu-link"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </nav>
+
+        <button
+          class="site-header__mobile-trigger"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="mobileNav"
+        >
+          <span class="site-header__mobile-trigger-icon"></span>
+        </button>
+
+        <nav
+          class="site-header__nav site-header__nav--mobile"
+          id="mobileNav"
+          aria-hidden="true"
+        >
+          <ul class="site-header__menu-list site-header__menu-list--mobile">
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/bloomsbury-self-storage')); ?>"
+                class="site-header__menu-link"
+                >Bloomsbury</a
+              >
+            </li>
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/stoke-newington-high-st')); ?>"
+                class="site-header__menu-link"
+                >Hackney</a
+              >
+            </li>
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/london-self-storage/')); ?>"
+                class="site-header__menu-link"
+                >Storage</a
+              >
+            </li>
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/moving/')); ?>"
+                class="site-header__menu-link"
+                >Moving</a
+              >
+            </li>
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/about/')); ?>"
+                class="site-header__menu-link"
+                >About</a
+              >
+            </li>
+            <li class="site-header__menu-item">
+              <a
+                href="<?php echo esc_url(home_url('/contact/')); ?>"
+                class="site-header__menu-link"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>

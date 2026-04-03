@@ -1,0 +1,19 @@
+# Зависимости
+node_modules/
+.pnpm-store/
+
+# Сборка
+dist/
+build/
+
+# Логи и кэш
+npm-debug.log*
+.eslintcache
+.vite
+
+# Переменные окружения (важно!)
+.env
+.env.local
+
+# AI Context
+ai-context.txt
