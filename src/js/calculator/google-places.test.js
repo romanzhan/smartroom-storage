@@ -72,6 +72,12 @@ describe("fetchPlaceAutocomplete", () => {
       { placeId: "ChIJ1", text: "1 Street, London" },
     ]);
     expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(global.fetch.mock.calls[0][1].body)).toMatchObject({
+      input: "lon",
+      languageCode: "en-GB",
+      includedRegionCodes: ["gb"],
+      sessionToken: "tok",
+    });
   });
 
   it("returns empty predictions when API key missing", async () => {

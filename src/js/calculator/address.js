@@ -1,4 +1,4 @@
-export function initAddress({ onChange }) {
+export function initAddress({ onChange, onPostcodeFieldInput }) {
   const state = {
     mode: "collection",
     address: "",
@@ -115,6 +115,12 @@ export function initAddress({ onChange }) {
       updateState("town", e.target.value),
     );
   }
+  if (elPostcode) {
+    elPostcode.addEventListener("input", (e) => {
+      updateState("postcode", e.target.value);
+      if (onPostcodeFieldInput) onPostcodeFieldInput(e.target.value);
+    });
+  }
 
   document
     .getElementById("aptFloor")
@@ -200,9 +206,19 @@ export function initAddress({ onChange }) {
     if (onChange) onChange();
   }
 
+  /** Same postcode shown in header pill / step 1; does not clear street or town. */
+  function syncPostcodeOnly(pc) {
+    const v = (pc || "").trim().toUpperCase();
+    state.postcode = v;
+    if (elPostcode) elPostcode.value = v;
+    recomposeAddress();
+    if (onChange) onChange();
+  }
+
   return {
     getData: () => state,
     applyFromPlace,
     resetCollectionFields,
+    syncPostcodeOnly,
   };
 }
