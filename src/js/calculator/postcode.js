@@ -1,10 +1,5 @@
-import { mockPostcodes } from "./data.js";
-
-/**
- * Управление постиндексом: автокомплит, валидация, пилюля/режим редактирования.
- * A11y: ARIA listbox pattern + стрелки ↑↓ + Enter + Escape.
- */
 export function initPostcode({
+  allowedPostcodes,
   form,
   errorText,
   currentPostcodeInput,
@@ -16,10 +11,11 @@ export function initPostcode({
   editAutocomplete,
 }) {
   let savedPostcode = "";
+  const list = Array.isArray(allowedPostcodes) ? allowedPostcodes : [];
 
   async function validate(value) {
     const clean = value.replace(/\s+/g, "").toUpperCase();
-    return mockPostcodes.some((p) => p.replace(/\s+/g, "").toUpperCase() === clean);
+    return list.some((p) => p.replace(/\s+/g, "").toUpperCase() === clean);
   }
 
   function revertToPill() {
@@ -28,7 +24,6 @@ export function initPostcode({
     editAutocomplete.style.display = "none";
   }
 
-  // --- ARIA helpers ---
   function setActiveDescendant(inputEl, itemEl) {
     if (itemEl) {
       inputEl.setAttribute("aria-activedescendant", itemEl.id);
@@ -69,7 +64,6 @@ export function initPostcode({
   }
 
   function setupAutocomplete(inputEl, listEl, onSelectCallback) {
-    // ARIA roles
     inputEl.setAttribute("role", "combobox");
     inputEl.setAttribute("aria-autocomplete", "list");
     inputEl.setAttribute("aria-expanded", "false");
@@ -94,13 +88,12 @@ export function initPostcode({
         return;
       }
 
-      const matches = mockPostcodes.filter((p) =>
+      const matches = list.filter((p) =>
         p.toLowerCase().includes(val.replace(/\s+/g, ""))
       );
       renderDropdown(inputEl, listEl, matches, onSelectCallback);
     });
 
-    // Keyboard navigation: ↑ ↓ Enter Escape
     inputEl.addEventListener("keydown", (e) => {
       const items = [...listEl.querySelectorAll(".autocomplete-item")];
       if (!items.length) return;
@@ -121,7 +114,6 @@ export function initPostcode({
           e.preventDefault();
           active.click();
         }
-        // если нет выделенного — стандартная обработка (submit/saveEdited)
       } else if (e.key === "Escape") {
         listEl.style.display = "none";
         inputEl.setAttribute("aria-expanded", "false");
@@ -168,7 +160,6 @@ export function initPostcode({
   setupAutocomplete(currentPostcodeInput, mainAutocomplete);
   setupAutocomplete(editInput, editAutocomplete, (selected) => saveEdited(selected));
 
-  // Edit pill button — доступен с клавиатуры (это уже <button>, ок)
   postcodePill.addEventListener("click", (e) => {
     e.stopPropagation();
     postcodePill.style.display = "none";
@@ -178,8 +169,6 @@ export function initPostcode({
   });
 
   editInput.addEventListener("keydown", (e) => {
-    // Enter и Escape обрабатываются в setupAutocomplete выше,
-    // но если дропдаун закрыт — обрабатываем здесь
     const items = [...editAutocomplete.querySelectorAll(".autocomplete-item")];
     const dropdownOpen = editAutocomplete.style.display === "block" && items.length > 0;
     const hasHighlighted = editAutocomplete.querySelector(".is-highlighted");

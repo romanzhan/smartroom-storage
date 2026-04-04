@@ -1,17 +1,29 @@
 # WordPress Integration Guide
 
-Данный лендинг полностью изолирован и готов к встраиванию в WordPress без зависимостей от тем и плагинов.
+Лендинг изолирован и готов к встраиванию в WordPress. **Калькулятор и админка используют один формат данных** (`site-config`), см. `src/js/site-config/`.
 
-## Архитектура
+## Поток данных (одинаковая логика: локально, GitHub Pages, WP)
 
-```
-[Vite Build] → dist/assets/main.js + main.css
-                       ↓
-[WP Plugin] → wp_enqueue_script / wp_enqueue_style
-                       ↓
-[wp_localize_script] → window.StorageCalcConfig → data.js
-                       ↓
-[Shortcode] → [smartroom_calculator] → выводит HTML калькулятора
+1. **Дефолты** в `src/js/site-config/defaults.js`
+2. **`calculator-config.json`** в корне сайта (после сборки копируется из `public/` в `dist/`, см. `vite.config.js` → `publicDir`)
+3. **`localStorage`** ключ `smartroom_site_config` — после «Save» в админке на **том же origin** калькулятор подхватывает правки без деплоя
+4. **WordPress** — приоритетный слой:
+   - `window.__SMARTROOM_SITE_CONFIG__` — объект настроек (рекомендуемый способ)
+   - **или** устаревший `window.StorageCalcConfig` (`postcodes`, `boxItemsData`, при необходимости числовые поля)
+
+Порядок слияния: `defaults` → JSON-файл → `localStorage` → `StorageCalcConfig` → `__SMARTROOM_SITE_CONFIG__`.
+
+Формат объекта (после слияния):
+
+```json
+{
+  "version": 1,
+  "globalDiscount": 45,
+  "baseFeeBoxes": 0,
+  "baseFeeFurniture": 25,
+  "allowedPostcodes": ["SW1A 1AA"],
+  "items": [{ "id": "small_box", "name": "Small Box", "desc": "…", "price": 4.5 }]
+}
 ```
 
 ---
@@ -19,117 +31,83 @@
 ## 1. Регистрация ассетов и шорткода (PHP)
 
 ```php
-// smartroom-storage/smartroom-storage.php
-
 add_action('wp_enqueue_scripts', function () {
-    wp_enqueue_style(
-        'smartroom-calc',
-        plugin_dir_url(__FILE__) . 'dist/assets/main.css'
-    );
-    wp_enqueue_script(
-        'smartroom-calc',
-        plugin_dir_url(__FILE__) . 'dist/assets/main.js',
-        [], false, true
-    );
+    $base = plugin_dir_url(__FILE__) . 'dist/';
 
-    // Передаём данные из БД во frontend
+    wp_enqueue_style('smartroom-calc', $base . 'assets/main.css');
+    wp_enqueue_script('smartroom-calc', $base . 'assets/main.js', [], false, true);
+
     $settings = get_option('smartroom_calc_settings', []);
-    wp_localize_script('smartroom-calc', 'StorageCalcConfig', [
-        'postcodes'    => $settings['postcodes']   ?? [],
-        'boxItemsData' => $settings['boxItems']    ?? [],
+
+    wp_localize_script('smartroom-calc', '__SMARTROOM_SITE_CONFIG__', [
+        'version'           => 1,
+        'globalDiscount'    => (float) ($settings['globalDiscount'] ?? 45),
+        'baseFeeBoxes'      => (float) ($settings['baseFeeBoxes'] ?? 0),
+        'baseFeeFurniture'  => (float) ($settings['baseFeeFurniture'] ?? 25),
+        'allowedPostcodes'  => $settings['postcodes'] ?? [],
+        'items'             => $settings['boxItems'] ?? [],
     ]);
 });
-
-add_shortcode('smartroom_calculator', function () {
-    ob_start();
-    include plugin_dir_path(__FILE__) . 'templates/calculator.php';
-    return ob_get_clean();
-});
 ```
+
+> **Важно:** первый аргумент `wp_localize_script` задаёт **имя JS-переменной**. Для имени `__SMARTROOM_SITE_CONFIG__` WordPress сгенерирует `var __SMARTROOM_SITE_CONFIG__ = {...};` — это совпадает с ожиданием фронта.
+
+Если удобнее оставить старое имя `StorageCalcConfig`, оно по-прежнему поддерживается (`postcodes` → `allowedPostcodes`, `boxItemsData` → `items`).
 
 ---
 
-## 2. Подключение данных в data.js
+## 2. Сохранение из админки WordPress
 
-Замените моковые данные на чтение из `window.StorageCalcConfig`:
+В статической админке при сохранении вызывается `saveSiteConfig()` → `localStorage` + опционально глобальная функция:
 
 ```js
-// src/js/modules/calculator/data.js
-
-const cfg = window.StorageCalcConfig ?? {};
-
-export const mockPostcodes = cfg.postcodes ?? [
-  "SW1A 1AA", "SW1A 2AA", // fallback для local-dev
-];
-
-export const boxItemsData = cfg.boxItemsData ?? [
-  { id: "small_box", name: "Small Box", desc: "(45×30×30cm)", price: 4.5 },
-  // ... остальные дефолты
-];
+window.__SMARTROOM_SAVE_CONFIG__ = function (body) {
+  fetch('/wp-json/smartroom/v1/settings', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-WP-Nonce': wpApiSettings.nonce,
+    },
+    body: JSON.stringify(body),
+  });
+};
 ```
 
----
+Подключите этот фрагмент **только** на странице, где грузится `admin.js` (или объедините админку с WP Settings API).
 
-## 3. Админ-панель → REST API (сохранение настроек)
-
-Файл `admin.html` / `admin.js` — дизайн-макет панели настроек. В WP он заменяется страницей настроек плагина.
+Пример REST (как раньше, но сохраняйте тот же JSON, что и фронт):
 
 ```php
-// Регистрация REST-эндпоинта
-add_action('rest_api_init', function () {
-    register_rest_route('smartroom/v1', '/settings', [
-        'methods'             => ['GET', 'POST'],
-        'callback'            => 'smartroom_handle_settings',
-        'permission_callback' => fn() => current_user_can('manage_options'),
-    ]);
-});
-
-function smartroom_handle_settings(WP_REST_Request $req) {
-    if ($req->get_method() === 'POST') {
-        $params = $req->get_json_params();
-        
-        // ВАЖНО: Добавьте санитаризацию (sanitize) входящих данных для защиты от XSS!
-        // Например: $sanitized = map_deep($params, 'sanitize_text_field');
-        
-        update_option('smartroom_calc_settings', $params); // Замените $params на очищенные данные в рабочей версии
-        return ['ok' => true];
-    }
-    return get_option('smartroom_calc_settings', []);
-}
+register_rest_route('smartroom/v1', '/settings', [
+    'methods'             => ['GET', 'POST'],
+    'callback'            => 'smartroom_handle_settings',
+    'permission_callback' => fn () => current_user_can('manage_options'),
+]);
 ```
 
-В `admin.js` — заменить `console.log` / `localStorage` на:
-```js
-await fetch('/wp-json/smartroom/v1/settings', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': wpApiSettings.nonce },
-    body: JSON.stringify(settingsPayload),
-});
-```
+Санитизируйте поля перед `update_option`.
+
+---
+
+## 3. GitHub Pages
+
+- Положите в репозиторий **`public/calculator-config.json`** (уже есть в проекте).
+- После правок в админке на gh.io: **Save** пишет в `localStorage` только для этого браузера.
+- Чтобы все пользователи видели изменения: **Download calculator-config.json** в админке → замените файл в `public/` → commit → push → деплой.
 
 ---
 
 ## 4. Деплой
 
 ```bash
-npm run build     # собирает dist/assets/main.{js,css}
-# → скопировать dist/assets/ в папку плагина WordPress
+npm run build
 ```
 
-Структура плагина:
-```
-smartroom-storage/
-├── smartroom-storage.php   # Основной файл плагина
-├── templates/
-│   └── calculator.php      # HTML-шаблон калькулятора
-└── dist/
-    └── assets/
-        ├── main.js
-        └── main.css
-```
+В `dist/` должны быть `calculator-config.json`, `index.html`, `admin.html`, `assets/*`.
 
 ---
 
 ## 5. Изоляция
 
-Лендинг **не использует** `wp_head()` / `wp_footer()`. Все стили и скрипты подключаются только через `wp_enqueue_*` на страницах с шорткодом `[smartroom_calculator]`, что исключает конфликты с темой.
+Калькулятор не тянет `wp_head` / `wp_footer`. Стили и скрипты — только через `wp_enqueue_*` на нужных страницах.

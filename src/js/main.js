@@ -1,9 +1,11 @@
-import { initHeader } from './modules/header.js';
-import { initFooter } from './modules/footer.js';
-import { initCalculator } from './modules/calculator/index.js';
+import { initCalculator } from "./calculator/index.js";
+import { initFooter } from "./layout/footer.js";
+import { initHeader } from "./layout/header.js";
+import { loadSiteConfig } from "./site-config/load-site-config.js";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", async () => {
   initHeader();
   initFooter();
-  initCalculator();
+  const siteConfig = await loadSiteConfig();
+  initCalculator(siteConfig);
 });

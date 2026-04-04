@@ -1,30 +1,26 @@
 export function initAddress({ onChange }) {
   const state = {
-    mode: "collection", // 'collection' | 'dropoff'
+    mode: "collection",
     address: "",
-    propType: "ground", // 'ground' | 'apartment'
+    propType: "ground",
     floor: 1,
-    lift: "yes", // 'yes' | 'no'
-    movers: "1", // '1' | '2'
+    lift: "yes",
+    movers: "1",
     instructions: "",
-    facility: "bloomsbury", // 'bloomsbury' | 'hackney'
+    facility: "bloomsbury",
   };
 
-  // DOM Elements
   const blockCollection = document.getElementById("collectionBlock");
   const blockDropoff = document.getElementById("dropoffBlock");
   const apartmentFields = document.getElementById("apartmentFields");
 
-  // Sync inputs to State
   function updateState(key, value) {
     state[key] = value;
     if (onChange) onChange();
   }
 
-  // Handle Mode Toggle (Collection vs Drop-off)
   document.querySelectorAll('input[name="delivery_mode"]').forEach((radio) => {
     radio.addEventListener("change", (e) => {
-      // Toggle card styles
       document
         .getElementById("cardModeCollection")
         .classList.toggle("is-selected", e.target.value === "collection");
@@ -32,7 +28,6 @@ export function initAddress({ onChange }) {
         .getElementById("cardModeDropoff")
         .classList.toggle("is-selected", e.target.value === "dropoff");
 
-      // Toggle blocks
       if (e.target.value === "collection") {
         blockCollection.style.display = "block";
         blockDropoff.style.display = "none";
@@ -44,12 +39,10 @@ export function initAddress({ onChange }) {
     });
   });
 
-  // Handle Property Type Toggle (Ground vs Apartment)
   document.querySelectorAll('input[name="prop_type"]').forEach((radio) => {
     radio.addEventListener("change", (e) => {
       if (e.target.value === "apartment") {
         apartmentFields.style.display = "grid";
-        // Small GSAP pop for smooth UI
         gsap.fromTo(
           apartmentFields,
           { opacity: 0, y: -10 },
@@ -62,7 +55,6 @@ export function initAddress({ onChange }) {
     });
   });
 
-  // Simple inputs
   document
     .getElementById("fullAddress")
     .addEventListener("input", (e) => updateState("address", e.target.value));
@@ -77,7 +69,6 @@ export function initAddress({ onChange }) {
       updateState("instructions", e.target.value),
     );
 
-  // Radios
   document
     .querySelectorAll('input[name="lift"]')
     .forEach((radio) =>
@@ -93,7 +84,6 @@ export function initAddress({ onChange }) {
       ),
     );
 
-  // Facilities
   document.querySelectorAll('input[name="facility"]').forEach((radio) => {
     radio.addEventListener("change", (e) => {
       document

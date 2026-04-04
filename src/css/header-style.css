@@ -1,18 +1,11 @@
-/* --- Header Section CSS (header-style.css) --- */
 :root {
-    /* Эти переменные используются только в шапке или должны быть доступны глобально */
-    /* Если они уже есть в вашем основном style.css, здесь их можно не дублировать */
-    /* --global-padding: 30px; */ /* Уже должно быть в :root основного CSS */
-    /* --color-primary: #0D0B9C; */ /* Уже должно быть в :root основного CSS */
-    /* --color-border: #e0e0e0; */ /* Уже должно быть в :root основного CSS */
-    
     --header-height: 80px;
     --header-bg-initial: rgba(255, 255, 255, 0.9);
     --header-bg-scrolled: #ffffff;
-    --header-text-color: #0D0B9C; /* Цвет текста ссылок в шапке */
+    --header-text-color: #0D0B9C; 
     --header-shadow-scrolled: 0 2px 10px rgba(0, 0, 0, 0.1);
     --mobile-nav-bg: #ffffff;
-    --mobile-nav-width: 100%; /* Или 280px, если хотите фиксированную ширину */
+    --mobile-nav-width: 100%; 
     --transition-speed: 0.3s;
 }
 
@@ -53,7 +46,7 @@
 
 .site-header__logo img {
     display: block;
-    width: 200px; /* Вы указали этот размер для лого в шапке */
+    width: 200px; 
     height: 26px;
 }
 
@@ -270,8 +263,3 @@
     color: #EEA243;
     text-decoration: none;
 }
-
-
-
-
-

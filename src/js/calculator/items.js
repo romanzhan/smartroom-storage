@@ -1,22 +1,25 @@
-import { boxItemsData } from "./data.js";
-
 const BOX_SVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`;
 
-export function initItems({ container, onChange }) {
+export function initItems({ container, onChange, itemsCatalog }) {
   const state = {};
+  const catalog = Array.isArray(itemsCatalog) ? itemsCatalog : [];
 
   function updateQty(id, change) {
     state[id] = Math.max(0, (state[id] ?? 0) + change);
     const input = document.getElementById(`qty_${id}`);
-    if (input) input.value = state[id];
+    if (input) {
+      input.value = state[id];
+      input
+        .closest(".item-row")
+        ?.classList.toggle("is-selected", state[id] > 0);
+    }
 
-    // Уведомляем Store об изменении!
     if (onChange) onChange();
   }
 
   function render() {
     container.innerHTML = "";
-    boxItemsData.forEach((item) => {
+    catalog.forEach((item) => {
       state[item.id] = 0;
       const row = document.createElement("div");
       row.className = "item-row";
@@ -51,8 +54,7 @@ export function initItems({ container, onChange }) {
   render();
 
   return {
-    // Возвращаем данные, обогащенные выбранным количеством
     getData: () =>
-      boxItemsData.map((item) => ({ ...item, qty: state[item.id] || 0 })),
+      catalog.map((item) => ({ ...item, qty: state[item.id] || 0 })),
   };
 }

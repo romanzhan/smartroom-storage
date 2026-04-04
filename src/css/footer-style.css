@@ -1,4 +1,3 @@
-/* --- Footer Section --- */
 .site-footer-main {
     background-color: var(--footer-bg-color, var(--color-background));
     color: var(--footer-text-color, #000000);
@@ -23,7 +22,7 @@
 .site-footer-main__logo img {
     width: 181px;
     height: 23px;
-    /* fill для SVG здесь не нужен, так как это img */
+    
 }
 
 .site-footer-main__navigation-wrapper {
@@ -37,7 +36,7 @@
 }
 
 .footer-navigation__column {
-    /* Дополнительные стили для колонки, если нужны */
+    
 }
 
 .footer-navigation__title {
@@ -71,13 +70,13 @@
 }
 
 .footer-navigation__accordion {
-    display: none; /* Скрыт на десктопе, будет показан через медиа-запрос */
+    display: none; 
 
 }
 
-/* --- Общие стили для Аккордеона (используются в футере и FAQ) --- */
-/* Если эти стили уже есть в global-styles.css, здесь их можно не дублировать, */
-/* а только специфичные для футера ниже */
+
+
+
 .accordion-item {
     border-bottom: 1px solid var(--footer-border-color, var(--color-border));
 }
@@ -96,16 +95,16 @@
     cursor: pointer;
     font-family: inherit;
 }
-.footer-navigation__accordion .accordion-item__header { /* Специфичные отступы для футера */
+.footer-navigation__accordion .accordion-item__header { 
     padding: 1rem 0; 
 }
-.accordion-item__title { /* Общий стиль для заголовка аккордеона */
+.accordion-item__title { 
     font-weight: 600;
     margin-bottom: 0;
-    color: var(--footer-text-color, #000000); /* Цвет текста из футера */
+    color: var(--footer-text-color, #000000); 
     padding-right: 1rem;
 }
-.footer-navigation__accordion .accordion-item__title { /* Размер для футера */
+.footer-navigation__accordion .accordion-item__title { 
     font-size: 1.1rem; 
 }
 
@@ -121,7 +120,7 @@
 .accordion-item__icon::after { 
     content: ''; 
     position: absolute; 
-    background-color: var(--footer-text-color, #000000); /* Цвет иконки из футера */
+    background-color: var(--footer-text-color, #000000); 
     transition: transform 0.3s ease, opacity 0.3s ease; 
 }
 .accordion-item__icon::before { 
@@ -150,21 +149,21 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.35s ease-out, padding-top 0.35s ease-out, padding-bottom 0.35s ease-out;
-    background-color: var(--color-background-accent); /* Может отличаться для футера, если нужно */
+    background-color: var(--color-background-accent); 
 }
 .accordion-item__content-inner { 
-    padding: 1rem 0.5rem 1.5rem 0.5rem; /* Отступы для контента аккордеона в футере */
+    padding: 1rem 0.5rem 1.5rem 0.5rem; 
 }
-.footer-navigation__accordion .accordion-item__content-inner .footer-navigation__links { /* Стили для списка внутри аккордеона футера */
+.footer-navigation__accordion .accordion-item__content-inner .footer-navigation__links { 
     padding-top: 0.5rem;
-    padding-bottom: 0; /* Убираем нижний padding если ссылки - последние элементы */
+    padding-bottom: 0; 
 }
 .footer-navigation__accordion .accordion-item__content-inner .footer-navigation__links li:last-child {
     margin-bottom: 0;
 }
 
 
-/* --- Footer Extra (Additional Links & Social) --- */
+
 .site-footer-main__extra { 
     display: flex; 
     flex-wrap: wrap; 
@@ -196,7 +195,7 @@
     display: flex; 
     gap: 1rem; 
 }
-.footer-social__link img { /* Стили для иконок соцсетей, если они img */
+.footer-social__link img { 
     width: 24px; 
     height: 24px; 
     display: block; 
@@ -206,7 +205,7 @@
     opacity: 0.7; 
 }
 
-/* --- Footer Bottom (Copyright & Secondary Logo) --- */
+
 .site-footer-main__bottom { 
     padding-top: var(--footer-section-gap, 2rem); 
     display: flex; 
@@ -227,7 +226,7 @@
     text-align: center; 
     margin-top: 1rem; 
 }
-.footer-secondary-logo img { /* Стили для второго логотипа-картинки */
+.footer-secondary-logo img { 
     width: auto; 
     max-width: 283px; 
     height: 23px; 
@@ -235,7 +234,7 @@
     margin: 0 auto; 
 }
 
-/* --- Footer Responsive --- */
+
 @media (max-width: 991px) {
     .site-footer-main__navigation-columns {
         display: none;

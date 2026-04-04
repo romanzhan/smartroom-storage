@@ -168,7 +168,6 @@ export function initDate({ store, onChange }) {
     });
   });
 
-  // ФУНКЦИЯ СБРОСА ПАМЯТИ
   function resetDateModule() {
     state.selectedDate = new Date(defaultDate);
     state.hasInteracted = false;
@@ -197,6 +196,6 @@ export function initDate({ store, onChange }) {
         state.selectedDate.getTime() <= today.getTime() + 172800000,
     }),
     reRenderCalendar: renderCalendar,
-    reset: resetDateModule, // Отдаем метод сброса наружу
+    reset: resetDateModule,
   };
 }

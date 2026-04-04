@@ -1,6 +1,7 @@
 export const store = {
   currentTab: "boxes",
   currentStep: 1,
+  siteConfig: null,
 
   modules: {
     items: null,
@@ -39,7 +40,6 @@ export const store = {
     const lines = [];
     let rawCollectionFee = 0;
 
-    // Step 1
     if (currentTab === "boxes") {
       itemsData.forEach((item) => {
         if (item.qty > 0) {
@@ -47,29 +47,52 @@ export const store = {
           const itemTotal = item.qty * item.price;
           subtotal += itemTotal;
           lines.push({
+            group: "storage",
             label: `${item.qty}x ${item.name}`,
             price: itemTotal,
             suffix: "",
           });
         }
       });
+      if (hasItems && duration != null) {
+        lines.push({
+          group: "storage",
+          label: isRolling
+            ? "Plan: rolling monthly"
+            : `Storing for: ${duration} months`,
+          price: null,
+        });
+      }
     } else {
       if (selectedUnit) {
         hasItems = true;
         subtotal = selectedUnit.price;
         lines.push({
+          group: "storage",
           label: `1x ${selectedUnit.name} (${selectedUnit.size})`,
           price: subtotal,
           suffix: "/wk",
         });
+        if (duration != null) {
+          lines.push({
+            group: "storage",
+            label: isRolling
+              ? "Plan: rolling monthly"
+              : `Storing for: ${duration} months`,
+            price: null,
+          });
+        }
       }
     }
 
-    // Step 2
     if (currentStep >= 2 && addr && hasItems) {
       if (addr.mode === "collection") {
-        let collFee = 30.0;
-        let details = "Collection";
+        const cfg = this.siteConfig || {};
+        const tabAddon =
+          currentTab === "boxes"
+            ? Number(cfg.baseFeeBoxes) || 0
+            : Number(cfg.baseFeeFurniture) || 0;
+        let collFee = 30.0 + tabAddon;
 
         if (addr.propType === "apartment") {
           collFee += 30.0 * 0.1;
@@ -77,14 +100,10 @@ export const store = {
             const floorNum = Math.max(1, addr.floor);
             collFee += 30.0 * (0.05 * floorNum);
           }
-          details += ` (Apt, Fl ${addr.floor})`;
-        } else {
-          details += ` (Ground)`;
         }
 
         if (addr.movers === "2") {
           collFee += 45.0;
-          details += ", 2 Movers";
         }
 
         rawCollectionFee = collFee;
@@ -101,27 +120,100 @@ export const store = {
           collFee = collFee * dateMultiplier;
         }
 
+        const pickupAddress = (addr.address || "").trim() || "Not provided";
+
         subtotal += collFee;
-        lines.push({ label: details, price: collFee, suffix: "" });
+        lines.push({
+          group: "service",
+          label: "Collection fee",
+          price: collFee,
+          suffix: "",
+        });
+
+        lines.push({
+          group: "service",
+          label: "Service",
+          detail: "Home collection",
+          price: null,
+        });
+        lines.push({
+          group: "service",
+          label: "Pickup address",
+          detail: pickupAddress,
+          price: null,
+        });
+
+        if (addr.propType === "apartment") {
+          lines.push({
+            group: "service",
+            label: "Property type",
+            detail: `Apartment · floor ${addr.floor}`,
+            price: null,
+          });
+          lines.push({
+            group: "service",
+            label: "Lift",
+            detail: addr.lift === "yes" ? "Yes" : "No",
+            price: null,
+          });
+        } else {
+          lines.push({
+            group: "service",
+            label: "Property type",
+            detail: "House / ground level",
+            price: null,
+          });
+        }
+
+        lines.push({
+          group: "service",
+          label: "Crew",
+          detail:
+            addr.movers === "2" ? "2 movers" : "Standard (1 team)",
+          price: null,
+        });
+
+        const notes = (addr.instructions || "").trim();
+        if (notes) {
+          const short =
+            notes.length > 100 ? `${notes.slice(0, 97)}…` : notes;
+          lines.push({
+            group: "service",
+            label: "Access notes",
+            detail: short,
+            price: null,
+          });
+        }
       } else {
         const facName =
           addr.facility === "bloomsbury" ? "Bloomsbury" : "Hackney";
-        lines.push({ label: `Drop-off (${facName})`, price: 0, suffix: "" });
+        lines.push({
+          group: "service",
+          label: `Drop-off at ${facName}`,
+          price: null,
+          variant: "dropoff",
+        });
       }
     }
 
-    // Step 3 - Добавляем Дату и Время в сайдбар (как текст без цены)
     if (currentStep >= 3 && dateData) {
       const dateStr = dateData.date.toLocaleDateString("en-GB", {
         weekday: "short",
         day: "numeric",
         month: "short",
+        year: "numeric",
       });
-      lines.push({ label: `Date: ${dateStr}`, price: 0, suffix: "" });
       lines.push({
-        label: `Time: ${dateData.timeWindow}`,
-        price: 0,
-        suffix: "",
+        group: "schedule",
+        label: "Date",
+        detail: dateStr,
+        price: null,
+      });
+      lines.push({
+        group: "schedule",
+        label: "Time window",
+        detail: dateData.timeWindow,
+        price: null,
       });
     }
 

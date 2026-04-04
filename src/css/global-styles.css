@@ -100,9 +100,7 @@
   --header-height: 80px;
   --transition-speed: 0.3s;
 
-  /* Переменные для каруселей и футера можно оставить здесь, если они общие,
-       или перенести в специфичные файлы, если они используются только там.
-       Для примера, оставим некоторые здесь, если они могут быть переиспользованы. */
+  
   --carousel-slide-gap: 16px;
   --pagination-dot-size: 8px;
   --pagination-dot-color-inactive: #ccc;
@@ -138,24 +136,24 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Применяем фон и скроллбары только для локальной разработки (где класс висит на body) */
+
 body.smartroom-calc-app {
   background-color: var(--color-background-light);
   overflow-x: hidden;
   overflow-y: scroll;
 }
 
-/* --- Общий контейнер для страниц --- */
+
 .page-container {
   max-width: 1480px;
   margin: 0 auto;
   padding-left: var(--global-padding);
   padding-right: var(--global-padding);
 }
-/* Вы можете применять этот класс к вашему <main> элементу или другим основным оберткам контента */
-/* Например, <main class="page-container page-bloomsbury"> */
 
-/* --- Базовая типографика --- */
+
+
+
 :where(.smartroom-calc-app) h1,
 :where(.smartroom-calc-app) h2,
 :where(.smartroom-calc-app) h3,
@@ -166,7 +164,7 @@ body.smartroom-calc-app {
 }
 :where(.smartroom-calc-app) h1 {
   font-size: 2.8rem;
-  margin-bottom: 1.5rem; /* Базовый отступ для H1 */
+  margin-bottom: 1.5rem; 
 }
 :where(.smartroom-calc-app) h2 {
   font-size: 2.2rem;
@@ -175,7 +173,6 @@ body.smartroom-calc-app {
 }
 :where(.smartroom-calc-app) h3 {
   font-size: 1.5rem;
-  margin-bottom: 1rem;
 }
 :where(.smartroom-calc-app) h4 {
   font-size: 1.2rem;
@@ -212,17 +209,17 @@ body.smartroom-calc-app {
 
 :where(.smartroom-calc-app) ul,
 :where(.smartroom-calc-app) ol {
-  /* Можно добавить базовые стили для списков, если нужно */
-  /* Например, убрать маркеры по умолчанию для некоторых контекстов */
+  
+  
 }
 
 :where(.smartroom-calc-app) img {
   max-width: 100%;
   height: auto;
-  display: block; /* Убирает лишние отступы под изображением */
+  display: block; 
 }
 
-/* --- Общие компоненты --- */
+
 .content-block {
   background-color: var(--color-background);
   border: 1px solid var(--color-border);
@@ -246,10 +243,10 @@ body.smartroom-calc-app {
     transform 0.1s ease;
   border: 1px solid transparent;
   font-family: var(--font-family-base);
-  text-decoration: none; /* Для кнопок-ссылок */
+  text-decoration: none; 
 }
 .button:hover {
-  text-decoration: none; /* Для кнопок-ссылок */
+  text-decoration: none; 
 }
 
 .button--primary {
@@ -268,12 +265,12 @@ body.smartroom-calc-app {
   box-shadow: 0 0 0 4px rgba(13, 11, 156, 0.3);
 }
 
-/* --- Базовые стили для аккордеона (могут быть переопределены в специфичных файлах) --- */
+
 .accordion-item {
   border-bottom: 1px solid var(--color-border);
 }
 .accordion-container .accordion-item:first-child {
-  /* Общий для всех аккордеонов в .accordion-container */
+  
   border-top: 1px solid var(--color-border);
 }
 
@@ -288,8 +285,8 @@ body.smartroom-calc-app {
   text-align: left;
   cursor: pointer;
   font-family: inherit;
-  font-size: inherit; /* Наследуем размер шрифта */
-  color: inherit; /* Наследуем цвет текста */
+  font-size: inherit; 
+  color: inherit; 
 }
 .accordion-item__title {
   font-size: 1.1rem;
@@ -366,14 +363,14 @@ body.smartroom-calc-app {
   margin-bottom: 0.75rem;
 }
 .accordion-item__content-inner ul a {
-  color: var(--footer-link-color); /* Пример, если используется в футере */
+  color: var(--footer-link-color); 
   font-size: 0.95rem;
 }
 .accordion-item__content-inner ul a:hover {
   color: var(--footer-link-hover-color);
 }
 
-/* --- Адаптация глобальных стилей типографики --- */
+
 @media (max-width: 768px) {
   .smartroom-calc-app {
     font-size: 15px;

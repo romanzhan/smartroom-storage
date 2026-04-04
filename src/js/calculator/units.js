@@ -30,7 +30,6 @@ export function initUnits({ container, onChange }) {
           label.classList.add("is-selected");
           selectedUnitId = e.target.value;
 
-          // Уведомляем Store об изменении!
           if (onChange) onChange();
         }
       });
@@ -42,7 +41,6 @@ export function initUnits({ container, onChange }) {
   render();
 
   return {
-    // Возвращаем объект выбранного юнита целиком
     getSelectedUnit: () =>
       unitsData.find((u) => u.id === selectedUnitId) || null,
   };

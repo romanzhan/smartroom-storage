@@ -1,6 +1,3 @@
-/**
- * GSAP-анимации: раскрытие и схлопывание панели калькулятора.
- */
 const PILL_CONFIG = {
   desktop: {
     maxWidth: "800px", width: "100%", height: "58px", minHeight: "58px",
@@ -30,9 +27,6 @@ function makeSpacer(pos) {
   return el;
 }
 
-/**
- * Анимация раскрытия: pill → полноэкранная панель.
- */
 export function animateExpand({
   panel, initialView, expandedView, sharedToggle,
   toggleExpandedSlot, messages,
@@ -122,9 +116,6 @@ export function animateExpand({
   });
 }
 
-/**
- * Анимация схлопывания: полноэкранная панель → pill.
- */
 export function animateCollapse({
   panel, initialView, expandedView, sharedToggle,
   messages, currentPostcodeInput, revertToPill, postcodeSearchMode,

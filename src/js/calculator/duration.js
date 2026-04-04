@@ -6,19 +6,30 @@ export function initDuration({
   promoText,
   rollingText,
   qtyWrap,
+  onChange,
 }) {
-  if (!minusBtn) return null; // Защита от ошибок
+  if (!minusBtn) return null;
 
   let isRolling = false;
 
+  function emitChange() {
+    if (onChange) onChange();
+  }
+
   minusBtn.addEventListener("click", () => {
     const val = parseInt(input.value);
-    if (val > 1) input.value = val - 1;
+    if (val > 1) {
+      input.value = val - 1;
+      emitChange();
+    }
   });
 
   plusBtn.addEventListener("click", () => {
     const val = parseInt(input.value);
-    if (val < 36) input.value = val + 1;
+    if (val < 36) {
+      input.value = val + 1;
+      emitChange();
+    }
   });
 
   toggleBtn.addEventListener("click", () => {
@@ -29,6 +40,7 @@ export function initDuration({
     toggleBtn.textContent = isRolling
       ? "I know my duration"
       : "Not sure how long?";
+    emitChange();
   });
 
   return {

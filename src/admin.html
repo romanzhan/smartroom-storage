@@ -1,128 +1,225 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calculator Settings - Admin</title>
+    <title>Calculator settings — SmartRoom</title>
+    <link rel="stylesheet" href="/css/global-styles.css" />
     <link rel="stylesheet" href="/css/admin.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
-  <body>
-    <div class="admin-wrapper">
-      <aside class="admin-sidebar">
-        <div class="admin-sidebar__logo">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9"/><path d="M9 22V12h6v10z"/><path d="M2 10.6L12 2l10 8.6"/></svg>
-          SmartRoom Admin
+  <body class="sr-admin">
+    <a class="sr-admin__skip" href="#sr-admin-main">Skip to main content</a>
+
+    <div class="sr-admin__shell">
+      <header class="sr-admin__mobile-bar">
+        <button
+          type="button"
+          class="sr-admin__menu-btn"
+          id="adminNavToggle"
+          aria-controls="sr-admin-nav"
+          aria-expanded="false"
+          aria-label="Open section menu"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+          </svg>
+        </button>
+        <span class="sr-admin__mobile-title">Settings</span>
+        <a class="sr-admin__mobile-link" href="/" target="_blank" rel="noopener noreferrer">Calculator</a>
+      </header>
+
+      <div class="sr-admin__backdrop" id="adminNavBackdrop" aria-hidden="true"></div>
+
+      <aside class="sr-admin__aside" id="sr-admin-aside">
+        <div class="sr-admin__brand">
+          <span class="sr-admin__brand-mark" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9" />
+              <path d="M9 22V12h6v10z" />
+              <path d="M2 10.6L12 2l10 8.6" />
+            </svg>
+          </span>
+          <div class="sr-admin__brand-text">
+            <span class="sr-admin__brand-name">SmartRoom</span>
+            <span class="sr-admin__brand-tag">Storage calculator</span>
+          </div>
         </div>
-        <nav class="admin-nav">
-          <a href="#general" class="admin-nav__link is-active">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            General Settings
+
+        <nav class="sr-admin__nav" id="sr-admin-nav" aria-label="Settings sections">
+          <a href="#section-general" class="sr-admin__nav-link is-active" data-nav="section-general">
+            <span class="sr-admin__nav-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </span>
+            Overview
           </a>
-          <a href="#prices" class="admin-nav__link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            Pricing & Discounts
+          <a href="#section-prices" class="sr-admin__nav-link" data-nav="section-prices">
+            <span class="sr-admin__nav-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </span>
+            Pricing
           </a>
-          <a href="#locations" class="admin-nav__link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Locations (Postcodes)
+          <a href="#section-locations" class="sr-admin__nav-link" data-nav="section-locations">
+            <span class="sr-admin__nav-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            Postcodes
           </a>
-          <a href="#items" class="admin-nav__link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-            Items Manager
+          <a href="#section-items" class="sr-admin__nav-link" data-nav="section-items">
+            <span class="sr-admin__nav-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            </span>
+            Box items
           </a>
         </nav>
+
+        <div class="sr-admin__aside-foot">
+          <a class="sr-admin__aside-link" href="/" target="_blank" rel="noopener noreferrer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Open live calculator
+          </a>
+        </div>
       </aside>
 
-      <main class="admin-main">
-        <header class="admin-header">
-          <div>
-            <h1 class="admin-title">Calculator Settings</h1>
-            <p class="admin-subtitle">Manage prices, items, and available postcodes for the frontend calculator.</p>
+      <main class="sr-admin__main" id="sr-admin-main">
+        <section class="sr-admin__hero" id="section-general" tabindex="-1">
+          <div class="sr-admin__hero-inner">
+            <div class="sr-admin__hero-copy">
+              <p class="sr-admin__eyebrow">Admin</p>
+              <h1 class="sr-admin__title">Calculator settings</h1>
+              <p class="sr-admin__lead">
+                Control pricing, service areas, and box catalogue. Changes apply to the public calculator after you save (via your CMS integration).
+              </p>
+              <p class="sr-admin__status" id="adminSaveStatus" role="status" aria-live="polite">
+                <span class="sr-admin__status-dot" aria-hidden="true"></span>
+                <span id="adminSaveStatusText">All changes saved</span>
+              </p>
+              <p class="sr-admin__sync-hint" id="adminSyncHint">
+                Same data feeds the calculator: <strong>calculator-config.json</strong> (in the site root) is loaded first, then overrides from this browser after you save, then <strong>WordPress</strong> if <code>window.__SMARTROOM_SITE_CONFIG__</code> is set.
+              </p>
+            </div>
+            <div class="sr-admin__hero-actions">
+              <button type="button" class="sr-admin__btn sr-admin__btn--outline" id="exportConfigBtn">
+                Download <span class="sr-admin__btn-text-short">JSON</span><span class="sr-admin__btn-text-full">calculator-config.json</span>
+              </button>
+              <button type="button" class="sr-admin__btn sr-admin__btn--primary" id="saveSettingsBtn">
+                <span class="sr-admin__btn-spinner" aria-hidden="true"></span>
+                <svg class="sr-admin__btn-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                <span class="sr-admin__btn-text">Save changes</span>
+              </button>
+            </div>
           </div>
-          <button class="btn btn-primary" id="saveSettingsBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            Save Changes
-          </button>
-        </header>
+        </section>
 
-        <div class="admin-content">
-          <!-- Prices Section -->
-          <section class="admin-card" id="section-prices">
-            <h2 class="admin-card__title">Pricing & Discounts</h2>
-            <div class="admin-grid">
-              <div class="form-group">
-                <label class="form-label">Global Discount (%)</label>
-                <div class="input-wrapper">
-                  <span class="input-prefix">%</span>
-                  <input type="number" class="form-input" id="globalDiscount" value="45" />
-                </div>
-                <p class="form-help">Displayed in the duration card as an active discount.</p>
+        <div class="sr-admin__content">
+          <section class="sr-admin__card sr-admin__section" id="section-prices" aria-labelledby="heading-prices">
+            <header class="sr-admin__card-head">
+              <span class="sr-admin__card-badge" aria-hidden="true">£</span>
+              <div>
+                <h2 class="sr-admin__card-title" id="heading-prices">Pricing &amp; fees</h2>
+                <p class="sr-admin__card-desc">
+                  Global discount appears on the duration card. Base fees supplement collection pricing in the calculator logic.
+                </p>
               </div>
-              <div class="form-group">
-                <label class="form-label">Base Fee (Box Collection) £</label>
-                <div class="input-wrapper">
-                  <span class="input-prefix">£</span>
-                  <input type="number" class="form-input" id="baseFeeBoxes" value="0.00" step="0.01" />
+            </header>
+            <div class="sr-admin__fields">
+              <div class="sr-admin__field">
+                <label class="sr-admin__label" for="globalDiscount">Global discount</label>
+                <div class="sr-admin__input-wrap sr-admin__input-wrap--prefix">
+                  <span class="sr-admin__prefix" aria-hidden="true">%</span>
+                  <input type="number" class="sr-admin__input" id="globalDiscount" name="globalDiscount" min="0" max="100" step="1" value="45" inputmode="numeric" aria-describedby="help-discount" />
+                </div>
+                <p class="sr-admin__hint" id="help-discount">Shown as the active promotion on storage duration.</p>
+              </div>
+              <div class="sr-admin__field">
+                <label class="sr-admin__label" for="baseFeeBoxes">Base fee — boxes (collection)</label>
+                <div class="sr-admin__input-wrap sr-admin__input-wrap--prefix">
+                  <span class="sr-admin__prefix" aria-hidden="true">£</span>
+                  <input type="number" class="sr-admin__input" id="baseFeeBoxes" name="baseFeeBoxes" min="0" step="0.01" value="0.00" inputmode="decimal" />
                 </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Base Fee (Furniture) £</label>
-                <div class="input-wrapper">
-                  <span class="input-prefix">£</span>
-                  <input type="number" class="form-input" id="baseFeeFurniture" value="25.00" step="0.01" />
+              <div class="sr-admin__field">
+                <label class="sr-admin__label" for="baseFeeFurniture">Base fee — furniture</label>
+                <div class="sr-admin__input-wrap sr-admin__input-wrap--prefix">
+                  <span class="sr-admin__prefix" aria-hidden="true">£</span>
+                  <input type="number" class="sr-admin__input" id="baseFeeFurniture" name="baseFeeFurniture" min="0" step="0.01" value="25.00" inputmode="decimal" />
                 </div>
               </div>
             </div>
           </section>
 
-          <!-- Locations Section -->
-          <section class="admin-card" id="section-locations">
-            <h2 class="admin-card__title">Allowed Postcodes</h2>
-            <p class="form-help">Enter one postcode per line. Only these will validate successfully.</p>
-            <div class="form-group mt-1">
-              <textarea class="form-textarea" id="allowedPostcodes" rows="6">
-SW1A 1AA
-SW1A 2AA
-SW1A 2AB
-SW1P 3PA
-EC1A 1BB
-W1A 0AX
-E1 6AN
-SE1 9SG
-N1 9GU</textarea>
-            </div>
+          <section class="sr-admin__card sr-admin__section" id="section-locations" aria-labelledby="heading-locations">
+            <header class="sr-admin__card-head">
+              <span class="sr-admin__card-badge sr-admin__card-badge--accent" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <div class="sr-admin__card-head-row">
+                <div>
+                  <h2 class="sr-admin__card-title" id="heading-locations">Allowed postcodes</h2>
+                  <p class="sr-admin__card-desc">
+                    One UK postcode per line. The calculator only accepts addresses in this list (normalised, case-insensitive).
+                  </p>
+                </div>
+                <div class="sr-admin__toolbar">
+                  <span class="sr-admin__pill" id="postcodeStat" aria-live="polite">0 postcodes</span>
+                  <button type="button" class="sr-admin__btn sr-admin__btn--small sr-admin__btn--outline" id="normalizePostcodesBtn">
+                    Tidy list
+                  </button>
+                </div>
+              </div>
+            </header>
+            <label class="sr-admin__label sr-admin__visually-hidden" for="allowedPostcodes">Postcode list</label>
+            <textarea class="sr-admin__textarea" id="allowedPostcodes" name="allowedPostcodes" rows="10" spellcheck="false" autocomplete="off" aria-describedby="help-postcodes"></textarea>
+            <p class="sr-admin__hint" id="help-postcodes">Tip: paste from a spreadsheet column. Use &quot;Tidy list&quot; to trim spaces and uppercase.</p>
           </section>
 
-          <!-- Items Manager -->
-          <section class="admin-card" id="section-items">
-            <div class="admin-card__header-flex">
-              <h2 class="admin-card__title">Storable Items</h2>
-              <button class="btn btn-secondary btn-sm" id="addItemBtn">Add Item</button>
-            </div>
-            
-            <div class="table-container">
-              <table class="admin-table">
+          <section class="sr-admin__card sr-admin__section" id="section-items" aria-labelledby="heading-items">
+            <header class="sr-admin__card-head">
+              <span class="sr-admin__card-badge" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              </span>
+              <div class="sr-admin__card-head-row">
+                <div>
+                  <h2 class="sr-admin__card-title" id="heading-items">Storable items</h2>
+                  <p class="sr-admin__card-desc">IDs should stay stable if referenced elsewhere. Price is in GBP.</p>
+                </div>
+                <div class="sr-admin__toolbar">
+                  <span class="sr-admin__pill" id="itemsCountPill" aria-live="polite">0 items</span>
+                  <button type="button" class="sr-admin__btn sr-admin__btn--small sr-admin__btn--secondary" id="addItemBtn">Add item</button>
+                </div>
+              </div>
+            </header>
+
+            <div class="sr-admin__table-wrap" role="region" aria-label="Items table" tabindex="0">
+              <table class="sr-admin__table">
                 <thead>
                   <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price (£)</th>
-                    <th>Actions</th>
+                    <th scope="col" class="sr-admin__th-narrow">#</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col" class="sr-admin__th-price">Price</th>
+                    <th scope="col" class="sr-admin__th-actions"><span class="sr-admin__visually-hidden">Actions</span></th>
                   </tr>
                 </thead>
-                <tbody id="itemsTableBody">
-                  <!-- JS Data -->
-                </tbody>
+                <tbody id="itemsTableBody"></tbody>
               </table>
             </div>
           </section>
         </div>
-        
-        <!-- Simulation Toast Notification -->
-        <div class="toast" id="toast">Settings saved to WP Database ✓</div>
       </main>
+    </div>
+
+    <div class="sr-admin__toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+      <span class="sr-admin__toast-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </span>
+      <span class="sr-admin__toast-text">Settings saved</span>
     </div>
 
     <script type="module" src="/js/admin.js"></script>
