@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment successful · SmartRoom</title>
+    <script type="module" crossorigin src="/smartroom-storage/assets/payment-success.js"></script>
+    <link rel="modulepreload" crossorigin href="/smartroom-storage/assets/modulepreload-polyfill.js">
+    <link rel="modulepreload" crossorigin href="/smartroom-storage/assets/success-redirect.js">
+    <link rel="stylesheet" crossorigin href="/smartroom-storage/assets/success-redirect.css">
+  </head>
+  <body class="smartroom-calc-app payment-success-page">
+    <main class="payment-success-page__main" id="paymentSuccessRoot">
+      <div class="success-icon-wrap" aria-hidden="true">
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h1 class="payment-success-page__title">Payment successful</h1>
+      <p class="payment-success-page__lead">
+        Your booking has been confirmed. We've sent a receipt to your email.
+      </p>
+      <p class="payment-success-page__demo">
+        Demo: this flow simulates a successful Stripe payment — no card is
+        charged.
+      </p>
+
+      <div id="inventoryBlock" class="success-inventory-block">
+        <h2 class="success-inventory-block__title">Pickup checklist</h2>
+        <p class="success-inventory-block__intro">
+          For home collection we need a rough list of furniture and boxes so we
+          can plan crew size and vehicle. Enter quantities below — add anything
+          else under “Other”.
+        </p>
+        <div class="inventory-checklist-scroll">
+          <table
+            class="inventory-checklist"
+            aria-label="Items we are collecting"
+          >
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Qty</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sofa / corner sofa</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                    aria-label="Sofa quantity"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Armchair</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                    aria-label="Armchair quantity"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Bed &amp; mattress (double+)</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Single / guest bed</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Wardrobe (any)</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Chest of drawers</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Dining table</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Dining chairs</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Desk / office</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>TV / large screen</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Fridge / freezer</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Washing machine / dryer</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Large moving boxes</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Medium boxes</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Suitcases / bags</td>
+                <td>
+                  <input
+                    type="number"
+                    class="inventory-qty"
+                    min="0"
+                    max="99"
+                    value="0"
+                    inputmode="numeric"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <label
+          class="success-inventory-block__notes-label"
+          for="inventoryOtherNotes"
+          >Other items or details</label
+        >
+        <textarea
+          id="inventoryOtherNotes"
+          class="storage-form__textarea success-inventory-block__notes"
+          rows="3"
+          placeholder="e.g. piano, garden furniture, fragile art…"
+        ></textarea>
+        <p
+          id="inventoryChecklistError"
+          class="inventory-checklist-error"
+          role="alert"
+          hidden
+        ></p>
+        <button
+          type="button"
+          class="btn-primary success-inventory-block__submit"
+          id="btnSubmitInventory"
+        >
+          Submit checklist
+        </button>
+        <p id="inventorySuccessMsg" class="inventory-success-msg">
+          Thanks! We got your list.
+        </p>
+      </div>
+
+      <p class="payment-success-page__nav">
+        <a
+          class="payment-success-page__home-link"
+          id="paymentSuccessHomeLink"
+          href="index.html"
+          >Back to storage calculator</a
+        >
+      </p>
+    </main>
+  </body>
+</html>
