@@ -6,8 +6,8 @@
  *   https://romanzhan.github.io/smartroom-storage/*
  *   https://romanzhan.github.io/*
  *
- * Для локальной разработки удобнее `.env` с VITE_GOOGLE_MAPS_API_KEY — он
- * имеет приоритет над этой константой.
+ * В production-сборке (`npm run build` / deploy) эта константа идёт первой — ключ для gh-pages.
+ * Локально в dev удобнее `.env` с VITE_GOOGLE_MAPS_API_KEY — там .env имеет приоритет.
  *
  * Внимание: ключ в репозитории виден всем. Только для тестов + referrer restrictions.
  */

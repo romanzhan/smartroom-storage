@@ -15,10 +15,11 @@ export function initCalculator(siteConfig) {
   store.siteConfig = siteConfig;
   applySiteConfigUi(dom, siteConfig);
 
+  // Prod (gh-pages): inline first so deploy matches Console referrers without relying on .env at build time.
   const googleMapsApiKey = (
-    import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
-    INLINE_GOOGLE_MAPS_API_KEY ||
-    ""
+    import.meta.env.PROD
+      ? INLINE_GOOGLE_MAPS_API_KEY || import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+      : import.meta.env.VITE_GOOGLE_MAPS_API_KEY || INLINE_GOOGLE_MAPS_API_KEY
   ).trim();
 
   if (!googleMapsApiKey && dom.initialView) {
