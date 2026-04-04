@@ -11,4 +11,4 @@
  *
  * Внимание: ключ в репозитории виден всем. Только для тестов + referrer restrictions.
  */
-export const INLINE_GOOGLE_MAPS_API_KEY = "";
+export const INLINE_GOOGLE_MAPS_API_KEY = "AIzaSyAGOuMC8IAONAT-W7B6psMwqpWOGyB6eVU";
