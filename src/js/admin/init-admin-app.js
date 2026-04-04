@@ -103,6 +103,12 @@ export async function initAdminApp() {
         .map((p) => p.trim())
         .filter(Boolean),
       items: structuredClone(adminConfigData.items),
+      restrictToAllowedPostcodes: Boolean(initial.restrictToAllowedPostcodes),
+      warehouseLatitude: initial.warehouseLatitude,
+      warehouseLongitude: initial.warehouseLongitude,
+      distancePricing: initial.distancePricing
+        ? { ...initial.distancePricing }
+        : undefined,
     };
   }
 

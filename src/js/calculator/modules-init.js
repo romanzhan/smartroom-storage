@@ -7,19 +7,6 @@ import { initDate } from "./date.js";
 import { initSidebar } from "./sidebar.js";
 
 export function initCalculatorModules(dom, store, siteConfig) {
-  const postcode = initPostcode({
-    allowedPostcodes: siteConfig?.allowedPostcodes,
-    form: dom.form,
-    errorText: dom.errorText,
-    currentPostcodeInput: dom.currentPostcodeInput,
-    mainAutocomplete: dom.mainAutocomplete,
-    postcodePill: dom.postcodePill,
-    postcodeSearchMode: dom.postcodeSearchMode,
-    postcodeText: dom.postcodeText,
-    editInput: dom.editInput,
-    editAutocomplete: dom.editAutocomplete,
-  });
-
   store.modules.items = initItems({
     container: dom.boxesItemsList,
     onChange: () => store.notify(),
@@ -58,6 +45,26 @@ export function initCalculatorModules(dom, store, siteConfig) {
       store.notify();
       if (store.modules.date) store.modules.date.reRenderCalendar();
     },
+  });
+
+  const postcode = initPostcode({
+    googleMapsApiKey: siteConfig?.googleMapsApiKey || "",
+    restrictToAllowedPostcodes: Boolean(siteConfig?.restrictToAllowedPostcodes),
+    allowedPostcodes: siteConfig?.allowedPostcodes,
+    warehouseLatitude: siteConfig?.warehouseLatitude,
+    warehouseLongitude: siteConfig?.warehouseLongitude,
+    onPlaceResolved: (data) => {
+      store.modules.address?.applyFromPlace?.(data);
+    },
+    form: dom.form,
+    errorText: dom.errorText,
+    currentPostcodeInput: dom.currentPostcodeInput,
+    mainAutocomplete: dom.mainAutocomplete,
+    postcodePill: dom.postcodePill,
+    postcodeSearchMode: dom.postcodeSearchMode,
+    postcodeText: dom.postcodeText,
+    editInput: dom.editInput,
+    editAutocomplete: dom.editAutocomplete,
   });
 
   store.modules.date = initDate({

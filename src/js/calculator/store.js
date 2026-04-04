@@ -1,3 +1,25 @@
+/**
+ * Extra collection charge for driving distance beyond free threshold (miles).
+ * @param {number|null|undefined} miles
+ * @param {object} cfg siteConfig
+ * @returns {number}
+ */
+export function distanceSurchargePounds(miles, cfg) {
+  if (miles == null || Number.isNaN(Number(miles))) return 0;
+  const dp = cfg?.distancePricing;
+  const freeMiles =
+    dp?.freeMiles != null && dp.freeMiles !== ""
+      ? Number(dp.freeMiles)
+      : 0;
+  const pricePerMile =
+    dp?.pricePerMile != null && dp.pricePerMile !== ""
+      ? Number(dp.pricePerMile)
+      : 0;
+  const m = Number(miles);
+  const extra = Math.max(0, m - freeMiles);
+  return extra * pricePerMile;
+}
+
 export const store = {
   currentTab: "boxes",
   currentStep: 1,
@@ -106,6 +128,9 @@ export const store = {
           collFee += 45.0;
         }
 
+        const distanceExtra = distanceSurchargePounds(addr.distanceMiles, cfg);
+        collFee += distanceExtra;
+
         rawCollectionFee = collFee;
 
         if (dateData && currentStep >= 3) {
@@ -129,6 +154,28 @@ export const store = {
           price: collFee,
           suffix: "",
         });
+
+        if (
+          addr.distanceMiles != null &&
+          typeof addr.distanceMiles === "number" &&
+          !Number.isNaN(addr.distanceMiles)
+        ) {
+          lines.push({
+            group: "service",
+            label: "Driving distance (est.)",
+            detail: `${addr.distanceMiles.toFixed(1)} mi from Bloomsbury warehouse`,
+            price: null,
+          });
+        }
+
+        if (distanceExtra > 0) {
+          lines.push({
+            group: "service",
+            label: "Distance note",
+            detail: `Includes distance surcharge beyond ${Number(cfg.distancePricing?.freeMiles) || 0} mi free`,
+            price: null,
+          });
+        }
 
         lines.push({
           group: "service",

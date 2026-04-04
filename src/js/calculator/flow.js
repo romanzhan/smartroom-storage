@@ -481,7 +481,7 @@ export function attachCalculatorFlow({
     updateBackButtonsVisibility();
   }
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
     if (store.currentStep > 1) {
       if (store.currentStep === 4 && !continueBtn.disabled) {
@@ -490,20 +490,26 @@ export function attachCalculatorFlow({
       return;
     }
     const value = currentPostcodeInput ? currentPostcodeInput.value.trim() : "";
-    if (!value || !(await postcode.validate(value))) {
+    const reason = postcode.validationReason(value);
+    if (reason) {
       gsap.to(form.querySelector(".storage-form__helper"), {
         opacity: 0,
         duration: 0.2,
       });
       gsap.to(errorText, { opacity: 1, duration: 0.2 });
-      errorText.textContent = !value
-        ? "Please enter your Postcode to continue"
-        : "We currently do not serve this area.";
+      errorText.textContent =
+        reason === "no_api_key"
+          ? "This calculator needs a Google Maps API key. Add VITE_GOOGLE_MAPS_API_KEY to your .env file and rebuild."
+          : reason === "missing"
+            ? "Please enter your postcode to continue"
+            : reason === "pick_required"
+              ? "Please choose an address from the suggestions."
+              : "We currently do not serve this area.";
       form.classList.add("is-invalid");
       if (currentPostcodeInput) currentPostcodeInput.focus();
       return;
     }
-    postcode.setSaved(value.toUpperCase());
+    postcode.commitSavedFromValidSubmit(value);
     postcodeText.textContent = postcode.getSaved();
     form.classList.remove("is-invalid");
 
@@ -716,6 +722,10 @@ export function attachCalculatorFlow({
     });
 
     form.reset();
+    if (postcode.resetForNewSession) postcode.resetForNewSession();
+    if (store.modules.address?.resetCollectionFields) {
+      store.modules.address.resetCollectionFields();
+    }
 
     const defaultMode = document.querySelector(
       'input[name="delivery_mode"][value="collection"]',

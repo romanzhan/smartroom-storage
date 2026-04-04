@@ -5,6 +5,13 @@ export const defaultSiteConfig = {
   globalDiscount: 45,
   baseFeeBoxes: 0,
   baseFeeFurniture: 25,
+  restrictToAllowedPostcodes: false,
+  warehouseLatitude: 51.5229,
+  warehouseLongitude: -0.1195,
+  distancePricing: {
+    freeMiles: 15,
+    pricePerMile: 0.5,
+  },
   allowedPostcodes: [
     "SW1A 1AA",
     "SW1A 2AA",

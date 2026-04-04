@@ -20,15 +20,35 @@ export function mergeSiteConfigLayer(base, patch) {
   if (Array.isArray(patch.allowedPostcodes)) {
     next.allowedPostcodes = [...patch.allowedPostcodes];
   }
+  if (patch.restrictToAllowedPostcodes != null) {
+    next.restrictToAllowedPostcodes = Boolean(patch.restrictToAllowedPostcodes);
+  }
+  if (patch.warehouseLatitude != null && patch.warehouseLatitude !== "") {
+    next.warehouseLatitude = Number(patch.warehouseLatitude);
+  }
+  if (patch.warehouseLongitude != null && patch.warehouseLongitude !== "") {
+    next.warehouseLongitude = Number(patch.warehouseLongitude);
+  }
+  if (patch.distancePricing && typeof patch.distancePricing === "object") {
+    next.distancePricing = {
+      ...next.distancePricing,
+      ...patch.distancePricing,
+    };
+  }
   if (Array.isArray(patch.items)) {
     next.items = cloneItems(patch.items);
   }
   return next;
 }
 
+function cloneDefaultConfig() {
+  const base = { ...defaultSiteConfig };
+  base.items = cloneItems(defaultSiteConfig.items);
+  base.allowedPostcodes = [...defaultSiteConfig.allowedPostcodes];
+  base.distancePricing = { ...defaultSiteConfig.distancePricing };
+  return base;
+}
+
 export function mergeSiteConfigChain(...layers) {
-  return layers.reduce(
-    (acc, layer) => mergeSiteConfigLayer(acc, layer),
-    { ...defaultSiteConfig, items: cloneItems(defaultSiteConfig.items), allowedPostcodes: [...defaultSiteConfig.allowedPostcodes] },
-  );
+  return layers.reduce((acc, layer) => mergeSiteConfigLayer(acc, layer), cloneDefaultConfig());
 }

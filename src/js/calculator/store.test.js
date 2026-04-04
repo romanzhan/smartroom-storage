@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { store } from "./store.js";
+import { store, distanceSurchargePounds } from "./store.js";
 
 function resetStore() {
   store.currentTab = "boxes";
@@ -99,6 +99,47 @@ describe("store.getSnapshot", () => {
     expect(typeof service[0].price).toBe("number");
     expect(service[1].label).toBe("Service");
     expect(s.subtotal).toBe(5 + service[0].price);
+  });
+
+  it("distanceSurchargePounds respects free miles and per-mile rate", () => {
+    const cfg = { distancePricing: { freeMiles: 15, pricePerMile: 2 } };
+    expect(distanceSurchargePounds(10, cfg)).toBe(0);
+    expect(distanceSurchargePounds(20, cfg)).toBe(10);
+    expect(distanceSurchargePounds(null, cfg)).toBe(0);
+  });
+
+  it("collection fee includes distance surcharge when distanceMiles set", () => {
+    store.siteConfig = {
+      distancePricing: { freeMiles: 0, pricePerMile: 1 },
+      baseFeeBoxes: 0,
+    };
+    store.modules.items = {
+      getData: () => [{ name: "Box", qty: 1, price: 0 }],
+    };
+    store.modules.durationBoxes = {
+      getDuration: () => 1,
+      isRollingPlan: () => false,
+    };
+    store.currentStep = 2;
+    store.modules.address = {
+      getData: () => ({
+        mode: "collection",
+        address: "Far away",
+        distanceMiles: 25,
+        propType: "ground",
+        movers: "1",
+        instructions: "",
+      }),
+    };
+    const s = store.getSnapshot();
+    const feeLine = s.lines.find(
+      (l) => l.group === "service" && l.label === "Collection fee",
+    );
+    expect(feeLine.price).toBeCloseTo(30 + 25, 5);
+    const distLine = s.lines.find(
+      (l) => l.group === "service" && l.label === "Driving distance (est.)",
+    );
+    expect(distLine.detail).toContain("25.0");
   });
 
   it("drop-off: single line with variant dropoff", () => {

@@ -14,7 +14,30 @@ export function initCalculator(siteConfig) {
   store.siteConfig = siteConfig;
   applySiteConfigUi(dom, siteConfig);
 
-  const postcode = initCalculatorModules(dom, store, siteConfig);
+  const googleMapsApiKey = (
+    import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""
+  ).trim();
+
+  if (!googleMapsApiKey && dom.initialView) {
+    const note = document.createElement("p");
+    note.className = "storage-form__maps-off";
+    note.setAttribute("role", "alert");
+    note.textContent =
+      "Google Maps API key is missing. Create a file named .env in the project root with: VITE_GOOGLE_MAPS_API_KEY=your_key_here — then restart npm run dev (or set the variable in your host’s build settings for production).";
+    const actionGroup = dom.initialView.querySelector(
+      ".storage-form__action-group",
+    );
+    if (actionGroup) {
+      actionGroup.insertAdjacentElement("beforebegin", note);
+    } else {
+      dom.initialView.insertAdjacentElement("afterbegin", note);
+    }
+  }
+
+  const postcode = initCalculatorModules(dom, store, {
+    ...siteConfig,
+    googleMapsApiKey,
+  });
 
   attachCalculatorFlow({
     dom,

@@ -48,9 +48,8 @@
                 id="postcode"
                 name="postcode"
                 class="storage-form__input"
-                placeholder="Enter postcode"
+                placeholder="Enter Postcode"
                 autocomplete="off"
-                value="SW1A 1AA"
               />
               <ul class="autocomplete-list main-autocomplete"></ul>
             </div>
@@ -121,7 +120,7 @@
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
-                <span class="calc-postcode-text">SW1A 1AA</span>
+                <span class="calc-postcode-text" aria-label="Postcode"></span>
                 <button
                   type="button"
                   class="calc-edit-btn"
@@ -167,7 +166,7 @@
                   type="text"
                   class="calc-edit-input"
                   autocomplete="off"
-                  placeholder="Enter postcode"
+                  placeholder="Enter Postcode"
                 />
                 <ul class="autocomplete-list edit-autocomplete"></ul>
               </div>
@@ -419,14 +418,66 @@
                   <div id="collectionBlock">
                     <section class="calc-section">
                       <h3 class="calc-section-title">Collection Details</h3>
+                      <p
+                        class="form-hint mb-3"
+                        id="collectionDistanceHint"
+                        hidden
+                      ></p>
                       <div class="form-group mb-4">
-                        <label class="form-label">Full Address</label>
+                        <label class="form-label" for="addressLine1"
+                          >Address line 1</label
+                        >
                         <input
                           type="text"
                           class="storage-form__input-box"
-                          id="fullAddress"
-                          placeholder="Start typing your address..."
+                          id="addressLine1"
+                          name="address_line1"
+                          autocomplete="address-line1"
+                          placeholder="Street and number"
                         />
+                      </div>
+                      <div class="form-group mb-4">
+                        <label class="form-label" for="addressLine2"
+                          >Address line 2 (optional)</label
+                        >
+                        <input
+                          type="text"
+                          class="storage-form__input-box"
+                          id="addressLine2"
+                          name="address_line2"
+                          autocomplete="address-line2"
+                          placeholder="Flat, building name…"
+                        />
+                      </div>
+                      <div class="form-row split-2 mb-4">
+                        <div class="form-group">
+                          <label class="form-label" for="addressTown"
+                            >Town / City</label
+                          >
+                          <input
+                            type="text"
+                            class="storage-form__input-box"
+                            id="addressTown"
+                            name="address_town"
+                            autocomplete="address-level2"
+                            placeholder="Town or city"
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label" for="addressPostcode"
+                            >Postcode</label
+                          >
+                          <input
+                            type="text"
+                            class="storage-form__input-box"
+                            id="addressPostcode"
+                            name="address_postcode"
+                            autocomplete="postal-code"
+                            readonly
+                            aria-readonly="true"
+                            placeholder="From postcode step"
+                          />
+                        </div>
                       </div>
                       <div class="form-row split-2 mb-4">
                         <div class="form-group">
