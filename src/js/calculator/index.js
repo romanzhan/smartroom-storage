@@ -2,6 +2,7 @@ import { animateExpand, animateCollapse } from "./animations.js";
 import { applySiteConfigUi } from "./apply-site-config-ui.js";
 import { getCalculatorDom } from "./dom.js";
 import { attachCalculatorFlow } from "./flow.js";
+import { INLINE_GOOGLE_MAPS_API_KEY } from "./inline-maps-api-key.js";
 import { initCalculatorModules } from "./modules-init.js";
 import { store } from "./store.js";
 
@@ -15,7 +16,9 @@ export function initCalculator(siteConfig) {
   applySiteConfigUi(dom, siteConfig);
 
   const googleMapsApiKey = (
-    import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""
+    import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
+    INLINE_GOOGLE_MAPS_API_KEY ||
+    ""
   ).trim();
 
   if (!googleMapsApiKey && dom.initialView) {
@@ -23,7 +26,7 @@ export function initCalculator(siteConfig) {
     note.className = "storage-form__maps-off";
     note.setAttribute("role", "alert");
     note.textContent =
-      "Google Maps API key is missing. Create a file named .env in the project root with: VITE_GOOGLE_MAPS_API_KEY=your_key_here — then restart npm run dev (or set the variable in your host’s build settings for production).";
+      "Нет ключа Google Maps: задайте VITE_GOOGLE_MAPS_API_KEY в .env (локально) или вставьте ключ в src/js/calculator/inline-maps-api-key.js для сборки под GitHub Pages, затем пересоберите проект.";
     const actionGroup = dom.initialView.querySelector(
       ".storage-form__action-group",
     );

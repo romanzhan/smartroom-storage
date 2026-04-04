@@ -52,7 +52,13 @@ npm run deploy    # Сборка + деплой на ветку gh-pages
 
 ### Google Maps / Places (обязательно для калькулятора)
 
-Без **`VITE_GOOGLE_MAPS_API_KEY`** калькулятор **не работает**: поле посткода и кнопка отключены, показывается предупреждение. Ключ задаётся в **`.env`** в корне проекта (см. [`.env.example`](.env.example)), строка `VITE_GOOGLE_MAPS_API_KEY=ваш_ключ`, затем перезапуск `npm run dev`. Для **GitHub Pages / CI** задайте ту же переменную в настройках секретов и шага сборки (Vite подставит её при `npm run build`).
+Без ключа калькулятор **не работает**. Приоритет источника:
+
+1. **`VITE_GOOGLE_MAPS_API_KEY`** в **`.env`** (см. [`.env.example`](.env.example)) — удобно для `npm run dev`.
+2. Константа **`INLINE_GOOGLE_MAPS_API_KEY`** в файле [`src/js/calculator/inline-maps-api-key.js`](src/js/calculator/inline-maps-api-key.js) — для **статического деплоя без GitHub Actions** (локально вставили ключ → `npm run build` → `npm run deploy` на `gh-pages`).
+
+**GitHub Pages (тест):** в консоли Google для ключа укажите referrer, например  
+`https://romanzhan.github.io/smartroom-storage/*` (и при необходимости `http://localhost:3000/*` для dev). Ключ в JS попадёт в публичный бандл — опирайтесь на ограничения referrer + квоты в Cloud Console.
 
 **В Google Cloud Console:** включите **Places API (New)** и **Distance Matrix API**, ограничьте ключ по **HTTP referrer** и только нужным API.
 

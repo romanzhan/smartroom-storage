@@ -499,7 +499,7 @@ export function attachCalculatorFlow({
       gsap.to(errorText, { opacity: 1, duration: 0.2 });
       errorText.textContent =
         reason === "no_api_key"
-          ? "This calculator needs a Google Maps API key. Add VITE_GOOGLE_MAPS_API_KEY to your .env file and rebuild."
+          ? "Нужен ключ Google Maps: .env (VITE_GOOGLE_MAPS_API_KEY) или inline-maps-api-key.js, затем пересборка."
           : reason === "missing"
             ? "Please enter your postcode to continue"
             : reason === "pick_required"
