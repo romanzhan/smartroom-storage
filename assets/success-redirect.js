@@ -1,1 +1,0 @@
-var e=`smartroom_payment_success`;function t(){let e=`/smartroom-storage/`;return e.endsWith(`/`)?e:`${e}/`}function n(){let e=t();return new URL(`payment-success.html`,window.location.origin+e).href}function r(){let e=t();return new URL(`index.html`,window.location.origin+e).href}export{r as n,n as r,e as t};
