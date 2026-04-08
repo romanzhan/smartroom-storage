@@ -548,22 +548,16 @@ export function attachCalculatorFlow({
     postcodeText.textContent = postcode.getSaved();
     form.classList.remove("is-invalid");
 
-    const submitBtn = form.querySelector(".storage-form__submit");
-    if (submitBtn) submitBtn.classList.add("is-loading");
     if (currentPostcodeInput) currentPostcodeInput.disabled = true;
-
-    setTimeout(() => {
-      if (submitBtn) submitBtn.classList.remove("is-loading");
-      if (messages) messages.style.display = "none";
-      animateExpand({
-        panel,
-        initialView,
-        expandedView,
-        sharedToggle,
-        toggleExpandedSlot,
-        messages,
-      });
-    }, POSTCODE_SUBMIT_DELAY_MS);
+    if (messages) messages.style.display = "none";
+    animateExpand({
+      panel,
+      initialView,
+      expandedView,
+      sharedToggle,
+      toggleExpandedSlot,
+      messages,
+    });
   });
 
   desktopStepBackBtn.addEventListener("click", handlePrevStep);

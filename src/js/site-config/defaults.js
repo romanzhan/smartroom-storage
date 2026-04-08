@@ -24,9 +24,9 @@ export const defaultSiteConfig = {
     "N1 9GU",
   ],
   items: [
-    { id: "small_box", name: "Small Box", desc: "(45 x 30 x 30cm)", price: 8.20 },
-    { id: "medium_box", name: "Medium box", desc: "(45 x 40 x 40cm)", price: 11.30 },
-    { id: "large_box", name: "Large box", desc: "(70 x 45 x 45cm)", price: 20.40 },
+    { id: "small_box", name: "Small Box", desc: "(45 x 35 x 35cm)", price: 8.20 },
+    { id: "medium_box", name: "Medium box", desc: "(50 x 40 x 40cm)", price: 11.30 },
+    { id: "large_box", name: "Large box", desc: "(70 x 50 x 45cm)", price: 20.40 },
     {
       id: "suitcase",
       name: "Suitcase",
@@ -36,13 +36,13 @@ export const defaultSiteConfig = {
     {
       id: "medium_bag",
       name: "Medium bag",
-      desc: "Holdall or duffel bag (approx 60x30x30cm)",
+      desc: "(55 x 40 x 35cm) As strong as IKEA bag",
       price: 13.50,
     },
     {
       id: "guitar",
       name: "Guitar",
-      desc: "Acoustic or electric (in hard case)",
+      desc: "(In hard case)",
       price: 30.00,
     },
     {
