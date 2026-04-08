@@ -10,7 +10,7 @@
 
   <div class="storage-hero__content">
     <h1 class="storage-hero__title">
-      Storage with home collection and delivery
+      London storage with collection and delivery
     </h1>
 
     <form class="storage-form" id="storageForm" action="#" novalidate>
@@ -199,6 +199,12 @@
             <div class="calc-layout" id="calcLayoutArea">
               <div class="calc-main">
                 <div id="step1Container">
+                  <p class="calc-step1-intro">
+                    We collect from anywhere in London, store your items, and deliver them back.
+                    Drop-off and final pick-up available in Hackney &amp; Bloomsbury.
+                    No in-person access to the storage.
+                    Need daily access? <a href="https://smartroom.co.uk/#selfstorage" class="calc-step1-intro__link">Click here.</a>
+                  </p>
                   <div class="calc-wrapper" id="calcBoxesView">
                     <section class="calc-section">
                       <h3 class="calc-section-title">
@@ -206,17 +212,14 @@
                       </h3>
                       <div class="duration-card" id="durationCard">
                         <div class="duration-card__header">
-                          <p class="duration-card__promo" id="durationPromo">
-                            The longer you store, the more you save. Enjoy a
-                            <strong>45% discount!</strong>
+                          <p class="duration-card__rolling-label">
+                            You are on a monthly rolling plan
                           </p>
-                          <p
-                            class="duration-card__rolling-text"
-                            id="rollingText"
-                            style="display: none"
-                          >
-                            You've selected a rolling monthly plan, order your
-                            boxes back anytime.
+                          <p class="duration-card__billing-note">
+                            Billed every 4 weeks. Unused weeks refunded with 2 weeks' notice. Minimum 2 weeks of storage.
+                          </p>
+                          <p class="duration-card__rolling-note" id="rollingNote" style="display:none">
+                            You've selected a rolling monthly plan — order your boxes back anytime.
                           </p>
                         </div>
                         <div class="duration-card__controls">
@@ -254,12 +257,45 @@
                             Not sure how long?
                           </button>
                         </div>
+                        <hr class="duration-card__divider" />
+                        <p class="duration-card__promo" id="durationPromo">
+                          The longer you store, the more you save. Enjoy a
+                          <strong>25% discount!</strong>
+                        </p>
                       </div>
                     </section>
 
                     <section class="calc-section">
                       <h3 class="calc-section-title">What are you storing?</h3>
                       <div class="items-list" id="boxesItemsList"></div>
+                    </section>
+
+                    <section class="calc-section">
+                      <h3 class="calc-section-title">Insurance for box</h3>
+                      <div class="insurance-options" id="insuranceBoxes">
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_boxes" value="100" data-price="0" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;100</span>
+                            <span class="insurance-option__price">Free</span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_boxes" value="200" data-price="1.30" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;200</span>
+                            <span class="insurance-option__price">&pound;1.30 <small>per item/mo</small></span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_boxes" value="500" data-price="2.50" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;500</span>
+                            <span class="insurance-option__price">&pound;2.50 <small>per box/mo</small></span>
+                          </div>
+                        </label>
+                      </div>
+                      <p class="insurance-hint" id="insuranceBoxesHint" style="display:none">Please select an insurance option to continue</p>
                     </section>
                   </div>
 
@@ -274,20 +310,14 @@
                       </h3>
                       <div class="duration-card" id="durationCardFurn">
                         <div class="duration-card__header">
-                          <p
-                            class="duration-card__promo"
-                            id="durationPromoFurn"
-                          >
-                            The longer you store, the more you save. Enjoy a
-                            <strong>45% discount!</strong>
+                          <p class="duration-card__rolling-label">
+                            You are on a monthly rolling plan
                           </p>
-                          <p
-                            class="duration-card__rolling-text"
-                            id="rollingTextFurn"
-                            style="display: none"
-                          >
-                            You've selected a rolling monthly plan, order your
-                            boxes back anytime.
+                          <p class="duration-card__billing-note">
+                            Billed every 4 weeks. Unused weeks refunded with 2 weeks' notice. Minimum 2 weeks of storage.
+                          </p>
+                          <p class="duration-card__rolling-note" id="rollingNoteFurn" style="display:none">
+                            You've selected a rolling monthly plan — request your items back anytime.
                           </p>
                         </div>
                         <div class="duration-card__controls">
@@ -328,12 +358,59 @@
                             Not sure how long?
                           </button>
                         </div>
+                        <hr class="duration-card__divider" />
+                        <p class="duration-card__promo" id="durationPromoFurn">
+                          The longer you store, the more you save. Enjoy a
+                          <strong>25% discount!</strong>
+                        </p>
                       </div>
                     </section>
 
                     <section class="calc-section">
                       <h3 class="calc-section-title">Select your unit size</h3>
                       <div class="units-grid" id="unitsListContainer"></div>
+                    </section>
+
+                    <section class="calc-section">
+                      <h3 class="calc-section-title">Insurance for room</h3>
+                      <div class="insurance-options" id="insuranceFurniture">
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_furniture" value="500" data-price="4.50" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;500</span>
+                            <span class="insurance-option__price">&pound;4.50 <small>/mo</small></span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_furniture" value="2000" data-price="12.10" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;2,000</span>
+                            <span class="insurance-option__price">&pound;12.10 <small>/mo</small></span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_furniture" value="5000" data-price="29.50" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;5,000</span>
+                            <span class="insurance-option__price">&pound;29.50 <small>/mo</small></span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_furniture" value="7500" data-price="41.50" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;7,500</span>
+                            <span class="insurance-option__price">&pound;41.50 <small>/mo</small></span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_furniture" value="10000" data-price="60.90" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;10,000</span>
+                            <span class="insurance-option__price">&pound;60.90 <small>/mo</small></span>
+                          </div>
+                        </label>
+                      </div>
+                      <p class="insurance-hint" id="insuranceFurnitureHint" style="display:none">Please select an insurance option to continue</p>
                     </section>
                   </div>
                 </div>
@@ -359,23 +436,6 @@
                           class="unit-card__radio"
                           checked
                         />
-                        <div class="unit-card__icon">
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                          >
-                            <rect x="1" y="3" width="15" height="13"></rect>
-                            <polygon
-                              points="16 8 20 8 23 11 23 16 16 16 16 8"
-                            ></polygon>
-                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
-                          </svg>
-                        </div>
                         <div class="unit-card__info">
                           <div class="unit-card__title">Collection</div>
                           <div class="unit-card__size">
@@ -390,21 +450,6 @@
                           value="dropoff"
                           class="unit-card__radio"
                         />
-                        <div class="unit-card__icon">
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                          >
-                            <path
-                              d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
-                            ></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                          </svg>
-                        </div>
                         <div class="unit-card__info">
                           <div class="unit-card__title">Drop-off</div>
                           <div class="unit-card__size">
@@ -494,7 +539,7 @@
                                 type="radio"
                                 name="prop_type"
                                 value="apartment"
-                              /><span>Apartment</span></label
+                              /><span>Other floor</span></label
                             >
                           </div>
                         </div>
@@ -525,17 +570,6 @@
                         style="display: none"
                       >
                         <div class="form-group">
-                          <label class="form-label">Floor</label>
-                          <input
-                            type="number"
-                            id="aptFloor"
-                            class="storage-form__input-box"
-                            min="1"
-                            value="1"
-                            placeholder="e.g. 3"
-                          />
-                        </div>
-                        <div class="form-group">
                           <label class="form-label">Is there a lift?</label>
                           <div class="radio-pill-group">
                             <label class="radio-pill"
@@ -553,6 +587,29 @@
                                 value="no"
                               /><span>No</span></label
                             >
+                          </div>
+                        </div>
+                        <div class="form-group" id="floorField" style="display: none">
+                          <label class="form-label">Floor</label>
+                          <div class="select-wrapper">
+                            <select
+                              id="aptFloor"
+                              class="storage-form__input-box storage-form__select"
+                            >
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                              <option value="7">7</option>
+                              <option value="8">8</option>
+                              <option value="9">9</option>
+                              <option value="10">10</option>
+                            </select>
+                            <svg class="select-wrapper__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M3 4.5 6 7.5 9 4.5"/>
+                            </svg>
                           </div>
                         </div>
                       </div>
@@ -691,6 +748,7 @@
 
                   <section class="calc-section">
                     <h3 class="calc-section-title">Preferred Start Time</h3>
+                    <p class="calc-section-note">You will receive an updated 2 hour window the day before your collection date.</p>
 
                     <h4
                       class="calc-section-subtitle"
@@ -877,6 +935,7 @@
                 </div>
               </div>
 
+              <div class="calc-sidebar-col">
               <div class="calc-sidebar" id="calcSidebar">
                 <div class="summary-card" id="summaryCard">
                   <div class="summary-mobile-header" id="summaryMobileToggle">
@@ -981,7 +1040,7 @@
                       </svg>
                       <p class="summary-card__info-text">
                         <strong>Flexible & Transparent.</strong> Cancel or
-                        modify your collection for free up to 24 hours before
+                        modify your collection for free up to 48 hours before
                         your scheduled slot. No hidden fees.
                       </p>
                       <span
@@ -1121,8 +1180,83 @@
                         </svg>
                       </button>
                     </div>
+
+                    <div class="sidebar-disclaimers sidebar-disclaimers--mobile">
+                      <p class="sidebar-disclaimers__warning">
+                        Extra charges may apply if undeclared items, access details, or dismantling information are inaccurate.
+                      </p>
+
+                      <details class="sidebar-disclaimers__detail">
+                        <summary class="sidebar-disclaimers__summary">Pack securely</summary>
+                        <p class="sidebar-disclaimers__body">
+                          Please ensure your items are well packed, as they may be heavy and will be lifted during handling.
+                        </p>
+                      </details>
+
+                      <details class="sidebar-disclaimers__detail">
+                        <summary class="sidebar-disclaimers__summary">Delivery fees apply on return</summary>
+                        <p class="sidebar-disclaimers__body">
+                          Estimate your delivery fee by entering your new address as a collection in the calculator (prices may change), or call us.
+                        </p>
+                      </details>
+
+                      <div class="sidebar-disclaimers__help">
+                        <p class="sidebar-disclaimers__help-title">Need help?</p>
+                        <a href="tel:02079936365" class="sidebar-disclaimers__help-link">
+                          <svg class="sidebar-disclaimers__help-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                          </svg>
+                          020 7993 6365
+                        </a>
+                        <a href="mailto:hello@smartroom.co.uk" class="sidebar-disclaimers__help-link">
+                          <svg class="sidebar-disclaimers__help-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                          </svg>
+                          hello@smartroom.co.uk
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </div>
+
+              <div class="sidebar-disclaimers sidebar-disclaimers--desktop">
+                <p class="sidebar-disclaimers__warning">
+                  Extra charges may apply if undeclared items, access details, or dismantling information are inaccurate.
+                </p>
+
+                <details class="sidebar-disclaimers__detail">
+                  <summary class="sidebar-disclaimers__summary">Pack securely</summary>
+                  <p class="sidebar-disclaimers__body">
+                    Please ensure your items are well packed, as they may be heavy and will be lifted during handling.
+                  </p>
+                </details>
+
+                <details class="sidebar-disclaimers__detail">
+                  <summary class="sidebar-disclaimers__summary">Delivery fees apply on return</summary>
+                  <p class="sidebar-disclaimers__body">
+                    Estimate your delivery fee by entering your new address as a collection in the calculator (prices may change), or call us.
+                  </p>
+                </details>
+
+                <div class="sidebar-disclaimers__help">
+                  <p class="sidebar-disclaimers__help-title">Need help?</p>
+                  <a href="tel:02079936365" class="sidebar-disclaimers__help-link">
+                    <svg class="sidebar-disclaimers__help-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    020 7993 6365
+                  </a>
+                  <a href="mailto:hello@smartroom.co.uk" class="sidebar-disclaimers__help-link">
+                    <svg class="sidebar-disclaimers__help-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2"/>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                    hello@smartroom.co.uk
+                  </a>
+                </div>
+              </div>
               </div>
             </div>
           </div>
@@ -1131,8 +1265,7 @@
 
       <div class="storage-form__messages">
         <p class="storage-form__helper">
-          Select storage type, enter your Postcode and click the arrow to see
-          prices.
+          We collect boxes and furniture, store them, and deliver back anywhere in the world — even item by item.
         </p>
         <p class="storage-form__error-text">
           Please enter your Postcode to continue

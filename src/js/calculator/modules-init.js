@@ -5,6 +5,7 @@ import { initDuration } from "./duration.js";
 import { initAddress } from "./address.js";
 import { initDate } from "./date.js";
 import { initSidebar } from "./sidebar.js";
+import { initInsurance } from "./insurance.js";
 
 export function initCalculatorModules(dom, store, siteConfig) {
   store.modules.items = initItems({
@@ -24,8 +25,8 @@ export function initCalculatorModules(dom, store, siteConfig) {
     input: dom.durationInput,
     toggleBtn: dom.rollingPlanToggle,
     promoText: dom.durationPromo,
-    rollingText: dom.rollingText,
     qtyWrap: dom.durationQtyBoxes,
+    rollingNote: document.getElementById("rollingNote"),
     onChange: () => store.notify(),
   });
 
@@ -35,8 +36,12 @@ export function initCalculatorModules(dom, store, siteConfig) {
     input: dom.durationInputFurn,
     toggleBtn: dom.rollingPlanToggleFurn,
     promoText: dom.durationPromoFurn,
-    rollingText: dom.rollingTextFurn,
     qtyWrap: dom.qtyWrapFurn,
+    rollingNote: document.getElementById("rollingNoteFurn"),
+    onChange: () => store.notify(),
+  });
+
+  store.modules.insurance = initInsurance({
     onChange: () => store.notify(),
   });
 
@@ -67,10 +72,11 @@ export function initCalculatorModules(dom, store, siteConfig) {
     editAutocomplete: dom.editAutocomplete,
   });
 
-  store.modules.date = initDate({
-    store,
-    onChange: () => store.notify(),
-  });
+  store.modules.date =
+    initDate({
+      store,
+      onChange: () => store.notify(),
+    }) ?? null;
 
   initSidebar({
     store,

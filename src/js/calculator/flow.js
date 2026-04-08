@@ -9,18 +9,24 @@ import {
   PAYMENT_SUCCESS_SESSION_KEY,
 } from "./success-redirect.js";
 import { createCalcModalA11y } from "./modal-a11y.js";
+import { listMissingFlowDom } from "./flow-guard.js";
+import {
+  CHECKOUT_EMAIL_RE,
+  CHECKOUT_MSG,
+  checkoutPhoneOk,
+  evaluateCheckoutFields,
+} from "./checkout-validation.js";
+import {
+  gsapFromTo,
+  gsapScrollWindow,
+  gsapTo,
+  isValidDate,
+} from "../lib/runtime-utils.js";
 
-const CHECKOUT_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const CHECKOUT_MSG = {
-  name: "Please enter your full name (at least 2 characters).",
-  phone: "Enter a valid phone number (at least 10 digits).",
-  email: "Enter a valid email address.",
-  terms: "Please accept the terms to continue.",
-};
-
-function checkoutPhoneOk(value) {
-  return value.replace(/\D/g, "").length >= 10;
-}
+const g =
+  typeof globalThis !== "undefined" && globalThis.gsap
+    ? globalThis.gsap
+    : null;
 
 export function attachCalculatorFlow({
   dom,
@@ -87,13 +93,22 @@ export function attachCalculatorFlow({
     calcLayoutArea,
   } = dom;
 
+  const missingDom = listMissingFlowDom(dom);
+  if (missingDom.length > 0) {
+    console.error(
+      "[SmartRoom] Calculator flow disabled — missing DOM:",
+      missingDom.join(", "),
+    );
+    return;
+  }
+
   let modalA11y = {
     notifyOpened() {},
     notifyClosed() {},
   };
 
   function dismissExitModalOnly() {
-    gsap.to(exitModal, {
+    gsapTo(g, exitModal, {
       opacity: 0,
       duration: 0.2,
       onComplete: () => {
@@ -173,35 +188,27 @@ export function attachCalculatorFlow({
 
   function showCheckoutValidationErrors() {
     if (store.currentStep !== 4) return false;
-    const nameOk = contactName.value.trim().length >= 2;
-    const phoneOk = checkoutPhoneOk(contactPhone.value);
-    const emailOk = CHECKOUT_EMAIL_RE.test(contactEmail.value.trim());
-    const termsOk = termsCheckbox.checked;
+    const v = evaluateCheckoutFields({
+      contactName,
+      contactPhone,
+      contactEmail,
+      termsCheckbox,
+    });
+    if (!v.nameOk) setCheckoutFieldError("name", CHECKOUT_MSG.name);
+    else clearCheckoutFieldError("name");
+    if (!v.phoneOk) setCheckoutFieldError("phone", CHECKOUT_MSG.phone);
+    else clearCheckoutFieldError("phone");
+    if (!v.emailOk) setCheckoutFieldError("email", CHECKOUT_MSG.email);
+    else clearCheckoutFieldError("email");
+    if (!v.termsOk) setCheckoutFieldError("terms", CHECKOUT_MSG.terms);
+    else clearCheckoutFieldError("terms");
 
-    let firstInvalid = null;
-    if (!nameOk) {
-      setCheckoutFieldError("name", CHECKOUT_MSG.name);
-      firstInvalid = firstInvalid || "name";
-    } else clearCheckoutFieldError("name");
-    if (!phoneOk) {
-      setCheckoutFieldError("phone", CHECKOUT_MSG.phone);
-      firstInvalid = firstInvalid || "phone";
-    } else clearCheckoutFieldError("phone");
-    if (!emailOk) {
-      setCheckoutFieldError("email", CHECKOUT_MSG.email);
-      firstInvalid = firstInvalid || "email";
-    } else clearCheckoutFieldError("email");
-    if (!termsOk) {
-      setCheckoutFieldError("terms", CHECKOUT_MSG.terms);
-      firstInvalid = firstInvalid || "terms";
-    } else clearCheckoutFieldError("terms");
-
-    if (firstInvalid) {
-      shakeCheckoutField(firstInvalid);
+    if (!v.ok && v.firstInvalid) {
+      shakeCheckoutField(v.firstInvalid);
       const scrollEl =
-        firstInvalid === "terms"
+        v.firstInvalid === "terms"
           ? sidebarTermsBox
-          : form.querySelector(`[data-checkout-field="${firstInvalid}"]`);
+          : form.querySelector(`[data-checkout-field="${v.firstInvalid}"]`);
       scrollEl?.scrollIntoView({ behavior: "smooth", block: "center" });
       return false;
     }
@@ -213,18 +220,19 @@ export function attachCalculatorFlow({
       targetValue === "boxes" ? calcFurnitureView : calcBoxesView;
     const viewToShow =
       targetValue === "boxes" ? calcBoxesView : calcFurnitureView;
+    if (!viewToHide || !viewToShow || !panel) return;
 
     store.currentTab = targetValue;
     store.notify();
 
     if (panel.classList.contains("is-expanded")) {
-      gsap.to(viewToHide, {
+      gsapTo(g, viewToHide, {
         opacity: 0,
         duration: 0.2,
         onComplete: () => {
           viewToHide.style.display = "none";
           viewToShow.style.display = "block";
-          gsap.to(viewToShow, {
+          gsapTo(g, viewToShow, {
             opacity: 1,
             duration: 0.3,
             ease: "power2.out",
@@ -255,8 +263,9 @@ export function attachCalculatorFlow({
         pendingSwitchValue = targetValue;
         pendingSwitchButton = this;
         switchModal.style.display = "flex";
-        gsap.to(switchModal, { opacity: 1, duration: 0.2 });
-        gsap.fromTo(
+        gsapTo(g, switchModal, { opacity: 1, duration: 0.2 });
+        gsapFromTo(
+          g,
           switchModal.querySelector(".calc-modal"),
           { y: 20 },
           { y: 0, duration: 0.3, ease: "power2.out" },
@@ -269,7 +278,7 @@ export function attachCalculatorFlow({
   });
 
   btnCancelSwitch.addEventListener("click", () => {
-    gsap.to(switchModal, {
+    gsapTo(g, switchModal, {
       opacity: 0,
       duration: 0.2,
       onComplete: () => {
@@ -282,7 +291,7 @@ export function attachCalculatorFlow({
   });
 
   btnConfirmSwitch.addEventListener("click", () => {
-    gsap.to(switchModal, {
+    gsapTo(g, switchModal, {
       opacity: 0,
       duration: 0.2,
       onComplete: () => {
@@ -299,27 +308,28 @@ export function attachCalculatorFlow({
   function updateBackButtonsVisibility() {
     const displayStyle =
       store.currentStep > 1 && store.currentStep < 5 ? "flex" : "none";
-    desktopStepBackBtn.style.display = displayStyle;
-    mobileStepBackBtn.style.display = displayStyle;
+    if (desktopStepBackBtn) desktopStepBackBtn.style.display = displayStyle;
+    if (mobileStepBackBtn) mobileStepBackBtn.style.display = displayStyle;
 
     if (store.currentStep === 4) {
-      sidebarTermsBox.style.display = "block";
+      if (sidebarTermsBox) sidebarTermsBox.style.display = "block";
       if (continueBtnText) continueBtnText.textContent = "Book Now";
-      mobileContinueBtn.textContent = "Book Now";
+      if (mobileContinueBtn) mobileContinueBtn.textContent = "Book Now";
       validateCheckoutForm();
     } else {
-      sidebarTermsBox.style.display = "none";
-      continueBtnText.textContent = "Continue";
-      mobileContinueBtn.textContent = "Continue";
-      continueBtn.disabled = !store.getSnapshot().hasItems;
-      mobileContinueBtn.disabled = !store.getSnapshot().hasItems;
+      if (sidebarTermsBox) sidebarTermsBox.style.display = "none";
+      if (continueBtnText) continueBtnText.textContent = "Continue";
+      if (mobileContinueBtn) mobileContinueBtn.textContent = "Continue";
+      const snap = store.getSnapshot();
+      if (continueBtn) continueBtn.disabled = !snap.hasItems;
+      if (mobileContinueBtn) mobileContinueBtn.disabled = !snap.hasItems;
     }
   }
 
   function validateCheckoutForm() {
     if (store.currentStep !== 4) return;
-    continueBtn.disabled = false;
-    mobileContinueBtn.disabled = false;
+    if (continueBtn) continueBtn.disabled = false;
+    if (mobileContinueBtn) mobileContinueBtn.disabled = false;
   }
 
   if (contactName) {
@@ -363,6 +373,7 @@ export function attachCalculatorFlow({
   }
 
   function populateCheckoutSummary() {
+    if (!checkoutSummaryBox) return;
     const addr = store.modules.address?.getData();
     const date = store.modules.date?.getData();
 
@@ -370,14 +381,16 @@ export function attachCalculatorFlow({
     if (addr?.mode === "collection") {
       html += `<p><strong>Service:</strong> Home Collection</p>`;
       html += `<p><strong>Address:</strong> ${addr.address || "Not provided"}, Postcode: ${postcode.getSaved()}</p>`;
-      if (date) {
+      if (date && isValidDate(date.date)) {
         const dateStr = date.date.toLocaleDateString("en-GB", {
           weekday: "long",
           day: "numeric",
           month: "long",
           year: "numeric",
         });
-        html += `<p><strong>Date & Time:</strong> ${dateStr} between ${date.timeWindow}</p>`;
+        const tw =
+          typeof date.timeWindow === "string" ? date.timeWindow : "";
+        html += `<p><strong>Date & Time:</strong> ${dateStr}${tw ? ` between ${tw}` : ""}</p>`;
       }
     } else {
       const facName =
@@ -386,7 +399,7 @@ export function attachCalculatorFlow({
           : "Hackney (N16 8DR)";
       html += `<p><strong>Service:</strong> Drop-off</p>`;
       html += `<p><strong>Location:</strong> ${facName}</p>`;
-      if (date) {
+      if (date && isValidDate(date.date)) {
         const dateStr = date.date.toLocaleDateString("en-GB", {
           weekday: "long",
           day: "numeric",
@@ -399,14 +412,23 @@ export function attachCalculatorFlow({
   }
 
   function transitionSteps(hideId, showId, newStepNumber) {
-    gsap.to(`#${hideId}`, {
+    const hideEl = document.getElementById(hideId);
+    const showEl = document.getElementById(showId);
+    if (!hideEl || !showEl) {
+      console.error(
+        "[SmartRoom] transitionSteps: missing container",
+        hideId,
+        showId,
+      );
+      return;
+    }
+    gsapTo(g, hideEl, {
       opacity: 0,
       duration: 0.3,
       onComplete: () => {
-        document.getElementById(hideId).style.display = "none";
-        const elToShow = document.getElementById(showId);
-        elToShow.style.display = "block";
-        gsap.to(elToShow, { opacity: 1, duration: 0.3 });
+        hideEl.style.display = "none";
+        showEl.style.display = "block";
+        gsapTo(g, showEl, { opacity: 1, duration: 0.3 });
 
         document.querySelectorAll(".step").forEach((el, idx) => {
           el.classList.toggle("is-active", idx === newStepNumber - 1);
@@ -414,10 +436,12 @@ export function attachCalculatorFlow({
 
         const headerHeight =
           document.querySelector(".site-header")?.offsetHeight || 80;
-        gsap.to(window, {
-          scrollTo: { y: toggleExpandedSlot, offsetY: headerHeight },
-          duration: 0.5,
-        });
+        if (toggleExpandedSlot) {
+          gsapScrollWindow(g, {
+            scrollTo: { y: toggleExpandedSlot, offsetY: headerHeight },
+            duration: 0.5,
+          });
+        }
       },
     });
   }
@@ -433,6 +457,13 @@ export function attachCalculatorFlow({
 
   function handleNextStep() {
     if (store.currentStep === 1) {
+      const snap = store.getSnapshot();
+      if (!snap.hasInsurance) {
+        const hintId = snap.currentTab === "boxes" ? "insuranceBoxesHint" : "insuranceFurnitureHint";
+        const hint = document.getElementById(hintId);
+        if (hint) hint.style.display = "block";
+        return;
+      }
       store.currentStep = 2;
       store.notify();
       transitionSteps("step1Container", "step2Container", 2);
@@ -442,18 +473,19 @@ export function attachCalculatorFlow({
       if (store.modules.date) store.modules.date.reRenderCalendar();
       transitionSteps("step2Container", "step3Container", 3);
     } else if (store.currentStep === 3) {
-      const dateData = store.modules.date.getData();
-      if (!dateData.hasInteracted) {
+      const dateData = store.modules.date?.getData?.();
+      if (!dateData || dateData.hasInteracted) {
+        moveToStep4();
+      } else {
         dateModal.style.display = "flex";
-        gsap.to(dateModal, { opacity: 1, duration: 0.2 });
-        gsap.fromTo(
+        gsapTo(g, dateModal, { opacity: 1, duration: 0.2 });
+        gsapFromTo(
+          g,
           dateModal.querySelector(".calc-modal"),
           { y: 20 },
           { y: 0, duration: 0.3, ease: "power2.out" },
         );
         modalA11y.notifyOpened(dateModal);
-      } else {
-        moveToStep4();
       }
     } else if (store.currentStep === 4) {
       if (!showCheckoutValidationErrors()) return;
@@ -484,7 +516,7 @@ export function attachCalculatorFlow({
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     if (store.currentStep > 1) {
-      if (store.currentStep === 4 && !continueBtn.disabled) {
+      if (store.currentStep === 4 && continueBtn && !continueBtn.disabled) {
         handleNextStep();
       }
       return;
@@ -492,19 +524,22 @@ export function attachCalculatorFlow({
     const value = currentPostcodeInput ? currentPostcodeInput.value.trim() : "";
     const reason = postcode.validationReason(value);
     if (reason) {
-      gsap.to(form.querySelector(".storage-form__helper"), {
+      const helper = form.querySelector(".storage-form__helper");
+      gsapTo(g, helper, {
         opacity: 0,
         duration: 0.2,
       });
-      gsap.to(errorText, { opacity: 1, duration: 0.2 });
-      errorText.textContent =
-        reason === "no_api_key"
-          ? "Нужен ключ Google Maps: .env (VITE_GOOGLE_MAPS_API_KEY) или inline-maps-api-key.js, затем пересборка."
-          : reason === "missing"
-            ? "Please enter your postcode to continue"
-            : reason === "pick_required"
-              ? "Please choose an address from the suggestions."
-              : "We currently do not serve this area.";
+      if (errorText) {
+        gsapTo(g, errorText, { opacity: 1, duration: 0.2 });
+        errorText.textContent =
+          reason === "no_api_key"
+            ? "Нужен ключ Google Maps: .env (VITE_GOOGLE_MAPS_API_KEY) или inline-maps-api-key.js, затем пересборка."
+            : reason === "missing"
+              ? "Please enter your postcode to continue"
+              : reason === "pick_required"
+                ? "Please choose an address from the suggestions."
+                : "We currently do not serve this area.";
+      }
       form.classList.add("is-invalid");
       if (currentPostcodeInput) currentPostcodeInput.focus();
       return;
@@ -519,7 +554,7 @@ export function attachCalculatorFlow({
 
     setTimeout(() => {
       if (submitBtn) submitBtn.classList.remove("is-loading");
-      messages.style.display = "none";
+      if (messages) messages.style.display = "none";
       animateExpand({
         panel,
         initialView,
@@ -544,7 +579,7 @@ export function attachCalculatorFlow({
   });
 
   modalBtnChange.addEventListener("click", () => {
-    gsap.to(dateModal, {
+    gsapTo(g, dateModal, {
       opacity: 0,
       duration: 0.2,
       onComplete: () => {
@@ -556,7 +591,7 @@ export function attachCalculatorFlow({
   });
 
   modalBtnConfirm.addEventListener("click", () => {
-    gsap.to(dateModal, {
+    gsapTo(g, dateModal, {
       opacity: 0,
       duration: 0.2,
       onComplete: () => {
@@ -651,8 +686,9 @@ export function attachCalculatorFlow({
 
   backBtn.addEventListener("click", () => {
     exitModal.style.display = "flex";
-    gsap.to(exitModal, { opacity: 1, duration: 0.2 });
-    gsap.fromTo(
+    gsapTo(g, exitModal, { opacity: 1, duration: 0.2 });
+    gsapFromTo(
+      g,
       exitModal.querySelector(".calc-modal"),
       { y: 20 },
       { y: 0, duration: 0.3, ease: "power2.out" },
@@ -707,14 +743,14 @@ export function attachCalculatorFlow({
       const input = document.getElementById(id);
       if (input) {
         const control = input.parentElement;
-        const minusBtn = control.querySelector(".qty-btn:first-child");
-        const plusBtn = control.querySelector(".qty-btn:last-child");
-        let val = parseInt(input.value) || 0;
-        while (val > DEFAULT_DURATION_MONTHS) {
+        const minusBtn = control?.querySelector?.(".qty-btn:first-child");
+        const plusBtn = control?.querySelector?.(".qty-btn:last-child");
+        let val = parseInt(input.value, 10) || 0;
+        while (val > DEFAULT_DURATION_MONTHS && minusBtn) {
           minusBtn.click();
           val--;
         }
-        while (val < DEFAULT_DURATION_MONTHS) {
+        while (val < DEFAULT_DURATION_MONTHS && plusBtn) {
           plusBtn.click();
           val++;
         }

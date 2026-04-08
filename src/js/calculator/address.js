@@ -1,3 +1,38 @@
+function normPostcodeCompact(pc) {
+  return (pc || "").toUpperCase().replace(/\s+/g, "");
+}
+
+/** Drop line 1 when it only duplicates Town / Postcode fields (e.g. postcode-only place). */
+export function dedupeAddressLine1(line1, town, postcode) {
+  const l1 = (line1 || "").trim().replace(/\s+/g, " ");
+  if (!l1) return "";
+
+  const t = (town || "").trim();
+  const pc = (postcode || "").trim();
+
+  if (pc && normPostcodeCompact(l1) === normPostcodeCompact(pc)) return "";
+
+  if (t && l1.toLowerCase() === t.toLowerCase()) return "";
+
+  if (!pc) return l1;
+
+  const pcEsc = pc.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s*");
+  let rest = l1.replace(new RegExp(pcEsc, "i"), "").replace(/,/g, " ").trim();
+  rest = rest.replace(/\s+/g, " ");
+
+  if (!rest) return "";
+  if (t && rest.toLowerCase() === t.toLowerCase()) return "";
+
+  const restNoCountry = rest
+    .replace(/\b(UK|United Kingdom)\b/gi, "")
+    .trim()
+    .replace(/\s+/g, " ");
+  if (!restNoCountry) return "";
+  if (t && restNoCountry.toLowerCase() === t.toLowerCase()) return "";
+
+  return l1;
+}
+
 export function initAddress({ onChange, onPostcodeFieldInput }) {
   const state = {
     mode: "collection",
@@ -22,6 +57,7 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
   const blockCollection = document.getElementById("collectionBlock");
   const blockDropoff = document.getElementById("dropoffBlock");
   const apartmentFields = document.getElementById("apartmentFields");
+  const floorField = document.getElementById("floorField");
   const distanceHint = document.getElementById("collectionDistanceHint");
 
   const elLine1 = document.getElementById("addressLine1");
@@ -84,6 +120,16 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
     });
   });
 
+  function showFloorField() {
+    const liftVal = document.querySelector('input[name="lift"]:checked')?.value;
+    if (liftVal === "no") {
+      floorField.style.display = "";
+      gsap.fromTo(floorField, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.3 });
+    } else {
+      floorField.style.display = "none";
+    }
+  }
+
   document.querySelectorAll('input[name="prop_type"]').forEach((radio) => {
     radio.addEventListener("change", (e) => {
       if (e.target.value === "apartment") {
@@ -95,8 +141,16 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
         );
       } else {
         apartmentFields.style.display = "none";
+        floorField.style.display = "none";
       }
       updateState("propType", e.target.value);
+    });
+  });
+
+  document.querySelectorAll('input[name="lift"]').forEach((radio) => {
+    radio.addEventListener("change", (e) => {
+      updateState("lift", e.target.value);
+      showFloorField();
     });
   });
 
@@ -124,7 +178,7 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
 
   document
     .getElementById("aptFloor")
-    .addEventListener("input", (e) =>
+    .addEventListener("change", (e) =>
       updateState("floor", parseInt(e.target.value, 10) || 1),
     );
   document
@@ -191,10 +245,14 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
         ? Number(data.distanceMiles)
         : null;
 
-    state.addressLine1 = data.addressLine1 || "";
-    state.addressLine2 = data.addressLine2 || "";
     state.town = data.town || "";
     state.postcode = (data.postcode || "").trim().toUpperCase();
+    state.addressLine1 = dedupeAddressLine1(
+      data.addressLine1 || "",
+      state.town,
+      state.postcode,
+    );
+    state.addressLine2 = data.addressLine2 || "";
 
     if (elLine1) elLine1.value = state.addressLine1;
     if (elLine2) elLine2.value = state.addressLine2;

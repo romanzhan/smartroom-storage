@@ -344,6 +344,12 @@
   display: none;
   max-height: 240px;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.autocomplete-list::-webkit-scrollbar {
+  display: none;
 }
 
 .edit-autocomplete {
@@ -644,6 +650,31 @@
   box-sizing: border-box;
 }
 
+.calc-step1-intro {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #4b5563;
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  background: #f0f7ff;
+  border-radius: 8px;
+}
+
+.calc-step1-intro__link {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.calc-section + .calc-section {
+  margin-top: 32px;
+}
+
+.calc-section-note {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: -8px 0 16px;
+}
+
 .calc-section-title {
   font-family: "Lexend", sans-serif;
   font-size: 1.5rem;
@@ -662,12 +693,23 @@
 }
 
 .duration-card__promo {
-  color: #111827;
+  color: #9ca3af;
   font-family: "Lexend", sans-serif;
-  font-size: 0.9rem;
-  margin-bottom: 16px;
+  font-size: 0.82rem;
+  margin: 0;
   line-height: 1.4;
-  text-align: center;
+  text-align: left;
+}
+
+.duration-card__promo strong {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.duration-card__divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 12px 0;
 }
 
 .duration-card__rolling-text {
@@ -676,10 +718,36 @@
   font-size: 0.9rem;
   margin-bottom: 16px !important;
   line-height: 1.4;
-  text-align: center;
+  text-align: left;
+}
+
+.duration-card__rolling-label {
+  font-family: "Lexend", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px;
+  text-align: left;
+}
+
+.duration-card__billing-note {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #6b7280;
+  margin: 0;
+  text-align: left;
+}
+
+.duration-card__rolling-note {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #0d0b9c;
+  margin: 6px 0 0;
+  text-align: left;
 }
 
 .duration-card__controls {
+  margin-top: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -687,7 +755,6 @@
   gap: 20px;
   flex-direction: row;
 }
-
 
 .qty-control {
   display: flex;
@@ -833,13 +900,13 @@
 }
 
 
-.calc-sidebar {
+.calc-sidebar-col {
   position: sticky;
   top: 100px;
 }
 
 @media (min-width: 993px) {
-  .calc-sidebar {
+  .calc-sidebar-col {
     align-self: start;
   }
 
@@ -987,6 +1054,7 @@
   letter-spacing: 0;
   text-transform: none;
   color: #9ca3af;
+  text-align: right;
 }
 
 .summary-line--note .summary-line__label {
@@ -1220,6 +1288,10 @@
   }
 
 
+  .calc-sidebar-col {
+    position: static;
+  }
+
   .calc-sidebar {
     position: fixed;
     top: auto;
@@ -1229,6 +1301,13 @@
     z-index: 100;
     padding: 0;
   }
+
+  .sidebar-disclaimers--mobile {
+    background: #fff;
+    padding: 0;
+    margin-top: 0;
+  }
+
 
   .summary-card {
     border-radius: 20px 20px 0 0;
@@ -1554,6 +1633,26 @@
 .storage-form__textarea {
   resize: vertical;
   min-height: 80px;
+}
+
+.storage-form__select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper__icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
 }
 
 
@@ -1959,6 +2058,177 @@
 
 .summary-actions-mobile {
   width: auto;
+}
+
+/* Sidebar disclaimers */
+.sidebar-disclaimers {
+  margin-top: 20px;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: #9ca3af;
+}
+
+.sidebar-disclaimers--mobile {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .sidebar-disclaimers--mobile {
+    display: block;
+  }
+  .sidebar-disclaimers--desktop {
+    display: none;
+  }
+}
+
+
+.sidebar-disclaimers__warning {
+  margin: 0 0 8px;
+  font-size: 0.7rem;
+}
+
+.sidebar-disclaimers__detail {
+  border-top: 1px solid #f3f4f6;
+  padding: 6px 0;
+}
+
+.sidebar-disclaimers__summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: #6b7280;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-disclaimers__summary::before {
+  content: "+";
+  font-size: 0.8rem;
+  line-height: 1;
+  font-weight: 400;
+  color: #9ca3af;
+  transition: transform 0.2s;
+}
+
+.sidebar-disclaimers__detail[open] > .sidebar-disclaimers__summary::before {
+  content: "\2212";
+}
+
+.sidebar-disclaimers__summary::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar-disclaimers__body {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.sidebar-disclaimers__help {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.sidebar-disclaimers__help-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin: 0 0 6px;
+}
+
+.sidebar-disclaimers__help-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: #6b7280;
+  text-decoration: none;
+  margin-bottom: 4px;
+}
+
+.sidebar-disclaimers__help-link:hover {
+  color: #374151;
+}
+
+.sidebar-disclaimers__help-icon {
+  flex-shrink: 0;
+}
+
+/* Insurance options */
+.insurance-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.insurance-option {
+  cursor: pointer;
+  flex: 1 1 0;
+  min-width: 90px;
+}
+
+.insurance-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.insurance-option__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 10px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.insurance-option__card:hover {
+  border-color: #c7d2fe;
+}
+
+.insurance-option input:checked + .insurance-option__card {
+  border-color: #0d0b9c;
+  box-shadow: 0 0 0 3px rgba(13, 11, 156, 0.12);
+}
+
+.insurance-option__cover {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.insurance-option__price {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.insurance-option__price small {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.insurance-hint {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+@media (max-width: 992px) {
+  .insurance-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .insurance-option {
+    min-width: 0;
+  }
 }
 
 .btn-step-back {

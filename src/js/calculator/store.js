@@ -1,3 +1,9 @@
+import {
+  isValidDate,
+  notifyEachSafe,
+  runSafe,
+} from "../lib/runtime-utils.js";
+
 /**
  * Extra collection charge for driving distance beyond free threshold (miles).
  * @param {number|null|undefined} miles
@@ -38,10 +44,21 @@ export const store = {
 
   subscribe(fn) {
     this._listeners.push(fn);
+    return () => {
+      const i = this._listeners.indexOf(fn);
+      if (i !== -1) this._listeners.splice(i, 1);
+    };
   },
 
   dispatch(event) {
-    this._listeners.forEach((fn) => fn(event, this.getSnapshot()));
+    let snapshot;
+    try {
+      snapshot = this.getSnapshot();
+    } catch (err) {
+      console.error("[SmartRoom] getSnapshot failed", err);
+      return;
+    }
+    notifyEachSafe(this._listeners, event, snapshot);
   },
 
   getSnapshot() {
@@ -56,6 +73,8 @@ export const store = {
       currentTab === "boxes" ? modules.durationBoxes : modules.durationFurn;
     const duration = durationModule?.getDuration() ?? null;
     const isRolling = durationModule?.isRollingPlan() ?? false;
+
+    const insuranceData = modules.insurance?.getSelected(currentTab) ?? null;
 
     let subtotal = 0;
     let hasItems = false;
@@ -105,6 +124,16 @@ export const store = {
           });
         }
       }
+    }
+
+    if (insuranceData) {
+      subtotal += insuranceData.price;
+      lines.push({
+        group: "insurance",
+        label: `Protection up to £${insuranceData.cover.toLocaleString()}`,
+        price: insuranceData.price,
+        suffix: "/mo",
+      });
     }
 
     if (currentStep >= 2 && addr && hasItems) {
@@ -243,7 +272,7 @@ export const store = {
       }
     }
 
-    if (currentStep >= 3 && dateData) {
+    if (currentStep >= 3 && dateData && isValidDate(dateData.date)) {
       const dateStr = dateData.date.toLocaleDateString("en-GB", {
         weekday: "short",
         day: "numeric",
@@ -256,10 +285,12 @@ export const store = {
         detail: dateStr,
         price: null,
       });
+      const tw =
+        typeof dateData.timeWindow === "string" ? dateData.timeWindow : "—";
       lines.push({
         group: "schedule",
         label: "Time window",
-        detail: dateData.timeWindow,
+        detail: tw,
         price: null,
       });
     }
@@ -268,6 +299,7 @@ export const store = {
       currentTab,
       currentStep,
       hasItems,
+      hasInsurance: !!insuranceData,
       subtotal,
       lines,
       duration,
@@ -277,6 +309,6 @@ export const store = {
   },
 
   notify() {
-    this.dispatch({ type: "UPDATE" });
+    runSafe("store.notify", () => this.dispatch({ type: "UPDATE" }));
   },
 };

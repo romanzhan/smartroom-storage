@@ -1,5 +1,6 @@
 const SUMMARY_GROUP_HEADINGS = {
   storage: "Storage",
+  insurance: "Insurance",
   service: "Collection & service",
   schedule: "Date & time",
 };
@@ -93,6 +94,11 @@ export function initSidebar({
   summaryCard,
   summaryMobileToggle,
 }) {
+  if (!summaryItems) {
+    console.error("[SmartRoom] initSidebar: summaryItems missing");
+    return;
+  }
+
   function renderLines(lines, hasItems, currentTab) {
     summaryItems.innerHTML = "";
 
@@ -136,7 +142,9 @@ export function initSidebar({
 
     renderLines(lines, hasItems, currentTab);
 
-    const priceText = `£${subtotal.toFixed(2)}`;
+    const safeSubtotal =
+      typeof subtotal === "number" && Number.isFinite(subtotal) ? subtotal : 0;
+    const priceText = `£${safeSubtotal.toFixed(2)}`;
     if (summarySubtotal) summarySubtotal.textContent = priceText;
     if (summaryTotal) summaryTotal.textContent = priceText;
     if (mobileSummaryTotal) mobileSummaryTotal.textContent = priceText;
