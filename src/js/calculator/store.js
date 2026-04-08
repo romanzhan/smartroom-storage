@@ -91,7 +91,7 @@ export const store = {
             group: "storage",
             label: `${item.qty}x ${item.name}`,
             price: itemTotal,
-            suffix: "",
+            suffix: "/4wk",
           });
         }
       });
@@ -112,7 +112,7 @@ export const store = {
           group: "storage",
           label: `1x ${selectedUnit.name} (${selectedUnit.size})`,
           price: subtotal,
-          suffix: "/wk",
+          suffix: "/4wk",
         });
         if (duration != null) {
           lines.push({

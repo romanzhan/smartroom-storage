@@ -5,6 +5,11 @@ const UNIT_SVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" st
 export function initUnits({ container, onChange }) {
   let selectedUnitId = null;
 
+  if (!container) {
+    console.error("[SmartRoom] initUnits: container missing");
+    return { getSelectedUnit: () => null };
+  }
+
   function render() {
     container.innerHTML = "";
 
@@ -14,12 +19,11 @@ export function initUnits({ container, onChange }) {
 
       label.innerHTML = `
         <input type="radio" name="storage_unit" value="${unit.id}" class="unit-card__radio">
-        <div class="unit-card__icon">${UNIT_SVG}</div>
         <div class="unit-card__info">
           <div class="unit-card__title">${unit.name}</div>
           <div class="unit-card__size">${unit.size}</div>
         </div>
-        <div class="unit-card__price">£${unit.price.toFixed(2)} <span class="unit-card__per">/wk</span></div>
+        <div class="unit-card__price">£${unit.price.toFixed(2)} <span class="unit-card__per">/4wk</span></div>
       `;
 
       label.querySelector("input").addEventListener("change", (e) => {
