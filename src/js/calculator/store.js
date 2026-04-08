@@ -76,223 +76,129 @@ export const store = {
 
     const insuranceData = modules.insurance?.getSelected(currentTab) ?? null;
 
-    let subtotal = 0;
+    let storagePrice = 0;
     let hasItems = false;
-    const lines = [];
     let rawCollectionFee = 0;
+    let collectionFee = 0;
+    const insurancePrice = insuranceData?.price ?? 0;
 
+    // --- Storage price ---
     if (currentTab === "boxes") {
       itemsData.forEach((item) => {
         if (item.qty > 0) {
           hasItems = true;
-          const itemTotal = item.qty * item.price;
-          subtotal += itemTotal;
-          lines.push({
-            group: "storage",
-            label: `${item.qty}x ${item.name}`,
-            price: itemTotal,
-            suffix: "/4wk",
-          });
+          storagePrice += item.qty * item.price;
         }
       });
-      if (hasItems && duration != null) {
-        lines.push({
-          group: "storage",
-          label: isRolling
-            ? "Plan: rolling monthly"
-            : `Storing for: ${duration} months`,
-          price: null,
-        });
-      }
     } else {
       if (selectedUnit) {
         hasItems = true;
-        subtotal = selectedUnit.price;
-        lines.push({
-          group: "storage",
-          label: `1x ${selectedUnit.name} (${selectedUnit.size})`,
-          price: subtotal,
-          suffix: "/4wk",
-        });
-        if (duration != null) {
-          lines.push({
-            group: "storage",
-            label: isRolling
-              ? "Plan: rolling monthly"
-              : `Storing for: ${duration} months`,
-            price: null,
-          });
-        }
+        storagePrice = selectedUnit.price;
       }
     }
 
-    if (insuranceData) {
-      subtotal += insuranceData.price;
-      lines.push({
-        group: "insurance",
-        label: `Protection up to £${insuranceData.cover.toLocaleString()}`,
-        price: insuranceData.price,
-        suffix: "/mo",
-      });
-    }
+    // --- Collection fee ---
+    if (currentStep >= 2 && addr && hasItems && addr.mode === "collection") {
+      const cfg = this.siteConfig || {};
+      const tabAddon =
+        currentTab === "boxes"
+          ? Number(cfg.baseFeeBoxes) || 0
+          : Number(cfg.baseFeeFurniture) || 0;
+      let collFee = 30.0 + tabAddon;
 
-    if (currentStep >= 2 && addr && hasItems) {
-      if (addr.mode === "collection") {
-        const cfg = this.siteConfig || {};
-        const tabAddon =
-          currentTab === "boxes"
-            ? Number(cfg.baseFeeBoxes) || 0
-            : Number(cfg.baseFeeFurniture) || 0;
-        let collFee = 30.0 + tabAddon;
-
-        if (addr.propType === "apartment") {
-          collFee += 30.0 * 0.1;
-          if (addr.lift === "no") {
-            const floorNum = Math.max(1, addr.floor);
-            collFee += 30.0 * (0.05 * floorNum);
-          }
+      if (addr.propType === "apartment") {
+        collFee += 30.0 * 0.1;
+        if (addr.lift === "no") {
+          const floorNum = Math.max(1, addr.floor);
+          collFee += 30.0 * (0.05 * floorNum);
         }
-
-        if (addr.movers === "2") {
-          collFee += 45.0;
-        }
-
-        const distanceExtra = distanceSurchargePounds(addr.distanceMiles, cfg);
-        collFee += distanceExtra;
-
-        rawCollectionFee = collFee;
-
-        if (dateData && currentStep >= 3) {
-          let dateMultiplier = 1;
-          if (dateData.isWeekend || dateData.isHoliday || dateData.isUrgent) {
-            dateMultiplier += 0.15;
-          }
-          if (dateData.windowType === "2-hour") {
-            dateMultiplier += 0.1;
-          }
-
-          collFee = collFee * dateMultiplier;
-        }
-
-        const pickupAddress = (addr.address || "").trim() || "Not provided";
-
-        subtotal += collFee;
-        lines.push({
-          group: "service",
-          label: "Collection fee",
-          price: collFee,
-          suffix: "",
-        });
-
-        if (
-          addr.distanceMiles != null &&
-          typeof addr.distanceMiles === "number" &&
-          !Number.isNaN(addr.distanceMiles)
-        ) {
-          lines.push({
-            group: "service",
-            label: "Driving distance (est.)",
-            detail: `${addr.distanceMiles.toFixed(1)} mi from Bloomsbury warehouse`,
-            price: null,
-          });
-        }
-
-        if (distanceExtra > 0) {
-          lines.push({
-            group: "service",
-            label: "Distance note",
-            detail: `Includes distance surcharge beyond ${Number(cfg.distancePricing?.freeMiles) || 0} mi free`,
-            price: null,
-          });
-        }
-
-        lines.push({
-          group: "service",
-          label: "Service",
-          detail: "Home collection",
-          price: null,
-        });
-        lines.push({
-          group: "service",
-          label: "Pickup address",
-          detail: pickupAddress,
-          price: null,
-        });
-
-        if (addr.propType === "apartment") {
-          lines.push({
-            group: "service",
-            label: "Property type",
-            detail: `Apartment · floor ${addr.floor}`,
-            price: null,
-          });
-          lines.push({
-            group: "service",
-            label: "Lift",
-            detail: addr.lift === "yes" ? "Yes" : "No",
-            price: null,
-          });
-        } else {
-          lines.push({
-            group: "service",
-            label: "Property type",
-            detail: "House / ground level",
-            price: null,
-          });
-        }
-
-        lines.push({
-          group: "service",
-          label: "Crew",
-          detail:
-            addr.movers === "2" ? "2 movers" : "Standard (1 team)",
-          price: null,
-        });
-
-        const notes = (addr.instructions || "").trim();
-        if (notes) {
-          const short =
-            notes.length > 100 ? `${notes.slice(0, 97)}…` : notes;
-          lines.push({
-            group: "service",
-            label: "Access notes",
-            detail: short,
-            price: null,
-          });
-        }
-      } else {
-        const facName =
-          addr.facility === "bloomsbury" ? "Bloomsbury" : "Hackney";
-        lines.push({
-          group: "service",
-          label: `Drop-off at ${facName}`,
-          price: null,
-          variant: "dropoff",
-        });
       }
+
+      if (addr.movers === "2") {
+        collFee += 45.0;
+      }
+
+      const distanceExtra = distanceSurchargePounds(addr.distanceMiles, cfg);
+      collFee += distanceExtra;
+
+      rawCollectionFee = collFee;
+
+      if (dateData && currentStep >= 3) {
+        let dateMultiplier = 1;
+        if (dateData.isWeekend || dateData.isHoliday || dateData.isUrgent) {
+          dateMultiplier += 0.15;
+        }
+        if (dateData.windowType === "2-hour") {
+          dateMultiplier += 0.1;
+        }
+        collFee = collFee * dateMultiplier;
+      }
+
+      collectionFee = collFee;
     }
 
+    // --- Totals ---
+    const subtotal = storagePrice + insurancePrice + collectionFee;
+    const monthlyPayment = storagePrice + insurancePrice;
+
+    // --- Date string ---
+    let dateStr = "";
     if (currentStep >= 3 && dateData && isValidDate(dateData.date)) {
-      const dateStr = dateData.date.toLocaleDateString("en-GB", {
+      dateStr = dateData.date.toLocaleDateString("en-GB", {
         weekday: "short",
         day: "numeric",
         month: "short",
         year: "numeric",
       });
-      lines.push({
-        group: "schedule",
-        label: "Date",
-        detail: dateStr,
-        price: null,
+    }
+
+    // --- Booking details (for step 4 summary) ---
+    const bookingDetails = [];
+    if (currentTab === "boxes") {
+      itemsData.forEach((item) => {
+        if (item.qty > 0) {
+          bookingDetails.push({ label: `${item.qty}x ${item.name}`, value: `£${(item.qty * item.price).toFixed(2)}/4wk` });
+        }
       });
-      const tw =
-        typeof dateData.timeWindow === "string" ? dateData.timeWindow : "—";
-      lines.push({
-        group: "schedule",
-        label: "Time window",
-        detail: tw,
-        price: null,
-      });
+    } else if (selectedUnit) {
+      bookingDetails.push({ label: `1x ${selectedUnit.name} (${selectedUnit.size})`, value: `£${selectedUnit.price.toFixed(2)}/4wk` });
+    }
+
+    if (duration != null) {
+      bookingDetails.push({ label: "Duration", value: isRolling ? "Rolling monthly" : `${duration} months` });
+    }
+
+    if (insuranceData) {
+      bookingDetails.push({ label: "Insurance", value: `£${insuranceData.cover.toLocaleString()} cover — £${insuranceData.price.toFixed(2)}/mo` });
+    }
+
+    if (addr && addr.mode) {
+      if (addr.mode === "collection") {
+        const pickupAddress = (addr.address || "").trim() || "Not provided";
+        bookingDetails.push({ label: "Service", value: "Home collection" });
+        bookingDetails.push({ label: "Pickup address", value: pickupAddress });
+        if (addr.propType === "apartment") {
+          bookingDetails.push({ label: "Property", value: `Other floor · floor ${addr.floor}` });
+          bookingDetails.push({ label: "Lift", value: addr.lift === "yes" ? "Yes" : "No" });
+        } else {
+          bookingDetails.push({ label: "Property", value: "Ground floor" });
+        }
+        bookingDetails.push({ label: "Movers", value: addr.movers === "2" ? "2 movers" : "1 mover" });
+        const notes = (addr.instructions || "").trim();
+        if (notes) bookingDetails.push({ label: "Notes", value: notes });
+        bookingDetails.push({ label: "Collection fee", value: `£${collectionFee.toFixed(2)}` });
+      } else {
+        const facName = addr.facility === "bloomsbury" ? "Bloomsbury (WC1N 3QA)" : "Hackney (N16 8DR)";
+        bookingDetails.push({ label: "Service", value: "Drop-off" });
+        bookingDetails.push({ label: "Facility", value: facName });
+      }
+    }
+
+    if (dateStr) {
+      bookingDetails.push({ label: "Date", value: dateStr });
+    }
+    if (dateData?.timeWindow) {
+      bookingDetails.push({ label: "Time window", value: dateData.timeWindow });
     }
 
     return {
@@ -301,10 +207,15 @@ export const store = {
       hasItems,
       hasInsurance: !!insuranceData,
       subtotal,
-      lines,
+      monthlyPayment,
+      storagePrice,
+      insurancePrice,
+      collectionFee,
+      dateStr,
       duration,
       isRolling,
       rawCollectionFee,
+      bookingDetails,
     };
   },
 

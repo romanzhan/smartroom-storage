@@ -1,86 +1,14 @@
-const SUMMARY_GROUP_HEADINGS = {
-  storage: "Storage",
-  insurance: "Insurance",
-  service: "Collection & service",
-  schedule: "Date & time",
-};
-
-function appendDivider(container) {
+function row(container, label, value) {
   const div = document.createElement("div");
-  div.className = "summary-block-divider";
-  div.setAttribute("aria-hidden", "true");
+  div.className = "summary-line summary-line--priced";
+  const l = document.createElement("span");
+  l.className = "summary-line__label";
+  l.textContent = label;
+  const r = document.createElement("span");
+  r.className = "summary-line__amount";
+  r.textContent = value;
+  div.append(l, r);
   container.appendChild(div);
-}
-
-function appendBlockHeader(container, group) {
-  const head = document.createElement("div");
-  head.className = "summary-block__heading";
-  head.textContent = SUMMARY_GROUP_HEADINGS[group] || group;
-  container.appendChild(head);
-}
-
-function appendPricedRow(body, label, price, suffix) {
-  const row = document.createElement("div");
-  row.className = "summary-line summary-line--priced";
-  const lab = document.createElement("span");
-  lab.className = "summary-line__label";
-  lab.textContent = label;
-  const amt = document.createElement("span");
-  amt.className = "summary-line__amount";
-  amt.textContent = `£${price.toFixed(2)}${suffix || ""}`;
-  row.append(lab, amt);
-  body.appendChild(row);
-}
-
-function appendScheduleRow(body, label, detail) {
-  const row = document.createElement("div");
-  row.className = "summary-line summary-line--schedule";
-  const k = document.createElement("span");
-  k.className = "summary-line__key";
-  k.textContent = label;
-  const v = document.createElement("span");
-  v.className = "summary-line__val";
-  v.textContent = detail;
-  row.append(k, v);
-  body.appendChild(row);
-}
-
-function appendNoteRow(body, label) {
-  const row = document.createElement("div");
-  row.className = "summary-line summary-line--note";
-  const lab = document.createElement("span");
-  lab.className = "summary-line__label";
-  lab.textContent = label;
-  row.appendChild(lab);
-  body.appendChild(row);
-}
-
-function appendDropoffRow(body, label) {
-  const row = document.createElement("div");
-  row.className = "summary-line summary-line--dropoff";
-  const lab = document.createElement("span");
-  lab.className = "summary-line__label";
-  lab.textContent = label;
-  row.appendChild(lab);
-  body.appendChild(row);
-}
-
-function appendLineRow(body, line) {
-  const hasPrice =
-    line.price != null && typeof line.price === "number" && !Number.isNaN(line.price);
-  if (hasPrice) {
-    appendPricedRow(body, line.label, line.price, line.suffix);
-    return;
-  }
-  if (line.variant === "dropoff") {
-    appendDropoffRow(body, line.label);
-    return;
-  }
-  if (line.detail) {
-    appendScheduleRow(body, line.label, line.detail);
-    return;
-  }
-  appendNoteRow(body, line.label);
 }
 
 export function initSidebar({
@@ -99,60 +27,81 @@ export function initSidebar({
     return;
   }
 
-  function renderLines(lines, hasItems, currentTab) {
+  const monthlyBox = document.getElementById("futureMonthlyAmount");
+
+  function renderSidebar(snapshot) {
     summaryItems.innerHTML = "";
 
-    if (!hasItems) {
+    if (!snapshot.hasItems) {
       const empty =
-        currentTab === "boxes"
+        snapshot.currentTab === "boxes"
           ? "Please select items to store."
           : "Please select a storage unit.";
       summaryItems.innerHTML = `<div class="summary-empty">${empty}</div>`;
       return;
     }
 
-    let currentGroup = null;
+    // First Month
+    row(summaryItems, "First month", `£${snapshot.storagePrice.toFixed(2)}`);
 
-    for (const line of lines) {
-      const group = line.group || "storage";
-      if (group !== currentGroup) {
-        if (currentGroup !== null) {
-          appendDivider(summaryItems);
-        }
-        const block = document.createElement("div");
-        block.className = `summary-block summary-block--${group}`;
-        appendBlockHeader(block, group);
-        const body = document.createElement("div");
-        body.className = "summary-block__body";
-        block.appendChild(body);
-        summaryItems.appendChild(block);
-        currentGroup = group;
-        appendLineRow(body, line);
-      } else {
-        const block = summaryItems.lastElementChild;
-        const body = block?.querySelector(".summary-block__body");
-        if (body) appendLineRow(body, line);
-      }
+    // Monthly insurance
+    if (snapshot.insurancePrice > 0) {
+      row(summaryItems, "Monthly insurance", `£${snapshot.insurancePrice.toFixed(2)}`);
+    }
+
+    // Length
+    if (snapshot.duration != null) {
+      const lenText = snapshot.isRolling ? "Rolling" : `${snapshot.duration} months`;
+      row(summaryItems, "Length", lenText);
+    }
+
+    // Collection
+    if (snapshot.collectionFee > 0) {
+      row(summaryItems, "Collection", `£${snapshot.collectionFee.toFixed(2)}`);
+    }
+
+    // Date
+    if (snapshot.dateStr) {
+      row(summaryItems, "Date", snapshot.dateStr);
     }
   }
 
   function render(_event, snapshot) {
     if (!snapshot) return;
-    const { currentTab, hasItems, subtotal, lines, currentStep } = snapshot;
 
-    renderLines(lines, hasItems, currentTab);
+    renderSidebar(snapshot);
 
     const safeSubtotal =
-      typeof subtotal === "number" && Number.isFinite(subtotal) ? subtotal : 0;
+      typeof snapshot.subtotal === "number" && Number.isFinite(snapshot.subtotal)
+        ? snapshot.subtotal
+        : 0;
     const priceText = `£${safeSubtotal.toFixed(2)}`;
     if (summarySubtotal) summarySubtotal.textContent = priceText;
     if (summaryTotal) summaryTotal.textContent = priceText;
     if (mobileSummaryTotal) mobileSummaryTotal.textContent = priceText;
 
-    if (currentStep < 4) {
-      const disabled = !hasItems;
+    // Future monthly
+    if (monthlyBox) {
+      const mp = snapshot.monthlyPayment || 0;
+      monthlyBox.textContent = `£${mp.toFixed(2)}`;
+    }
+
+    if (snapshot.currentStep < 4) {
+      const disabled = !snapshot.hasItems;
       if (continueBtn) continueBtn.disabled = disabled;
       if (mobileContinueBtn) mobileContinueBtn.disabled = disabled;
+    }
+
+    // Render booking summary on step 4
+    const checkoutBox = document.getElementById("checkoutSummaryBox");
+    if (checkoutBox && snapshot.currentStep >= 4) {
+      checkoutBox.innerHTML = "";
+      for (const d of snapshot.bookingDetails) {
+        const r = document.createElement("div");
+        r.className = "checkout-summary-row";
+        r.innerHTML = `<span class="checkout-summary-row__label">${d.label}</span><span class="checkout-summary-row__value">${d.value}</span>`;
+        checkoutBox.appendChild(r);
+      }
     }
   }
 
