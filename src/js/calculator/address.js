@@ -51,7 +51,7 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
     lift: "yes",
     movers: "1",
     instructions: "",
-    facility: "bloomsbury",
+    facility: "",
   };
 
   const blockCollection = document.getElementById("collectionBlock");
@@ -154,10 +154,18 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
     });
   });
 
+  function clearFieldError(el) {
+    if (!el) return;
+    el.classList.remove("is-invalid");
+    const err = el.parentElement?.querySelector(".step2-field-error");
+    if (err) err.remove();
+  }
+
   if (elLine1) {
-    elLine1.addEventListener("input", (e) =>
-      updateState("addressLine1", e.target.value),
-    );
+    elLine1.addEventListener("input", (e) => {
+      clearFieldError(elLine1);
+      updateState("addressLine1", e.target.value);
+    });
   }
   if (elLine2) {
     elLine2.addEventListener("input", (e) =>
@@ -165,12 +173,14 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
     );
   }
   if (elTown) {
-    elTown.addEventListener("input", (e) =>
-      updateState("town", e.target.value),
-    );
+    elTown.addEventListener("input", (e) => {
+      clearFieldError(elTown);
+      updateState("town", e.target.value);
+    });
   }
   if (elPostcode) {
     elPostcode.addEventListener("input", (e) => {
+      clearFieldError(elPostcode);
       updateState("postcode", e.target.value);
       if (onPostcodeFieldInput) onPostcodeFieldInput(e.target.value);
     });
@@ -204,6 +214,9 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
 
   document.querySelectorAll('input[name="facility"]').forEach((radio) => {
     radio.addEventListener("change", (e) => {
+      // Clear facility validation error
+      const errEl = document.querySelector("#dropoffBlock .step2-field-error");
+      if (errEl) errEl.remove();
       document
         .getElementById("facBloomsbury")
         .classList.toggle("is-selected", e.target.value === "bloomsbury");

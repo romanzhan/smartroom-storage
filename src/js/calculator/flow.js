@@ -455,19 +455,85 @@ export function attachCalculatorFlow({
     updateBackButtonsVisibility();
   }
 
+  function validateStep2() {
+    const addr = store.modules.address?.getData();
+    if (!addr) return null;
+
+    // Clear previous errors
+    document.querySelectorAll(".step2-field-error").forEach((el) => el.remove());
+    document.querySelectorAll(".is-invalid").forEach((el) => el.classList.remove("is-invalid"));
+
+    function showError(fieldEl, msg) {
+      fieldEl.classList.add("is-invalid");
+      const err = document.createElement("p");
+      err.className = "step2-field-error insurance-hint";
+      err.textContent = msg;
+      err.style.display = "block";
+      fieldEl.parentElement.appendChild(err);
+    }
+
+    if (addr.mode === "collection") {
+      const postEl = document.getElementById("addressPostcode");
+      const line1El = document.getElementById("addressLine1");
+      const townEl = document.getElementById("addressTown");
+
+      if (!addr.postcode?.trim()) {
+        showError(postEl, "Postcode is required");
+        postEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        return true;
+      }
+      if (!addr.addressLine1?.trim()) {
+        showError(line1El, "Address is required");
+        line1El.scrollIntoView({ behavior: "smooth", block: "center" });
+        return true;
+      }
+      if (!addr.town?.trim()) {
+        showError(townEl, "Town is required");
+        townEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        return true;
+      }
+    } else {
+      // dropoff — facility must be selected
+      if (!addr.facility) {
+        const facilityGrid = document.querySelector("#dropoffBlock .units-grid");
+        if (facilityGrid) {
+          const err = document.createElement("p");
+          err.className = "step2-field-error insurance-hint";
+          err.textContent = "Please select a facility";
+          err.style.display = "block";
+          facilityGrid.parentElement.appendChild(err);
+          facilityGrid.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return true;
+      }
+    }
+    return null;
+  }
+
   function handleNextStep() {
     if (store.currentStep === 1) {
       const snap = store.getSnapshot();
+      if (!snap.hasItems) {
+        const listId = snap.currentTab === "boxes" ? "boxesItemsList" : "unitsListContainer";
+        const el = document.getElementById(listId);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
       if (!snap.hasInsurance) {
         const hintId = snap.currentTab === "boxes" ? "insuranceBoxesHint" : "insuranceFurnitureHint";
         const hint = document.getElementById(hintId);
-        if (hint) hint.style.display = "block";
+        if (hint) {
+          hint.style.display = "block";
+          hint.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
         return;
       }
       store.currentStep = 2;
       store.notify();
       transitionSteps("step1Container", "step2Container", 2);
     } else if (store.currentStep === 2) {
+      const addrErr = validateStep2();
+      if (addrErr) return;
       store.currentStep = 3;
       store.notify();
       if (store.modules.date) store.modules.date.reRenderCalendar();
