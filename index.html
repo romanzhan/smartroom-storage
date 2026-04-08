@@ -570,7 +570,7 @@
                           </h3>
                           <div class="units-grid mb-4">
                             <label
-                              class="unit-card is-selected"
+                              class="unit-card"
                               id="cardModeCollection"
                             >
                               <input
@@ -578,7 +578,6 @@
                                 name="delivery_mode"
                                 value="collection"
                                 class="unit-card__radio"
-                                checked
                               />
                               <div class="unit-card__info">
                                 <div class="unit-card__title">Collection</div>
@@ -604,7 +603,7 @@
                           </div>
                         </section>
       
-                        <div id="collectionBlock">
+                        <div id="collectionBlock" style="display: none">
                           <section class="calc-section">
                             <h3 class="calc-section-title">Collection Details</h3>
                             <p
@@ -1151,14 +1150,20 @@
                           </div>
       
                           <div class="summary-card__totals">
-                            <div class="summary-row">
-                              <span>Subtotal</span>
-                              <span id="summarySubtotal">£0.00</span>
-                            </div>
                             <div class="summary-row summary-total">
-                              <span>Total</span>
+                              <span>Total due today</span>
                               <span id="summaryTotal">£0.00</span>
                             </div>
+                          </div>
+      
+                          <div class="summary-card__monthly">
+                            <div class="summary-row">
+                              <span>Future monthly payments</span>
+                              <span id="futureMonthlyAmount">£0.00</span>
+                            </div>
+                            <p class="summary-card__monthly-note">
+                              This is the amount you'll pay each month while your stuff's in storage.
+                            </p>
                           </div>
       
                           <div
