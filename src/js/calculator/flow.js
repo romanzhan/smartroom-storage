@@ -540,6 +540,14 @@ export function attachCalculatorFlow({
       transitionSteps("step2Container", "step3Container", 3);
     } else if (store.currentStep === 3) {
       const dateData = store.modules.date?.getData?.();
+      if (!dateData?.timeWindow) {
+        const hint = document.getElementById("timeSlotHint");
+        if (hint) {
+          hint.style.display = "block";
+          hint.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return;
+      }
       if (!dateData || dateData.hasInteracted) {
         moveToStep4();
       } else {

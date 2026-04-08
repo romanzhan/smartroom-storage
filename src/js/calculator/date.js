@@ -27,8 +27,8 @@ export function initDate({ store, onChange }) {
   const state = {
     selectedDate: new Date(defaultDate),
     hasInteracted: false,
-    timeWindow: "8:00 AM - 2:00 PM",
-    windowType: "6-hour",
+    timeWindow: "",
+    windowType: "",
     currentMonth: defaultDate.getMonth(),
     currentYear: defaultDate.getFullYear(),
   };
@@ -40,6 +40,21 @@ export function initDate({ store, onChange }) {
   const gridEl = document.getElementById("calendarGrid");
   const monthYearEl = document.getElementById("calMonthYear");
   const btnSaveDate = document.getElementById("btnSaveDate");
+  const calPrevMonth = document.getElementById("calPrevMonth");
+  const calNextMonth = document.getElementById("calNextMonth");
+
+  if (
+    !displayEl ||
+    !btnOpenCal ||
+    !calWrapper ||
+    !gridEl ||
+    !monthYearEl ||
+    !calPrevMonth ||
+    !calNextMonth
+  ) {
+    console.error("[SmartRoom] initDate: missing calendar DOM");
+    return null;
+  }
 
   function formatDateFriendly(date) {
     return date.toLocaleDateString("en-GB", {
@@ -58,7 +73,7 @@ export function initDate({ store, onChange }) {
 
   function updateDisplay() {
     const text = formatDateFriendly(state.selectedDate);
-    displayEl.textContent = text;
+    if (displayEl) displayEl.textContent = text;
     if (modalDisplayEl) modalDisplayEl.textContent = text;
   }
 
@@ -92,7 +107,7 @@ export function initDate({ store, onChange }) {
     for (let day = 1; day <= lastDay.getDate(); day++) {
       const cellDate = new Date(state.currentYear, state.currentMonth, day);
       const cellDateStr = formatYYYYMMDD(cellDate);
-      const isPast = cellDate < today;
+      const isPast = cellDate <= today;
 
       const isWeekend = cellDate.getDay() === 0 || cellDate.getDay() === 6;
       const isHoliday = ukHolidays.includes(cellDateStr);
@@ -142,7 +157,7 @@ export function initDate({ store, onChange }) {
     });
   }
 
-  document.getElementById("calPrevMonth").addEventListener("click", () => {
+  calPrevMonth.addEventListener("click", () => {
     state.currentMonth--;
     if (state.currentMonth < 0) {
       state.currentMonth = 11;
@@ -151,7 +166,7 @@ export function initDate({ store, onChange }) {
     renderCalendar();
   });
 
-  document.getElementById("calNextMonth").addEventListener("click", () => {
+  calNextMonth.addEventListener("click", () => {
     state.currentMonth++;
     if (state.currentMonth > 11) {
       state.currentMonth = 0;
@@ -164,6 +179,8 @@ export function initDate({ store, onChange }) {
     radio.addEventListener("change", (e) => {
       state.timeWindow = e.target.value;
       state.windowType = e.target.getAttribute("data-type");
+      const hint = document.getElementById("timeSlotHint");
+      if (hint) hint.style.display = "none";
       if (onChange) onChange();
     });
   });
@@ -171,8 +188,8 @@ export function initDate({ store, onChange }) {
   function resetDateModule() {
     state.selectedDate = new Date(defaultDate);
     state.hasInteracted = false;
-    state.timeWindow = "8:00 AM - 2:00 PM";
-    state.windowType = "6-hour";
+    state.timeWindow = "";
+    state.windowType = "";
     state.currentMonth = defaultDate.getMonth();
     state.currentYear = defaultDate.getFullYear();
 

@@ -1738,6 +1738,21 @@
   color: #111827;
 }
 
+.date-summary-box__today-note {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 10px;
+}
+
+.date-summary-box__phone {
+  color: #0d0b9c;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.date-summary-box__phone:hover {
+  text-decoration: underline;
+}
 
 .custom-calendar-wrapper {
   background: #fff;
