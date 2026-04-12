@@ -6,6 +6,7 @@ import { initAddress } from "./address.js";
 import { initDate } from "./date.js";
 import { initSidebar } from "./sidebar.js";
 import { initInsurance } from "./insurance.js";
+import { initExtras } from "./extras.js";
 
 export function initCalculatorModules(dom, store, siteConfig) {
   store.modules.items = initItems({
@@ -43,6 +44,12 @@ export function initCalculatorModules(dom, store, siteConfig) {
 
   store.modules.insurance = initInsurance({
     onChange: () => store.notify(),
+  });
+
+  store.modules.extras = initExtras({
+    container: document.getElementById("extrasContainer"),
+    onChange: () => store.notify(),
+    extrasCatalog: siteConfig?.extras,
   });
 
   store.modules.address = initAddress({
@@ -89,6 +96,20 @@ export function initCalculatorModules(dom, store, siteConfig) {
     summaryCard: dom.summaryCard,
     summaryMobileToggle: dom.summaryMobileToggle,
   });
+
+  // Show/hide extras section based on tab + delivery mode
+  const extrasSection = document.getElementById("extrasSection");
+  if (extrasSection) {
+    store.subscribe((_event, snapshot) => {
+      if (!snapshot) return;
+      const addr = store.modules.address?.getData();
+      const show =
+        snapshot.currentTab === "furniture" &&
+        addr?.mode === "collection" &&
+        snapshot.currentStep >= 2;
+      extrasSection.style.display = show ? "" : "none";
+    });
+  }
 
   return postcode;
 }

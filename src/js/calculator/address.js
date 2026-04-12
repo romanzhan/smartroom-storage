@@ -35,7 +35,7 @@ export function dedupeAddressLine1(line1, town, postcode) {
 
 export function initAddress({ onChange, onPostcodeFieldInput }) {
   const state = {
-    mode: "collection",
+    mode: "",
     address: "",
     addressLine1: "",
     addressLine2: "",
@@ -102,6 +102,9 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
 
   document.querySelectorAll('input[name="delivery_mode"]').forEach((radio) => {
     radio.addEventListener("change", (e) => {
+      // Clear mode validation error
+      const modeErr = document.querySelector("#step2Container > section > .step2-field-error");
+      if (modeErr) modeErr.remove();
       document
         .getElementById("cardModeCollection")
         .classList.toggle("is-selected", e.target.value === "collection");
@@ -110,11 +113,13 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
         .classList.toggle("is-selected", e.target.value === "dropoff");
 
       if (e.target.value === "collection") {
-        blockCollection.style.display = "block";
         blockDropoff.style.display = "none";
+        blockCollection.style.display = "block";
+        gsap.fromTo(blockCollection, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.3 });
       } else {
         blockCollection.style.display = "none";
         blockDropoff.style.display = "block";
+        gsap.fromTo(blockDropoff, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.3 });
       }
       updateState("mode", e.target.value);
     });
@@ -204,13 +209,7 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
         updateState("lift", e.target.value),
       ),
     );
-  document
-    .querySelectorAll('input[name="movers"]')
-    .forEach((radio) =>
-      radio.addEventListener("change", (e) =>
-        updateState("movers", e.target.value),
-      ),
-    );
+  // Movers are now auto-calculated based on volume in store.js
 
   document.querySelectorAll('input[name="facility"]').forEach((radio) => {
     radio.addEventListener("change", (e) => {

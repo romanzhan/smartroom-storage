@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { store, distanceSurchargePounds } from "./store.js";
+import { store, calculateCollectionFee } from "./store.js";
 
 function resetStore() {
   store.currentTab = "boxes";
@@ -12,6 +12,7 @@ function resetStore() {
     durationFurn: null,
     address: null,
     date: null,
+    extras: null,
   };
   store._listeners = [];
 }
@@ -30,14 +31,13 @@ describe("store.getSnapshot", () => {
     const s = store.getSnapshot();
     expect(s.hasItems).toBe(false);
     expect(s.subtotal).toBe(0);
-    expect(s.lines.length).toBe(0);
   });
 
-  it("boxes: sums line totals and adds duration line", () => {
+  it("boxes: sums storage prices correctly", () => {
     store.modules.items = {
       getData: () => [
-        { name: "Small box", qty: 2, price: 10 },
-        { name: "Large box", qty: 1, price: 15 },
+        { name: "Small box", qty: 2, price: 10, volume: 0.05 },
+        { name: "Large box", qty: 1, price: 15, volume: 0.2 },
       ],
     };
     store.modules.durationBoxes = {
@@ -46,22 +46,19 @@ describe("store.getSnapshot", () => {
     };
     const s = store.getSnapshot();
     expect(s.hasItems).toBe(true);
+    expect(s.storagePrice).toBe(35);
     expect(s.subtotal).toBe(35);
-    expect(s.lines[0].label).toBe("2x Small box");
-    expect(s.lines[0].price).toBe(20);
-    expect(s.lines[1].label).toBe("1x Large box");
-    expect(s.lines[1].price).toBe(15);
-    expect(s.lines[2].label).toBe("Storing for: 4 months");
-    expect(s.lines[2].price).toBeNull();
+    expect(s.totalVolume).toBeCloseTo(0.3, 5);
   });
 
-  it("furniture: unit line includes weekly suffix", () => {
+  it("furniture: unit price used as storage price", () => {
     store.currentTab = "furniture";
     store.modules.units = {
       getSelectedUnit: () => ({
         name: "Unit A",
         size: "10 sq ft",
         price: 49.99,
+        volume: 2.0,
       }),
     };
     store.modules.durationFurn = {
@@ -70,168 +67,168 @@ describe("store.getSnapshot", () => {
     };
     const s = store.getSnapshot();
     expect(s.hasItems).toBe(true);
-    expect(s.subtotal).toBe(49.99);
-    expect(s.lines[0].suffix).toBe("/wk");
-    expect(s.lines[0].label).toContain("Unit A");
+    expect(s.storagePrice).toBe(49.99);
+    expect(s.totalVolume).toBe(2.0);
+  });
+});
+
+describe("calculateCollectionFee", () => {
+  it("small job gets minimum price", () => {
+    const result = calculateCollectionFee({
+      volume: 1.0,
+      distanceMiles: 5,
+      propType: "ground",
+      floor: 0,
+      lift: "yes",
+      dateData: null,
+      extrasData: null,
+      cfg: {},
+      vatCfg: { enabled: false },
+      extrasList: [],
+    });
+    expect(result.collectionFee).toBeGreaterThanOrEqual(65);
+    expect(result.movers).toBe(1);
   });
 
-  it("collection: Collection fee is first service line", () => {
-    store.modules.items = {
-      getData: () => [{ name: "Box", qty: 1, price: 5 }],
-    };
-    store.modules.durationBoxes = {
-      getDuration: () => 1,
-      isRollingPlan: () => false,
-    };
-    store.currentStep = 2;
-    store.modules.address = {
-      getData: () => ({
-        mode: "collection",
-        address: "10 Test St",
-        propType: "ground",
-        movers: "1",
-        instructions: "",
-      }),
-    };
-    const s = store.getSnapshot();
-    const service = s.lines.filter((l) => l.group === "service");
-    expect(service[0].label).toBe("Collection fee");
-    expect(typeof service[0].price).toBe("number");
-    expect(service[1].label).toBe("Service");
-    expect(s.subtotal).toBe(5 + service[0].price);
+  it("normal job calculates time-based price", () => {
+    const result = calculateCollectionFee({
+      volume: 5.0,
+      distanceMiles: 10,
+      propType: "ground",
+      floor: 0,
+      lift: "yes",
+      dateData: null,
+      extrasData: null,
+      cfg: {},
+      vatCfg: { enabled: false },
+      extrasList: [],
+    });
+    // 5m³, 1 mover (£72/hr), efficiency = 9.5 * (2.2/1.2) = 17.42
+    // loading = 17.42 * 5 * 1.0 = 87.08
+    // unloading = 17.42 * 5 * 1.0 = 87.08
+    // travel = 10 * 3 + 85 = 115
+    // total = 289.17 min = 4.82 hr * £72 = £347
+    expect(result.collectionFee).toBeGreaterThan(300);
+    expect(result.movers).toBe(1);
   });
 
-  it("distanceSurchargePounds respects free miles and per-mile rate", () => {
-    const cfg = { distancePricing: { freeMiles: 15, pricePerMile: 2 } };
-    expect(distanceSurchargePounds(10, cfg)).toBe(0);
-    expect(distanceSurchargePounds(20, cfg)).toBe(10);
-    expect(distanceSurchargePounds(null, cfg)).toBe(0);
+  it("apartment without lift increases loading time", () => {
+    const ground = calculateCollectionFee({
+      volume: 5.0,
+      distanceMiles: 5,
+      propType: "ground",
+      floor: 0,
+      lift: "yes",
+      dateData: null,
+      extrasData: null,
+      cfg: {},
+      vatCfg: { enabled: false },
+      extrasList: [],
+    });
+    const apt = calculateCollectionFee({
+      volume: 5.0,
+      distanceMiles: 5,
+      propType: "apartment",
+      floor: 3,
+      lift: "no",
+      dateData: null,
+      extrasData: null,
+      cfg: {},
+      vatCfg: { enabled: false },
+      extrasList: [],
+    });
+    expect(apt.collectionFee).toBeGreaterThan(ground.collectionFee);
   });
 
-  it("collection fee includes distance surcharge when distanceMiles set", () => {
-    store.siteConfig = {
-      distancePricing: { freeMiles: 0, pricePerMile: 1 },
-      baseFeeBoxes: 0,
-    };
-    store.modules.items = {
-      getData: () => [{ name: "Box", qty: 1, price: 0 }],
-    };
-    store.modules.durationBoxes = {
-      getDuration: () => 1,
-      isRollingPlan: () => false,
-    };
-    store.currentStep = 2;
-    store.modules.address = {
-      getData: () => ({
-        mode: "collection",
-        address: "Far away",
-        distanceMiles: 25,
-        propType: "ground",
-        movers: "1",
-        instructions: "",
-      }),
-    };
-    const s = store.getSnapshot();
-    const feeLine = s.lines.find(
-      (l) => l.group === "service" && l.label === "Collection fee",
-    );
-    expect(feeLine.price).toBeCloseTo(30 + 25, 5);
-    const distLine = s.lines.find(
-      (l) => l.group === "service" && l.label === "Driving distance (est.)",
-    );
-    expect(distLine.detail).toContain("25.0");
+  it("weekend surcharge adds 15%", () => {
+    const normal = calculateCollectionFee({
+      volume: 5.0,
+      distanceMiles: 5,
+      propType: "ground",
+      floor: 0,
+      lift: "yes",
+      dateData: { isWeekend: false, isHoliday: false, isUrgent: false, windowType: "6-hour" },
+      extrasData: null,
+      cfg: {},
+      vatCfg: { enabled: false },
+      extrasList: [],
+    });
+    const weekend = calculateCollectionFee({
+      volume: 5.0,
+      distanceMiles: 5,
+      propType: "ground",
+      floor: 0,
+      lift: "yes",
+      dateData: { isWeekend: true, isHoliday: false, isUrgent: false, windowType: "6-hour" },
+      extrasData: null,
+      cfg: {},
+      vatCfg: { enabled: false },
+      extrasList: [],
+    });
+    expect(weekend.collectionFee).toBeCloseTo(normal.collectionFee * 1.15, 1);
   });
 
-  it("drop-off: single line with variant dropoff", () => {
-    store.modules.items = {
-      getData: () => [{ name: "Box", qty: 1, price: 5 }],
-    };
-    store.modules.durationBoxes = {
-      getDuration: () => 1,
-      isRollingPlan: () => false,
-    };
-    store.currentStep = 2;
-    store.modules.address = {
-      getData: () => ({
-        mode: "dropoff",
-        facility: "bloomsbury",
-      }),
-    };
-    const s = store.getSnapshot();
-    const service = s.lines.filter((l) => l.group === "service");
-    expect(service.length).toBe(1);
-    expect(service[0].label).toBe("Drop-off at Bloomsbury");
-    expect(service[0].variant).toBe("dropoff");
-    expect(s.subtotal).toBe(5);
+  it("VAT adds 20% when enabled", () => {
+    const noVat = calculateCollectionFee({
+      volume: 5.0,
+      distanceMiles: 5,
+      propType: "ground",
+      floor: 0,
+      lift: "yes",
+      dateData: null,
+      extrasData: null,
+      cfg: {},
+      vatCfg: { enabled: false },
+      extrasList: [],
+    });
+    const withVat = calculateCollectionFee({
+      volume: 5.0,
+      distanceMiles: 5,
+      propType: "ground",
+      floor: 0,
+      lift: "yes",
+      dateData: null,
+      extrasData: null,
+      cfg: {},
+      vatCfg: { enabled: true, applyToCollection: true, rate: 0.20 },
+      extrasList: [],
+    });
+    expect(withVat.collectionFee).toBeCloseTo(noVat.collectionFee * 1.20, 1);
+    expect(withVat.vatAmount).toBeGreaterThan(0);
   });
 
-  it("collection fee applies date multipliers from step 3", () => {
-    store.modules.items = {
-      getData: () => [{ name: "Box", qty: 1, price: 0 }],
-    };
-    store.modules.durationBoxes = {
-      getDuration: () => 1,
-      isRollingPlan: () => false,
-    };
-    store.currentStep = 3;
-    store.modules.address = {
-      getData: () => ({
-        mode: "collection",
-        address: "1 St",
-        propType: "ground",
-        movers: "1",
-        instructions: "",
-      }),
-    };
-    const baseDate = new Date(2026, 5, 10, 12, 0, 0);
-    store.modules.date = {
-      getData: () => ({
-        date: baseDate,
-        timeWindow: "2:00 PM - 8:00 PM",
-        windowType: "6-hour",
-        isWeekend: true,
-        isHoliday: false,
-        isUrgent: false,
-        hasInteracted: true,
-      }),
-    };
-    const s = store.getSnapshot();
-    const feeLine = s.lines.find(
-      (l) => l.group === "service" && l.label === "Collection fee",
-    );
-    expect(feeLine.price).toBeCloseTo(30 * 1.15, 5);
+  it("auto-upgrades to 2 movers above 10 m³", () => {
+    const result = calculateCollectionFee({
+      volume: 12.0,
+      distanceMiles: 5,
+      propType: "ground",
+      floor: 0,
+      lift: "yes",
+      dateData: null,
+      extrasData: null,
+      cfg: {},
+      vatCfg: { enabled: false },
+      extrasList: [],
+    });
+    expect(result.movers).toBe(2);
   });
 
-  it("schedule lines appear from step 3 when date module set", () => {
-    store.modules.items = {
-      getData: () => [{ name: "Box", qty: 1, price: 1 }],
-    };
-    store.modules.durationBoxes = {
-      getDuration: () => 1,
-      isRollingPlan: () => false,
-    };
-    store.currentStep = 3;
-    store.modules.address = {
-      getData: () => ({ mode: "dropoff", facility: "hackney" }),
-    };
-    const baseDate = new Date(2026, 3, 6, 12, 0, 0);
-    store.modules.date = {
-      getData: () => ({
-        date: baseDate,
-        timeWindow: "Morning",
-        windowType: "6-hour",
-        isWeekend: false,
-        isHoliday: false,
-        isUrgent: false,
-        hasInteracted: true,
-      }),
-    };
-    const s = store.getSnapshot();
-    const sched = s.lines.filter((l) => l.group === "schedule");
-    expect(sched.length).toBe(2);
-    expect(sched[0].label).toBe("Date");
-    expect(sched[0].detail).toMatch(/2026/);
-    expect(sched[1].label).toBe("Time window");
-    expect(sched[1].detail).toBe("Morning");
+  it("extras add to collection fee", () => {
+    const extras = [
+      { id: "dismantling", name: "Dismantling", price: 20, perItem: true },
+    ];
+    const result = calculateCollectionFee({
+      volume: 5.0,
+      distanceMiles: 5,
+      propType: "ground",
+      floor: 0,
+      lift: "yes",
+      dateData: null,
+      extrasData: { quantities: { dismantling: 3 }, flags: [] },
+      cfg: {},
+      vatCfg: { enabled: false },
+      extrasList: extras,
+    });
+    expect(result.extrasPrice).toBe(60);
   });
 });

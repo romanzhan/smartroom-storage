@@ -900,6 +900,55 @@
 }
 
 
+/* ── Extras (additional services) ───────────────────── */
+.extras-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+.extras-row:hover {
+  border-color: #d1d5db;
+}
+.extras-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.extras-name {
+  font-family: "Lexend", sans-serif;
+  font-size: 0.9rem;
+  color: #111827;
+}
+.extras-price {
+  font-family: "Lexend", sans-serif;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+.extras-flag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  width: 100%;
+}
+.extras-flag .extras-name {
+  flex: 1;
+}
+.extras-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #111827;
+  cursor: pointer;
+}
+
 .calc-sidebar-col {
   position: sticky;
   top: 100px;

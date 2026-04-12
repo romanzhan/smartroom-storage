@@ -18,8 +18,9 @@ function mapLegacyWpConfig() {
   if (Array.isArray(legacy.postcodes)) out.allowedPostcodes = legacy.postcodes;
   if (Array.isArray(legacy.boxItemsData)) out.items = legacy.boxItemsData;
   if (legacy.globalDiscount != null) out.globalDiscount = legacy.globalDiscount;
-  if (legacy.baseFeeBoxes != null) out.baseFeeBoxes = legacy.baseFeeBoxes;
-  if (legacy.baseFeeFurniture != null) out.baseFeeFurniture = legacy.baseFeeFurniture;
+  if (legacy.collection && typeof legacy.collection === "object") out.collection = legacy.collection;
+  if (legacy.vat && typeof legacy.vat === "object") out.vat = legacy.vat;
+  if (Array.isArray(legacy.extras)) out.extras = legacy.extras;
   return Object.keys(out).length ? out : null;
 }
 
@@ -29,18 +30,40 @@ export async function loadSiteConfig() {
     try {
       const jsonUrl = new URL("calculator-config.json", window.location.href).href;
       const res = await fetch(jsonUrl, { cache: "no-store" });
-      if (res.ok) fromFile = await res.json();
+      if (res.ok) {
+        try {
+          fromFile = await res.json();
+        } catch {
+          fromFile = null;
+        }
+      }
     } catch {
       fromFile = null;
     }
   }
 
-  const fromStorage = readLocalStorage();
+  let fromStorage = null;
+  try {
+    fromStorage = readLocalStorage();
+  } catch {
+    fromStorage = null;
+  }
+
   const fromWp =
     typeof window !== "undefined" && window.__SMARTROOM_SITE_CONFIG__
       ? window.__SMARTROOM_SITE_CONFIG__
       : null;
-  const legacyWp = mapLegacyWpConfig();
+  let legacyWp = null;
+  try {
+    legacyWp = mapLegacyWpConfig();
+  } catch {
+    legacyWp = null;
+  }
 
-  return mergeSiteConfigChain(fromFile, fromStorage, legacyWp, fromWp);
+  try {
+    return mergeSiteConfigChain(fromFile, fromStorage, legacyWp, fromWp);
+  } catch (err) {
+    console.error("[SmartRoom] loadSiteConfig merge failed", err);
+    return mergeSiteConfigChain(null, null, null, null);
+  }
 }
