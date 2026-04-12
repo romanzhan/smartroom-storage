@@ -686,26 +686,7 @@
                                   >
                                 </div>
                               </div>
-                              <div class="form-group">
-                                <label class="form-label">Movers needed</label>
-                                <div class="radio-pill-group">
-                                  <label class="radio-pill"
-                                    ><input
-                                      type="radio"
-                                      name="movers"
-                                      value="1"
-                                      checked
-                                    /><span>1 Mover</span></label
-                                  >
-                                  <label class="radio-pill"
-                                    ><input
-                                      type="radio"
-                                      name="movers"
-                                      value="2"
-                                    /><span>2 Movers</span></label
-                                  >
-                                </div>
-                              </div>
+                              <!-- Movers auto-calculated based on volume -->
                             </div>
                             <div
                               class="form-row split-2 mb-4"
@@ -767,6 +748,12 @@
                                 placeholder="Parking details, access codes, etc."
                               ></textarea>
                             </div>
+                          </section>
+      
+                          <!-- Extras (only visible for collection + furniture) -->
+                          <section class="calc-section" id="extrasSection" style="display: none">
+                            <h3 class="calc-section-title">Additional Services</h3>
+                            <div id="extrasContainer"></div>
                           </section>
                         </div>
       
