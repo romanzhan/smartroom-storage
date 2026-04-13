@@ -62,7 +62,7 @@ export function calculateCollectionFee({
 
   const baseTime = cfg.baseTimePerCubicMeter ?? 9.5;
   const effFactor = cfg.moverEfficiencyFactor ?? 2.2;
-  const rates = cfg.moverRates ?? { 1: 72, 2: 84, 3: 120 };
+  const rates = cfg.moverRates ?? { 1: 72, 2: 84 };
   const smallThreshold = cfg.smallJobThreshold ?? 2;
   const minPrice = cfg.smallJobMinPrice ?? 65;
 

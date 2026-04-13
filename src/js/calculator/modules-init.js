@@ -18,6 +18,7 @@ export function initCalculatorModules(dom, store, siteConfig) {
   store.modules.units = initUnits({
     container: dom.unitsListContainer,
     onChange: () => store.notify(),
+    unitsCatalog: siteConfig?.units,
   });
 
   store.modules.durationBoxes = initDuration({
@@ -29,6 +30,7 @@ export function initCalculatorModules(dom, store, siteConfig) {
     qtyWrap: dom.durationQtyBoxes,
     rollingNote: document.getElementById("rollingNote"),
     onChange: () => store.notify(),
+    discountTiers: siteConfig?.durationDiscounts,
   });
 
   store.modules.durationFurn = initDuration({
@@ -40,6 +42,7 @@ export function initCalculatorModules(dom, store, siteConfig) {
     qtyWrap: dom.qtyWrapFurn,
     rollingNote: document.getElementById("rollingNoteFurn"),
     onChange: () => store.notify(),
+    discountTiers: siteConfig?.durationDiscounts,
   });
 
   store.modules.insurance = initInsurance({

@@ -31,6 +31,16 @@ export function animateExpand({
   panel, initialView, expandedView, sharedToggle,
   toggleExpandedSlot, messages,
 }) {
+  if (
+    !panel ||
+    !initialView ||
+    !expandedView ||
+    !sharedToggle ||
+    !toggleExpandedSlot
+  ) {
+    console.error("[SmartRoom] animateExpand: missing DOM references");
+    return;
+  }
   const startPos = getRelativePos(sharedToggle, panel);
   const startSpacer = makeSpacer(startPos);
   sharedToggle.parentNode.replaceChild(startSpacer, sharedToggle);
@@ -120,6 +130,16 @@ export function animateCollapse({
   panel, initialView, expandedView, sharedToggle,
   messages, currentPostcodeInput, revertToPill, postcodeSearchMode,
 }) {
+  if (
+    !panel ||
+    !initialView ||
+    !expandedView ||
+    !sharedToggle ||
+    !messages
+  ) {
+    console.error("[SmartRoom] animateCollapse: missing DOM references");
+    return;
+  }
   const startPos = getRelativePos(sharedToggle, panel);
   const startSpacer = makeSpacer(startPos);
   sharedToggle.parentNode.replaceChild(startSpacer, sharedToggle);
@@ -179,7 +199,7 @@ export function animateCollapse({
       messages.style.display = "block";
       if (currentPostcodeInput) currentPostcodeInput.disabled = false;
       revertToPill();
-      postcodeSearchMode.classList.remove("is-error");
+      postcodeSearchMode?.classList.remove("is-error");
       gsap.to(".storage-form__messages", { opacity: 1, duration: 0.4, ease: "power2.out", clearProps: "all" });
     },
   });

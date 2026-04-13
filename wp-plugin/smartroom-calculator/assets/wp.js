@@ -1,0 +1,1 @@
+import"./modulepreload-polyfill.js";import"./runtime-utils.js";import{t as e}from"./calculator.js";import{n as t,t as n}from"./load-site-config.js";document.addEventListener(`DOMContentLoaded`,async()=>{let r;try{r=await n()}catch(e){console.error(`[SmartRoom] loadSiteConfig`,e),r=t(null,null,null,null)}try{e(r)}catch(e){console.error(`[SmartRoom] initCalculator`,e)}});

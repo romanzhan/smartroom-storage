@@ -7,7 +7,6 @@
 | Страница | URL |
 |----------|-----|
 | 🏠 **Фронтенд** | [romanzhan2610-png.github.io/smartroom-storage/](https://romanzhan2610-png.github.io/smartroom-storage/) |
-| ⚙️ **Админ-панель** | [romanzhan2610-png.github.io/smartroom-storage/admin.html](https://romanzhan2610-png.github.io/smartroom-storage/admin.html) |
 
 ## 🛠 Стек
 
@@ -27,18 +26,15 @@ public/
 
 src/
 ├── index.html          # Главная страница
-├── admin.html          # Панель администратора
 ├── partials/           # HTML-компоненты (header, calculator, footer…)
 ├── css/                # Стили по компонентам
 └── js/
-    ├── site-config/    # Единая загрузка/сохранение настроек (JSON + LS + WP)
+    ├── site-config/    # Загрузка настроек (JSON + localStorage + WP)
     ├── main.js
-    ├── admin.js          # Точка входа админки
-    ├── admin/            # Экран настроек (таблица, сохранение)
     ├── layout/           # header / footer
     └── calculator/       # Калькулятор: store, DOM, flow, модули шагов
 
-Админка и калькулятор читают одни и те же данные: `loadSiteConfig()` (файл → localStorage → WP), после Save — `saveSiteConfig()` в LS (+ хук `__SMARTROOM_SAVE_CONFIG__` в WordPress). Подробности в `wp_integration.md`.
+Калькулятор подтягивает конфиг через `loadSiteConfig()` (файл → localStorage → WordPress). Редактирование значений — в `public/calculator-config.json` и деплой, либо через `window.__SMARTROOM_SITE_CONFIG__` в WP. Подробности в `wp_integration.md`.
 ```
 
 ## 🚀 Разработка
@@ -60,13 +56,13 @@ npm run deploy    # Сборка + деплой на ветку gh-pages
 **GitHub Pages (тест):** в консоли Google для ключа укажите referrer, например  
 `https://romanzhan.github.io/smartroom-storage/*` (и при необходимости `http://localhost:3000/*` для dev). Ключ в JS попадёт в публичный бандл — опирайтесь на ограничения referrer + квоты в Cloud Console.
 
-**В Google Cloud Console:** включите **Places API (New)** и **Distance Matrix API**, ограничьте ключ по **HTTP referrer** и только нужным API.
+**В Google Cloud Console:** включите **Places API (New)** и **Maps JavaScript API**. Расстояние по дороге считается через **Distance Matrix Service** внутри загружаемого Maps JS (как при маршруте на карте), без видимой карты и без REST Matrix из браузера (у REST нет CORS). Ограничьте ключ по **HTTP referrer** и только нужным API.
 
 **Защита от перерасхода квоты** (чтобы не «расстреливать» API):
 
 - **Debounce** автодополнения ~350 ms — меньше запросов при быстром наборе.
 - **Минимум символов** перед первым autocomplete (2+).
-- **Лимиты в минуту на вкладку** (скользящее окно 60 с): отдельно для autocomplete, Place Details и Distance Matrix (`maps-api-guard.js`).
+- **Лимиты в минуту на вкладку** (скользящее окно 60 с): autocomplete, Place Details и вызовы Distance Matrix через Maps JS (`maps-api-guard.js`).
 - **Пауза (cooldown ~2 мин)** после серии ошибок или ответа **429** от Google.
 - **Кэш 30 дней** в `localStorage`: полный результат по **`placeId`** (адрес + мили до склада) не запрашивается повторно; при смене координат склада в конфиге старые записи автоматически не совпадут по ключу склада.
 - **Кэш в памяти ~10 мин** для одинаковой строки поиска в autocomplete — повторный ввод того же префикса без нового запроса.

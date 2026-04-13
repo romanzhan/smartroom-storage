@@ -1,17 +1,26 @@
 /**
- * Discount tiers based on duration (months).
- * Returns discount percentage.
+ * Default discount tiers (used when no config provided).
+ * Sorted descending by minMonths — first match wins.
  */
-function getDiscountPercent(months) {
-  if (months >= 12) return 45;
-  if (months >= 9) return 35;
-  if (months >= 6) return 25;
-  if (months >= 3) return 15;
-  if (months >= 2) return 5;
-  return 0;
+const DEFAULT_TIERS = [
+  { minMonths: 12, discount: 45 },
+  { minMonths: 9, discount: 35 },
+  { minMonths: 6, discount: 25 },
+  { minMonths: 3, discount: 15 },
+  { minMonths: 2, discount: 5 },
+];
+
+function makeGetDiscount(tiers) {
+  const sorted = [...tiers].sort((a, b) => b.minMonths - a.minMonths);
+  return function getDiscountPercent(months) {
+    for (const tier of sorted) {
+      if (months >= tier.minMonths) return tier.discount;
+    }
+    return 0;
+  };
 }
 
-function updatePromo(promoEl, months) {
+function updatePromo(promoEl, months, getDiscountPercent) {
   if (!promoEl) return;
   const pct = getDiscountPercent(months);
   if (pct > 0) {
@@ -32,8 +41,14 @@ export function initDuration({
   qtyWrap,
   rollingNote,
   onChange,
+  discountTiers,
 }) {
   if (!minusBtn) return null;
+
+  const tiers = Array.isArray(discountTiers) && discountTiers.length
+    ? discountTiers
+    : DEFAULT_TIERS;
+  const getDiscountPercent = makeGetDiscount(tiers);
 
   let isRolling = false;
 
@@ -44,13 +59,13 @@ export function initDuration({
         promoText.style.display = "";
       }
     } else {
-      updatePromo(promoText, parseInt(input.value));
+      updatePromo(promoText, parseInt(input.value), getDiscountPercent);
     }
     if (onChange) onChange();
   }
 
   // Set initial promo text
-  updatePromo(promoText, parseInt(input.value));
+  updatePromo(promoText, parseInt(input.value), getDiscountPercent);
 
   minusBtn.addEventListener("click", () => {
     const val = parseInt(input.value);

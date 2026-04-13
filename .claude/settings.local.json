@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n -o '.\\\\{0,80\\\\}[Pp]rice.\\\\{0,80\\\\}' \"/c/Users/roman/Desktop/smartroom/srv/htdocs/wp-content/themes/hello-elementor/react-calc/index-D4IcInR3.js\")",
+      "Bash(grep -n -o '.\\\\{0,80\\\\}[Cc]ost.\\\\{0,80\\\\}' \"/c/Users/roman/Desktop/smartroom/srv/htdocs/wp-content/themes/hello-elementor/react-calc/index-D4IcInR3.js\")",
+      "Bash(grep -n -o '.\\\\{0,80\\\\}[Ff]ee.\\\\{0,80\\\\}' \"/c/Users/roman/Desktop/smartroom/srv/htdocs/wp-content/themes/hello-elementor/react-calc/index-D4IcInR3.js\")",
+      "Bash(grep -n -o '.\\\\{0,80\\\\}surcharge.\\\\{0,80\\\\}' \"/c/Users/roman/Desktop/smartroom/srv/htdocs/wp-content/themes/hello-elementor/react-calc/index-D4IcInR3.js\")",
+      "Bash(grep -n -o '.\\\\{0,80\\\\}discount.\\\\{0,80\\\\}' \"/c/Users/roman/Desktop/smartroom/srv/htdocs/wp-content/themes/hello-elementor/react-calc/index-D4IcInR3.js\")",
+      "Bash(grep -n -o '.\\\\{0,80\\\\}insurance.\\\\{0,80\\\\}' \"/c/Users/roman/Desktop/smartroom/srv/htdocs/wp-content/themes/hello-elementor/react-calc/index-D4IcInR3.js\")",
+      "Bash(grep -n -o '.\\\\{0,80\\\\}collection.\\\\{0,80\\\\}' \"/c/Users/roman/Desktop/smartroom/srv/htdocs/wp-content/themes/hello-elementor/react-calc/index-D4IcInR3.js\")"
+    ]
+  }
+}

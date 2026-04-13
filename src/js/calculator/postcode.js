@@ -3,8 +3,12 @@ import {
   fetchPlaceAutocomplete,
   fetchPlaceDetails,
   placeDetailsToResolved,
-  fetchDrivingMilesImperial,
+  greatCircleDistanceMiles,
 } from "./google-places.js";
+import {
+  loadMapsJavaScriptApi,
+  getDrivingDistanceMilesJs,
+} from "./maps-driving.js";
 import { createMapsApiGuard } from "./maps-api-guard.js";
 import {
   getAutocompleteMemory,
@@ -13,6 +17,30 @@ import {
   setCachedResolvedPlace,
   warehouseKeyFromCoords,
 } from "./places-cache.js";
+import { gsapFromTo, gsapTo, runSafe } from "../lib/runtime-utils.js";
+
+const g =
+  typeof globalThis !== "undefined" && globalThis.gsap
+    ? globalThis.gsap
+    : null;
+
+/** @param {boolean} apiKeyPresent */
+function createPostcodeStub(apiKeyPresent) {
+  return {
+    mapsEnabled: apiKeyPresent,
+    validate: () => false,
+    getSaved: () => "",
+    setSaved: () => {},
+    resetForNewSession: () => {},
+    commitSavedFromValidSubmit: () => {},
+    revertToPill: () => {},
+    validationReason: (rawInput) => {
+      if (!apiKeyPresent) return "no_api_key";
+      const t = (rawInput || "").trim();
+      return !t ? "missing" : "pick_required";
+    },
+  };
+}
 
 function normPostcode(p) {
   return (p || "").replace(/\s+/g, "").toUpperCase();
@@ -51,10 +79,30 @@ export function initPostcode({
   editInput,
   editAutocomplete,
 }) {
-  let savedPostcode = "";
-  const list = Array.isArray(allowedPostcodes) ? allowedPostcodes : [];
   const apiKey = (googleMapsApiKey || "").trim();
   const mapsEnabled = Boolean(apiKey);
+
+  if (!form) {
+    console.error("[SmartRoom] initPostcode: form missing");
+    return createPostcodeStub(mapsEnabled);
+  }
+
+  const requiredEls = [
+    currentPostcodeInput,
+    mainAutocomplete,
+    postcodePill,
+    postcodeSearchMode,
+    postcodeText,
+    editInput,
+    editAutocomplete,
+  ];
+  if (requiredEls.some((el) => !el)) {
+    console.error("[SmartRoom] initPostcode: incomplete postcode DOM");
+    return createPostcodeStub(mapsEnabled);
+  }
+
+  let savedPostcode = "";
+  const list = Array.isArray(allowedPostcodes) ? allowedPostcodes : [];
   const mapsGuard = createMapsApiGuard();
 
   const destLat =
@@ -77,7 +125,7 @@ export function initPostcode({
     if (!helper || !message) return;
     helper.textContent = message;
     helper.style.opacity = "1";
-    gsap.fromTo(helper, { opacity: 0 }, { opacity: 1, duration: 0.2 });
+    gsapFromTo(g, helper, { opacity: 0 }, { opacity: 1, duration: 0.2 });
   }
 
   if (!mapsEnabled) {
@@ -116,12 +164,14 @@ export function initPostcode({
   }
 
   function revertToPill() {
+    if (!postcodeSearchMode || !postcodePill || !editAutocomplete) return;
     postcodeSearchMode.style.display = "none";
     postcodePill.style.display = "flex";
     editAutocomplete.style.display = "none";
   }
 
   function setActiveDescendant(inputEl, itemEl) {
+    if (!inputEl) return;
     if (itemEl) {
       inputEl.setAttribute("aria-activedescendant", itemEl.id);
     } else {
@@ -130,6 +180,7 @@ export function initPostcode({
   }
 
   function renderDropdown(inputEl, listEl, items, onSelect) {
+    if (!inputEl || !listEl) return;
     listEl.innerHTML = "";
     setActiveDescendant(inputEl, null);
 
@@ -153,7 +204,6 @@ export function initPostcode({
         typeof item === "string" ? item : item.text || item.label || "";
       li.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:bottom;margin-right:8px" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>${label}`;
       li.addEventListener("click", () => {
-        inputEl.value = label;
         listEl.style.display = "none";
         inputEl.setAttribute("aria-expanded", "false");
         setActiveDescendant(inputEl, null);
@@ -163,8 +213,31 @@ export function initPostcode({
     });
   }
 
+  async function drivingMilesOrFallback(originLat, originLng) {
+    if (!mapsGuard.tryDistanceMatrix()) {
+      return greatCircleDistanceMiles(originLat, originLng, destLat, destLng);
+    }
+    try {
+      await loadMapsJavaScriptApi(apiKey);
+      const miles = await getDrivingDistanceMilesJs(
+        originLat,
+        originLng,
+        destLat,
+        destLng,
+      );
+      if (miles != null) {
+        mapsGuard.recordSuccess();
+        return miles;
+      }
+      mapsGuard.recordFailure(0);
+    } catch {
+      mapsGuard.recordFailure(0);
+    }
+    return greatCircleDistanceMiles(originLat, originLng, destLat, destLng);
+  }
+
   async function resolvePlaceSelection(placeId, sessionRef, inputEl) {
-    if (!mapsEnabled || !placeId) return;
+    if (!mapsEnabled || !placeId || !inputEl) return;
 
     const cached = getCachedResolvedPlace(warehouseKey, placeId);
     if (cached) {
@@ -178,8 +251,18 @@ export function initPostcode({
         postcode: cached.postcode,
       };
       inputEl.value = (cached.postcode || "").toUpperCase();
+      let distanceMiles = cached.distanceMiles;
+      if (
+        distanceMiles == null &&
+        typeof cached.lat === "number" &&
+        typeof cached.lng === "number"
+      ) {
+        distanceMiles = await drivingMilesOrFallback(cached.lat, cached.lng);
+      }
       if (typeof onPlaceResolved === "function") {
-        onPlaceResolved({ ...cached });
+        runSafe("onPlaceResolved (cache)", () =>
+          onPlaceResolved({ ...cached, distanceMiles }),
+        );
       }
       return;
     }
@@ -219,7 +302,15 @@ export function initPostcode({
 
     mapsGuard.recordSuccess();
 
-    const resolved = placeDetailsToResolved(detailsRes.body);
+    let resolved;
+    try {
+      resolved = placeDetailsToResolved(detailsRes.body);
+    } catch (err) {
+      console.error("[SmartRoom] placeDetailsToResolved", err);
+      clearResolved();
+      showMapsHelper("Could not read address details. Try another search.");
+      return;
+    }
     if (!resolved?.postcode) {
       clearResolved();
       return;
@@ -238,29 +329,16 @@ export function initPostcode({
 
     inputEl.value = resolved.postcode.toUpperCase();
 
-    let distanceMiles = null;
-    if (mapsGuard.tryDistanceMatrix()) {
-      let dmRes;
-      try {
-        dmRes = await fetchDrivingMilesImperial(
-          resolved.lat,
-          resolved.lng,
-          destLat,
-          destLng,
-          apiKey,
-        );
-      } catch {
-        mapsGuard.recordFailure(0);
-      }
-      if (dmRes) {
-        if (dmRes.ok) {
-          mapsGuard.recordSuccess();
-          distanceMiles = dmRes.miles;
-        } else {
-          mapsGuard.recordFailure(dmRes.status);
-        }
-      }
-    }
+    const lat = resolved.lat;
+    const lng = resolved.lng;
+    const coordsOk =
+      typeof lat === "number" &&
+      typeof lng === "number" &&
+      Number.isFinite(lat) &&
+      Number.isFinite(lng);
+    const distanceMiles = coordsOk
+      ? await drivingMilesOrFallback(lat, lng)
+      : null;
 
     const payload = {
       ...resolved,
@@ -268,13 +346,18 @@ export function initPostcode({
     };
 
     if (typeof onPlaceResolved === "function") {
-      onPlaceResolved(payload);
+      runSafe("onPlaceResolved", () => onPlaceResolved(payload));
     }
 
-    setCachedResolvedPlace(warehouseKey, resolved.placeId || placeId, payload);
+    try {
+      setCachedResolvedPlace(warehouseKey, resolved.placeId || placeId, payload);
+    } catch (err) {
+      console.error("[SmartRoom] setCachedResolvedPlace", err);
+    }
   }
 
   function setupGoogleAutocomplete(inputEl, listEl, sessionRef) {
+    if (!inputEl || !listEl) return;
     const runFetch = debounce(async () => {
       if (!mapsEnabled) return;
 
@@ -327,7 +410,11 @@ export function initPostcode({
       }
 
       mapsGuard.recordSuccess();
-      setAutocompleteMemory(val, result.predictions);
+      try {
+        setAutocompleteMemory(val, result.predictions);
+      } catch (err) {
+        console.error("[SmartRoom] setAutocompleteMemory", err);
+      }
       renderDropdown(inputEl, listEl, result.predictions, (item) => {
         void resolvePlaceSelection(item.placeId, sessionRef, inputEl);
       });
@@ -338,13 +425,16 @@ export function initPostcode({
 
       if (inputEl === currentPostcodeInput && form.classList.contains("is-invalid")) {
         form.classList.remove("is-invalid");
-        gsap.to(errorText, { opacity: 0, duration: 0.2 });
-        gsap.to(form.querySelector(".storage-form__helper"), {
+        gsapTo(g, errorText, { opacity: 0, duration: 0.2 });
+        gsapTo(g, form.querySelector(".storage-form__helper"), {
           opacity: 1,
           duration: 0.2,
         });
       }
-      if (inputEl === editInput && postcodeSearchMode.classList.contains("is-error")) {
+      if (
+        inputEl === editInput &&
+        postcodeSearchMode?.classList.contains("is-error")
+      ) {
         postcodeSearchMode.classList.remove("is-error");
       }
 
@@ -353,6 +443,7 @@ export function initPostcode({
   }
 
   function setupAutocomplete(inputEl, listEl, sessionRef) {
+    if (!inputEl || !listEl) return;
     inputEl.setAttribute("role", "combobox");
     inputEl.setAttribute("aria-autocomplete", "list");
     inputEl.setAttribute("aria-expanded", "false");
@@ -392,10 +483,15 @@ export function initPostcode({
     });
 
     document.addEventListener("click", (e) => {
-      if (!inputEl.contains(e.target) && !listEl.contains(e.target)) {
+      const t = e?.target;
+      if (!t || !(t instanceof Node)) return;
+      if (!inputEl.contains(t) && !listEl.contains(t)) {
         listEl.style.display = "none";
         inputEl.setAttribute("aria-expanded", "false");
-        if (inputEl === editInput && postcodeSearchMode.style.display !== "none") {
+        if (
+          inputEl === editInput &&
+          postcodeSearchMode?.style.display !== "none"
+        ) {
           revertToPill();
         }
       }
@@ -403,6 +499,7 @@ export function initPostcode({
   }
 
   function highlightItem(items, target, inputEl) {
+    if (!target) return;
     items.forEach((i) => {
       i.classList.remove("is-highlighted");
       i.setAttribute("aria-selected", "false");
@@ -414,9 +511,15 @@ export function initPostcode({
   }
 
   function saveEdited(val) {
+    if (!postcodeSearchMode || !postcodeText || !currentPostcodeInput) return;
     if (!validate(val)) {
       postcodeSearchMode.classList.add("is-error");
-      gsap.fromTo(postcodeSearchMode, { x: -5 }, { x: 5, duration: 0.1, yoyo: true, repeat: 3 });
+      gsapFromTo(
+        g,
+        postcodeSearchMode,
+        { x: -5 },
+        { x: 5, duration: 0.1, yoyo: true, repeat: 3 },
+      );
       return;
     }
     postcodeSearchMode.classList.remove("is-error");
@@ -459,13 +562,17 @@ export function initPostcode({
     clearResolved();
     mainSessionToken = newSessionToken();
     editSessionToken = newSessionToken();
-    postcodeText.textContent = "";
+    if (postcodeText) postcodeText.textContent = "";
     if (currentPostcodeInput) currentPostcodeInput.value = "";
-    mainAutocomplete.innerHTML = "";
-    mainAutocomplete.style.display = "none";
-    editInput.value = "";
-    editAutocomplete.innerHTML = "";
-    editAutocomplete.style.display = "none";
+    if (mainAutocomplete) {
+      mainAutocomplete.innerHTML = "";
+      mainAutocomplete.style.display = "none";
+    }
+    if (editInput) editInput.value = "";
+    if (editAutocomplete) {
+      editAutocomplete.innerHTML = "";
+      editAutocomplete.style.display = "none";
+    }
     revertToPill();
   }
 
@@ -483,7 +590,7 @@ export function initPostcode({
       } else {
         savedPostcode = (rawInput || "").trim().toUpperCase();
       }
-      postcodeText.textContent = savedPostcode || "";
+      if (postcodeText) postcodeText.textContent = savedPostcode || "";
     },
     revertToPill,
     /** @returns {"missing"|"not_served"|"pick_required"|"no_api_key"|false} */

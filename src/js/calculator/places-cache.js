@@ -1,5 +1,5 @@
 /** Full resolve result (place + distance), persisted for repeat selections. */
-const STORAGE_KEY = "smartroom_maps_place_cache_v1";
+const STORAGE_KEY = "smartroom_maps_place_cache_v2";
 const TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const MAX_STORED_ENTRIES = 200;
 

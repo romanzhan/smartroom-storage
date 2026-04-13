@@ -3,7 +3,7 @@ const WINDOW_MS = 60_000;
 /** Limits per browser tab (in-memory). Tune via env-style constants only. */
 const MAX_AUTOCOMPLETE_PER_MIN = 36;
 const MAX_PLACE_DETAILS_PER_MIN = 24;
-const MAX_DISTANCE_MATRIX_PER_MIN = 24;
+const MAX_DISTANCE_MATRIX_JS_PER_MIN = 24;
 
 const FAIL_STREAK_TO_COOLDOWN = 5;
 const COOLDOWN_MS = 120_000;
@@ -25,7 +25,7 @@ export function createMapsApiGuard(options = {}) {
 
   const autocompleteTimes = [];
   const detailsTimes = [];
-  const matrixTimes = [];
+  const distanceMatrixTimes = [];
 
   let failStreak = 0;
   let cooldownUntil = 0;
@@ -105,13 +105,13 @@ export function createMapsApiGuard(options = {}) {
 
     tryDistanceMatrix() {
       if (inCooldown()) return false;
-      pruneWindow(matrixTimes);
-      if (matrixTimes.length >= MAX_DISTANCE_MATRIX_PER_MIN) {
+      pruneWindow(distanceMatrixTimes);
+      if (distanceMatrixTimes.length >= MAX_DISTANCE_MATRIX_JS_PER_MIN) {
         lastMessage =
-          "Distance lookup limit reached for this minute. Distance may be missing until you wait briefly.";
+          "Driving distance lookup limit reached for this minute. Please wait briefly and try again.";
         return false;
       }
-      matrixTimes.push(Date.now());
+      distanceMatrixTimes.push(Date.now());
       return true;
     },
   };

@@ -3,6 +3,7 @@ import {
   parseAddressComponents,
   placeDetailsToResolved,
   fetchPlaceAutocomplete,
+  greatCircleDistanceMiles,
 } from "./google-places.js";
 
 describe("parseAddressComponents", () => {
@@ -76,6 +77,7 @@ describe("fetchPlaceAutocomplete", () => {
       input: "lon",
       languageCode: "en-GB",
       includedRegionCodes: ["gb"],
+      includedPrimaryTypes: ["postal_code"],
       sessionToken: "tok",
     });
   });
@@ -85,5 +87,21 @@ describe("fetchPlaceAutocomplete", () => {
     expect(out.ok).toBe(false);
     expect(out.predictions).toEqual([]);
     expect(global.fetch).not.toHaveBeenCalled();
+  });
+});
+
+describe("greatCircleDistanceMiles", () => {
+  it("is ~0 for identical coordinates", () => {
+    expect(greatCircleDistanceMiles(51.5, -0.12, 51.5, -0.12)).toBeCloseTo(0, 5);
+  });
+
+  it("returns null for invalid inputs", () => {
+    expect(greatCircleDistanceMiles(NaN, 0, 0, 0)).toBeNull();
+  });
+
+  it("returns a small positive distance for nearby London points", () => {
+    const mi = greatCircleDistanceMiles(51.5074, -0.1278, 51.5229, -0.1195);
+    expect(mi).toBeGreaterThan(0.5);
+    expect(mi).toBeLessThan(5);
   });
 });

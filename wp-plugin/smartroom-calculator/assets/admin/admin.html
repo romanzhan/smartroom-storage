@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartRoom Admin — Настройки калькулятора</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <script type="module" crossorigin src="../admin.js"></script>
+  <link rel="modulepreload" crossorigin href="../modulepreload-polyfill.js">
+  <link rel="modulepreload" crossorigin href="../load-site-config.js">
+  <link rel="stylesheet" crossorigin href="../admin.css">
+</head>
+<body>
+
+<!-- ── Мобильная шапка ───────────────────────────────────── -->
+<header class="admin-mobile-header" id="mobileHeader">
+  <button class="admin-mobile-header__burger" id="burgerBtn" aria-label="Меню">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="admin-mobile-header__brand">SmartRoom Admin</div>
+</header>
+
+<div class="admin-backdrop" id="backdrop"></div>
+
+<!-- ── Sidebar ───────────────────────────────────────────── -->
+<aside class="admin-sidebar" id="sidebar">
+  <div class="admin-sidebar__brand">SmartRoom Admin</div>
+  <nav class="admin-nav" id="nav">
+    <a href="#general" class="admin-nav__link is-active" data-section="general">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Общие
+    </a>
+    <a href="#discounts" class="admin-nav__link" data-section="discounts">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+      Скидки за срок
+    </a>
+    <a href="#collection" class="admin-nav__link" data-section="collection">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      Перевозка
+    </a>
+    <a href="#vat" class="admin-nav__link" data-section="vat">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      НДС
+    </a>
+    <a href="#items" class="admin-nav__link" data-section="items">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Коробки
+    </a>
+    <a href="#units" class="admin-nav__link" data-section="units">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H6v-2a2 2 0 0 0-4 0Z"/></svg>
+      Юниты хранения
+    </a>
+    <a href="#extras" class="admin-nav__link" data-section="extras">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Доп. услуги
+    </a>
+    <a href="#formulas" class="admin-nav__link" data-section="formulas">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Справка: формулы
+    </a>
+  </nav>
+  <div class="admin-sidebar__footer">
+    <a href="index.html" class="admin-nav__link admin-nav__link--back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Назад к калькулятору
+    </a>
+  </div>
+</aside>
+
+<!-- ── Основное содержимое ───────────────────────────────── -->
+<main class="admin-main">
+
+  <!-- Верхняя панель -->
+  <div class="admin-topbar">
+    <div class="admin-topbar__status" id="saveStatus"></div>
+    <div class="admin-topbar__actions">
+      <button class="admin-btn admin-btn--outline" id="resetBtn">Сбросить</button>
+      <button class="admin-btn admin-btn--outline" id="downloadBtn">Экспорт JSON</button>
+      <button class="admin-btn admin-btn--primary" id="saveBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Сохранить
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════ ОБЩИЕ ═══════════ -->
+  <section class="admin-section" id="general">
+    <h2 class="admin-section__title">Общие настройки</h2>
+
+    <div class="admin-card">
+      <div class="admin-field">
+        <label class="admin-label" for="globalDiscount">Глобальная скидка</label>
+        <p class="admin-hint">Процент скидки, применяемый к стоимости хранения по умолчанию</p>
+        <div class="admin-input-group">
+          <input type="number" class="admin-input" id="globalDiscount" min="0" max="100" step="1" data-key="globalDiscount" />
+          <span class="admin-input-group__suffix">%</span>
+        </div>
+      </div>
+
+      <div class="admin-field">
+        <label class="admin-label">Координаты склада</label>
+        <p class="admin-hint">Используются для расчёта расстояния перевозки через Google Maps</p>
+        <div class="admin-row">
+          <div class="admin-field admin-field--inline">
+            <label class="admin-label admin-label--sm" for="warehouseLatitude">Широта</label>
+            <input type="number" class="admin-input" id="warehouseLatitude" step="0.0001" data-key="warehouseLatitude" />
+          </div>
+          <div class="admin-field admin-field--inline">
+            <label class="admin-label admin-label--sm" for="warehouseLongitude">Долгота</label>
+            <input type="number" class="admin-input" id="warehouseLongitude" step="0.0001" data-key="warehouseLongitude" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ СКИДКИ ЗА СРОК ═══════════ -->
+  <section class="admin-section" id="discounts">
+    <h2 class="admin-section__title">Скидки за срок хранения</h2>
+
+    <div class="admin-card">
+      <p class="admin-hint" style="margin-bottom: 1rem;">Чем дольше срок хранения — тем больше скидка. Первый подходящий уровень применяется (сортировка по убыванию месяцев). Если срок меньше минимального — скидка 0%.</p>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="discountsTable">
+          <thead>
+            <tr>
+              <th>Мин. месяцев</th>
+              <th>Скидка (%)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <button class="admin-btn admin-btn--outline admin-btn--sm" id="addDiscountBtn" style="margin-top: 1rem;">+ Добавить уровень</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ ПЕРЕВОЗКА ═══════════ -->
+  <section class="admin-section" id="collection">
+    <h2 class="admin-section__title">Стоимость перевозки</h2>
+
+    <!-- Ставки грузчиков -->
+    <div class="admin-card">
+      <h3 class="admin-card__title">Почасовые ставки грузчиков</h3>
+      <p class="admin-hint">Цена за час работы бригады (£/час). Кол-во грузчиков выбирается автоматически по объёму.</p>
+      <div class="admin-row">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="moverRate1">1 грузчик</label>
+          <div class="admin-input-group">
+            <span class="admin-input-group__prefix">£</span>
+            <input type="number" class="admin-input" id="moverRate1" min="0" step="1" data-key="collection.moverRates.1" />
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="moverRate2">2 грузчика</label>
+          <div class="admin-input-group">
+            <span class="admin-input-group__prefix">£</span>
+            <input type="number" class="admin-input" id="moverRate2" min="0" step="1" data-key="collection.moverRates.2" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Расчёт времени -->
+    <div class="admin-card">
+      <h3 class="admin-card__title">Расчёт времени</h3>
+      <div class="admin-row">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="baseTimePerCubicMeter">Время на 1 м³</label>
+          <p class="admin-hint">Базовое кол-во минут на погрузку/разгрузку одного кубометра</p>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="baseTimePerCubicMeter" min="0" step="0.5" data-key="collection.baseTimePerCubicMeter" />
+            <span class="admin-input-group__suffix">мин</span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="moverEfficiencyFactor">Коэффициент эффективности</label>
+          <p class="admin-hint">Делитель для формулы: время = (base × factor) / (movers + 0.2)</p>
+          <input type="number" class="admin-input" id="moverEfficiencyFactor" min="0" step="0.1" data-key="collection.moverEfficiencyFactor" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Множители этажа -->
+    <div class="admin-card">
+      <h3 class="admin-card__title">Множители этажа</h3>
+      <p class="admin-hint">Доп. время на каждый этаж. Умножает время погрузки: 1 + этаж × множитель</p>
+      <div class="admin-row">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="floorMultiplierNoLift">Без лифта (за этаж)</label>
+          <input type="number" class="admin-input" id="floorMultiplierNoLift" min="0" step="0.01" data-key="collection.floorMultiplierNoLift" />
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="floorMultiplierWithLift">С лифтом (за этаж)</label>
+          <input type="number" class="admin-input" id="floorMultiplierWithLift" min="0" step="0.001" data-key="collection.floorMultiplierWithLift" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Время в пути -->
+    <div class="admin-card">
+      <h3 class="admin-card__title">Время в пути</h3>
+      <div class="admin-row">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="travelTimePerMile">Время на милю</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="travelTimePerMile" min="0" step="0.5" data-key="collection.travelTimePerMile" />
+            <span class="admin-input-group__suffix">мин</span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="fixedDelayMinutes">Фикс. задержка (трафик Лондона)</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="fixedDelayMinutes" min="0" step="5" data-key="collection.fixedDelayMinutes" />
+            <span class="admin-input-group__suffix">мин</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Обычный заказ -->
+    <div class="admin-card">
+      <h3 class="admin-card__title">Обычные заказы</h3>
+      <div class="admin-row">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="normalJobDefaultMiles">Расстояние по умолч.</label>
+          <p class="admin-hint">Используется когда расстояние неизвестно</p>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="normalJobDefaultMiles" min="0" step="1" data-key="collection.normalJobDefaultMiles" />
+            <span class="admin-input-group__suffix">миль</span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="autoUpgradeThreshold">Порог для 2-го грузчика</label>
+          <p class="admin-hint">Объём, выше которого автоматически добавляется второй грузчик</p>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="autoUpgradeThreshold" min="0" step="1" data-key="collection.autoUpgradeThreshold" />
+            <span class="admin-input-group__suffix">м³</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Малые заказы -->
+    <div class="admin-card">
+      <h3 class="admin-card__title">Малые заказы</h3>
+      <p class="admin-hint">Фиксированные значения времени для заказов с объёмом ниже порога</p>
+      <div class="admin-row admin-row--3">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="smallJobThreshold">Порог объёма</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="smallJobThreshold" min="0" step="0.5" data-key="collection.smallJobThreshold" />
+            <span class="admin-input-group__suffix">м³</span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="smallJobLoadingTime">Время погрузки</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="smallJobLoadingTime" min="0" step="1" data-key="collection.smallJobLoadingTime" />
+            <span class="admin-input-group__suffix">мин</span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="smallJobUnloadingTime">Время разгрузки</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="smallJobUnloadingTime" min="0" step="1" data-key="collection.smallJobUnloadingTime" />
+            <span class="admin-input-group__suffix">мин</span>
+          </div>
+        </div>
+      </div>
+      <div class="admin-row admin-row--3" style="margin-top: 1rem;">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="smallJobTravelPerMile">Время на милю</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="smallJobTravelPerMile" min="0" step="0.5" data-key="collection.smallJobTravelPerMile" />
+            <span class="admin-input-group__suffix">мин</span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="smallJobTravelDelay">Задержка в пути</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="smallJobTravelDelay" min="0" step="5" data-key="collection.smallJobTravelDelay" />
+            <span class="admin-input-group__suffix">мин</span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="smallJobDefaultMiles">Расстояние по умолч.</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="smallJobDefaultMiles" min="0" step="1" data-key="collection.smallJobDefaultMiles" />
+            <span class="admin-input-group__suffix">миль</span>
+          </div>
+        </div>
+      </div>
+      <div class="admin-row" style="margin-top: 1rem;">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="smallJobMinPrice">Минимальная цена</label>
+          <p class="admin-hint">Нижний порог стоимости (до НДС)</p>
+          <div class="admin-input-group">
+            <span class="admin-input-group__prefix">£</span>
+            <input type="number" class="admin-input" id="smallJobMinPrice" min="0" step="5" data-key="collection.smallJobMinPrice" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Перегруз -->
+    <div class="admin-card">
+      <h3 class="admin-card__title">Наценка за перегруз</h3>
+      <p class="admin-hint">Множители цены при превышении вместимости фургона</p>
+      <div class="admin-row">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="vanCapacity">Вместимость фургона</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="vanCapacity" min="0" step="1" data-key="collection.vanCapacity" />
+            <span class="admin-input-group__suffix">м³</span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="overloadThreshold">Порог тяжёлого перегруза</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="overloadThreshold" min="0" step="1" data-key="collection.overloadThreshold" />
+            <span class="admin-input-group__suffix">м³</span>
+          </div>
+        </div>
+      </div>
+      <div class="admin-row" style="margin-top: 1rem;">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="overloadLightMultiplier">Лёгкий перегруз</label>
+          <p class="admin-hint">Между вместимостью и порогом тяжёлого</p>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="overloadLightMultiplier" min="1" step="0.1" data-key="collection.overloadLightMultiplier" />
+            <span class="admin-input-group__suffix">x</span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="overloadHeavyMultiplier">Тяжёлый перегруз</label>
+          <p class="admin-hint">Выше порога тяжёлого перегруза</p>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="overloadHeavyMultiplier" min="1" step="0.1" data-key="collection.overloadHeavyMultiplier" />
+            <span class="admin-input-group__suffix">x</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Наценки по дате/времени -->
+    <div class="admin-card">
+      <h3 class="admin-card__title">Наценки по дате и времени</h3>
+      <div class="admin-row">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="urgencyDaysThreshold">Порог срочности</label>
+          <p class="admin-hint">Если до перевозки меньше этого кол-ва дней — заказ считается срочным</p>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="urgencyDaysThreshold" min="0" step="1" data-key="collection.urgencyDaysThreshold" />
+            <span class="admin-input-group__suffix">дней</span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="urgencySurcharge">Наценка за срочность</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="urgencySurcharge" min="0" max="1" step="0.05" data-key="collection.urgencySurcharge" />
+            <span class="admin-input-group__suffix admin-input-group__suffix--computed" data-pct="urgencySurcharge"></span>
+          </div>
+        </div>
+      </div>
+      <div class="admin-row" style="margin-top: 1rem;">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="weekendSurcharge">Наценка за выходные</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="weekendSurcharge" min="0" max="1" step="0.05" data-key="collection.weekendSurcharge" />
+            <span class="admin-input-group__suffix admin-input-group__suffix--computed" data-pct="weekendSurcharge"></span>
+          </div>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="holidaySurcharge">Наценка за праздники</label>
+          <p class="admin-hint">Заменяет наценку за выходные в праздничные дни</p>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="holidaySurcharge" min="0" max="1" step="0.05" data-key="collection.holidaySurcharge" />
+            <span class="admin-input-group__suffix admin-input-group__suffix--computed" data-pct="holidaySurcharge"></span>
+          </div>
+        </div>
+      </div>
+      <div class="admin-row" style="margin-top: 1rem;">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-label admin-label--sm" for="twoHourWindowSurcharge">Наценка за 2-часовое окно</label>
+          <div class="admin-input-group">
+            <input type="number" class="admin-input" id="twoHourWindowSurcharge" min="0" max="1" step="0.05" data-key="collection.twoHourWindowSurcharge" />
+            <span class="admin-input-group__suffix admin-input-group__suffix--computed" data-pct="twoHourWindowSurcharge"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ НДС ═══════════ -->
+  <section class="admin-section" id="vat">
+    <h2 class="admin-section__title">НДС (VAT)</h2>
+
+    <div class="admin-card">
+      <div class="admin-field">
+        <label class="admin-toggle-row">
+          <input type="checkbox" id="vatEnabled" data-key="vat.enabled" />
+          <span class="admin-toggle"></span>
+          <span>
+            <span class="admin-label">НДС включён</span>
+            <span class="admin-hint">Применять НДС к соответствующим статьям</span>
+          </span>
+        </label>
+      </div>
+
+      <div class="admin-field" style="margin-top: 1.5rem;">
+        <label class="admin-label" for="vatRate">Ставка НДС</label>
+        <div class="admin-input-group">
+          <input type="number" class="admin-input" id="vatRate" min="0" max="1" step="0.01" data-key="vat.rate" />
+          <span class="admin-input-group__suffix admin-input-group__suffix--computed" data-pct="vatRate"></span>
+        </div>
+      </div>
+
+      <div class="admin-row" style="margin-top: 1.5rem;">
+        <div class="admin-field admin-field--inline">
+          <label class="admin-toggle-row">
+            <input type="checkbox" id="applyToCollection" data-key="vat.applyToCollection" />
+            <span class="admin-toggle"></span>
+            <span>
+              <span class="admin-label">На перевозку</span>
+            </span>
+          </label>
+        </div>
+        <div class="admin-field admin-field--inline">
+          <label class="admin-toggle-row">
+            <input type="checkbox" id="applyToStorage" data-key="vat.applyToStorage" />
+            <span class="admin-toggle"></span>
+            <span>
+              <span class="admin-label">На хранение</span>
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ КОРОБКИ ═══════════ -->
+  <section class="admin-section" id="items">
+    <h2 class="admin-section__title">Коробки</h2>
+
+    <div class="admin-card">
+      <p class="admin-hint" style="margin-bottom: 1rem;">Позиции для хранения в коробках. Отображаются во вкладке «Boxes» калькулятора.</p>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="itemsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Название</th>
+              <th>Описание</th>
+              <th>Цена (£)</th>
+              <th>Объём (м³)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <button class="admin-btn admin-btn--outline admin-btn--sm" id="addItemBtn" style="margin-top: 1rem;">+ Добавить</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ ЮНИТЫ ХРАНЕНИЯ ═══════════ -->
+  <section class="admin-section" id="units">
+    <h2 class="admin-section__title">Юниты хранения</h2>
+
+    <div class="admin-card">
+      <p class="admin-hint" style="margin-bottom: 1rem;">Тарифы хранения. Отображаются во вкладке «Furniture» калькулятора.</p>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="unitsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Название</th>
+              <th>Размер</th>
+              <th>Цена (£/4нед)</th>
+              <th>Объём (м³)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <button class="admin-btn admin-btn--outline admin-btn--sm" id="addUnitBtn" style="margin-top: 1rem;">+ Добавить</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ ДОП. УСЛУГИ ═══════════ -->
+  <section class="admin-section" id="extras">
+    <h2 class="admin-section__title">Доп. услуги</h2>
+
+    <div class="admin-card">
+      <p class="admin-hint" style="margin-bottom: 1rem;">Дополнительные услуги, отображаемые при выборе «Home collection» для мебели. «За единицу» — с селектором количества; иначе — чекбокс.</p>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="extrasTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Название</th>
+              <th>Цена (£)</th>
+              <th>За единицу</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <button class="admin-btn admin-btn--outline admin-btn--sm" id="addExtraBtn" style="margin-top: 1rem;">+ Добавить</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ СПРАВКА: ФОРМУЛЫ ═══════════ -->
+  <section class="admin-section" id="formulas">
+    <h2 class="admin-section__title">Справка: как работают расчёты</h2>
+
+    <!-- Хранение -->
+    <div class="admin-card admin-card--docs">
+      <h3 class="admin-card__title">1. Стоимость хранения</h3>
+      <p>В калькуляторе две вкладки: <strong>Boxes</strong> (коробки) и <strong>Furniture</strong> (мебель).</p>
+      <ul>
+        <li><strong>Коробки:</strong> стоимость = сумма (цена × кол-во) по каждой позиции. Цена за 4 недели.</li>
+        <li><strong>Мебель:</strong> стоимость = цена выбранного юнита хранения. Цена за 4 недели.</li>
+      </ul>
+      <p>Скидка за срок применяется к итоговой цене хранения (см. секцию «Скидки за срок»). Скидка не применяется к rolling-плану (помесячная оплата без фиксированного срока).</p>
+    </div>
+
+    <div class="admin-card admin-card--docs">
+      <h3 class="admin-card__title">2. Скидки за срок хранения</h3>
+      <p>Таблица скидок отсортирована по убыванию мин. месяцев. Применяется <strong>первый подходящий</strong> уровень:</p>
+      <pre class="admin-code">если срок >= 12 мес → 45%
+если срок >= 9 мес  → 35%
+если срок >= 6 мес  → 25%
+если срок >= 3 мес  → 15%
+если срок >= 2 мес  → 5%
+иначе               → 0%</pre>
+      <p>Значения настраиваются в секции «Скидки за срок» выше.</p>
+    </div>
+
+    <div class="admin-card admin-card--docs">
+      <h3 class="admin-card__title">3. Стоимость перевозки (Collection Fee)</h3>
+      <p>Рассчитывается только для режима <strong>«Home collection»</strong>. Для «Drop-off» стоимость перевозки = 0.</p>
+
+      <h4>3.1 Определение грузчиков</h4>
+      <pre class="admin-code">если объём > autoUpgradeThreshold → 2 грузчика
+иначе                             → 1 грузчик</pre>
+
+      <h4>3.2 Малые заказы (объём &lt; smallJobThreshold)</h4>
+      <p>Используются <strong>фиксированные</strong> значения времени:</p>
+      <pre class="admin-code">погрузка     = smallJobLoadingTime (фикс.)
+разгрузка    = smallJobUnloadingTime (фикс.)
+время_пути   = расстояние × smallJobTravelPerMile + smallJobTravelDelay
+базовая_цена = max(общее_время / 60 × ставка, smallJobMinPrice)</pre>
+
+      <h4>3.3 Обычные заказы (объём >= smallJobThreshold)</h4>
+      <pre class="admin-code">эффективность   = baseTimePerCubicMeter × (efficiencyFactor / (movers + 0.2))
+множитель_этажа = 1 + этаж × (floorMultiplierNoLift | floorMultiplierWithLift)
+  (для ground floor множитель = 1.0)
+
+погрузка   = эффективность × объём × множитель_этажа
+разгрузка  = эффективность × объём × 1.0  (склад = 1 этаж)
+время_пути = расстояние × travelTimePerMile + fixedDelayMinutes
+
+базовая_цена = общее_время / 60 × ставка_грузчика</pre>
+
+      <h4>3.4 Наценка за перегруз</h4>
+      <pre class="admin-code">если объём > overloadThreshold  → цена × overloadHeavyMultiplier
+если объём > vanCapacity        → цена × overloadLightMultiplier
+иначе                           → без наценки</pre>
+
+      <h4>3.5 Наценки по дате/времени</h4>
+      <p>Каждая наценка — процент от текущей цены, добавляемый сверху:</p>
+      <pre class="admin-code">срочность (< urgencyDaysThreshold дней)  → + urgencySurcharge
+праздник                                  → + holidaySurcharge (заменяет выходные)
+выходные (сб/вс)                          → + weekendSurcharge
+2-часовое окно                            → + twoHourWindowSurcharge</pre>
+
+      <h4>3.6 Доп. услуги и НДС</h4>
+      <pre class="admin-code">доп_услуги     = сумма (цена_услуги × кол-во) для per-item услуг
+итого_до_ндс   = цена_перевозки + доп_услуги
+ндс            = итого_до_ндс × ставка_ндс  (если включён и applyToCollection)
+итого          = итого_до_ндс + ндс</pre>
+    </div>
+
+    <div class="admin-card admin-card--docs">
+      <h3 class="admin-card__title">4. Расстояние</h3>
+      <p>Расстояние от адреса клиента до склада рассчитывается через <strong>Google Maps Distance Matrix API</strong> (driving mode). Если API недоступен — используется значение по умолчанию (<code>normalJobDefaultMiles</code> или <code>smallJobDefaultMiles</code>).</p>
+      <p>Координаты склада задаются в секции «Общие настройки».</p>
+    </div>
+
+    <div class="admin-card admin-card--docs">
+      <h3 class="admin-card__title">5. Итоговый счёт клиента</h3>
+      <pre class="admin-code">первый_платёж = стоимость_хранения + страховка + стоимость_перевозки
+ежемесячно    = стоимость_хранения + страховка</pre>
+      <p>Страховка выбирается клиентом (фиксированные тарифы, не настраиваются в админке).</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- Тост -->
+<div class="admin-toast" id="toast"></div>
+
+</body>
+</html>

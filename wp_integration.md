@@ -1,12 +1,12 @@
 # WordPress Integration Guide
 
-Лендинг изолирован и готов к встраиванию в WordPress. **Калькулятор и админка используют один формат данных** (`site-config`), см. `src/js/site-config/`.
+Лендинг изолирован и готов к встраиванию в WordPress. Формат данных (`site-config`) описан в `src/js/site-config/`.
 
-## Поток данных (одинаковая логика: локально, GitHub Pages, WP)
+## Поток данных (локально, GitHub Pages, WP)
 
 1. **Дефолты** в `src/js/site-config/defaults.js`
 2. **`calculator-config.json`** в корне сайта (после сборки копируется из `public/` в `dist/`, см. `vite.config.js` → `publicDir`)
-3. **`localStorage`** ключ `smartroom_site_config` — после «Save» в админке на **том же origin** калькулятор подхватывает правки без деплоя
+3. **`localStorage`** ключ `smartroom_site_config` — опционально, если вы сами записали туда JSON (например для отладки)
 4. **WordPress** — приоритетный слой:
    - `window.__SMARTROOM_SITE_CONFIG__` — объект настроек (рекомендуемый способ)
    - **или** устаревший `window.StorageCalcConfig` (`postcodes`, `boxItemsData`, при необходимости числовые поля)
@@ -56,45 +56,17 @@ add_action('wp_enqueue_scripts', function () {
 
 ---
 
-## 2. Сохранение из админки WordPress
+## 2. Изменение настроек
 
-В статической админке при сохранении вызывается `saveSiteConfig()` → `localStorage` + опционально глобальная функция:
-
-```js
-window.__SMARTROOM_SAVE_CONFIG__ = function (body) {
-  fetch('/wp-json/smartroom/v1/settings', {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-WP-Nonce': wpApiSettings.nonce,
-    },
-    body: JSON.stringify(body),
-  });
-};
-```
-
-Подключите этот фрагмент **только** на странице, где грузится `admin.js` (или объедините админку с WP Settings API).
-
-Пример REST (как раньше, но сохраняйте тот же JSON, что и фронт):
-
-```php
-register_rest_route('smartroom/v1', '/settings', [
-    'methods'             => ['GET', 'POST'],
-    'callback'            => 'smartroom_handle_settings',
-    'permission_callback' => fn () => current_user_can('manage_options'),
-]);
-```
-
-Санитизируйте поля перед `update_option`.
+- **Статический деплой:** правьте `public/calculator-config.json`, затем `npm run build` и выкладка `dist/`.
+- **WordPress:** храните настройки в `get_option` / своей странице настроек плагина и отдавайте их через `wp_localize_script`, как в разделе 1. REST API для сохранения настраиваете в плагине отдельно, если нужен бэкенд.
 
 ---
 
 ## 3. GitHub Pages
 
-- Положите в репозиторий **`public/calculator-config.json`** (уже есть в проекте).
-- После правок в админке на gh.io: **Save** пишет в `localStorage` только для этого браузера.
-- Чтобы все пользователи видели изменения: **Download calculator-config.json** в админке → замените файл в `public/` → commit → push → деплой.
+- В репозитории лежит **`public/calculator-config.json`** (уже есть в проекте).
+- Чтобы обновить конфиг для всех пользователей: отредактируйте файл → commit → push → деплой.
 
 ---
 
@@ -104,7 +76,7 @@ register_rest_route('smartroom/v1', '/settings', [
 npm run build
 ```
 
-В `dist/` должны быть `calculator-config.json`, `index.html`, `admin.html`, `assets/*`.
+В `dist/` должны быть `calculator-config.json`, `index.html`, `assets/*` (и при необходимости `payment-success.html`).
 
 ---
 

@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: resolve(__dirname, 'src/index.html'),
         admin: resolve(__dirname, 'src/admin.html'),
+        wp: resolve(__dirname, 'src/wp.html'),
         'payment-success': resolve(__dirname, 'src/payment-success.html'),
       },
       output: {

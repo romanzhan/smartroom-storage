@@ -38,6 +38,8 @@ export async function fetchPlaceAutocomplete(input, sessionToken, apiKey) {
       input: trimmed,
       languageCode: PLACES_LANGUAGE_CODE,
       includedRegionCodes: ["gb"],
+      /** Places API (New) Table A — restricts suggestions to postal-code places (UK via region). */
+      includedPrimaryTypes: ["postal_code"],
       sessionToken,
     }),
   });
@@ -231,50 +233,36 @@ export function placeDetailsToResolved(details) {
   };
 }
 
+const EARTH_RADIUS_MILES = 3959;
+
+function toRad(deg) {
+  return (deg * Math.PI) / 180;
+}
+
 /**
- * Driving distance in miles (Distance Matrix API, imperial).
- * @returns {Promise<{ ok: boolean, status: number, miles: number|null }>}
+ * Great-circle miles (Haversine). Fallback when Maps JavaScript Distance Matrix is unavailable.
  */
-export async function fetchDrivingMilesImperial(
-  originLat,
-  originLng,
-  destLat,
-  destLng,
-  apiKey,
-) {
-  if (!apiKey) {
-    return { ok: false, status: 0, miles: null };
-  }
-  const origins = `${originLat},${originLng}`;
-  const destinations = `${destLat},${destLng}`;
-  const params = new URLSearchParams({
-    origins,
-    destinations,
-    units: "imperial",
-    language: PLACES_LANGUAGE_CODE,
-    key: apiKey,
-  });
-  const url = `https://maps.googleapis.com/maps/api/distancematrix/json?${params}`;
-
-  const res = await fetch(url);
-  if (!res.ok) {
-    return { ok: false, status: res.status, miles: null };
+export function greatCircleDistanceMiles(originLat, originLng, destLat, destLng) {
+  if (
+    typeof originLat !== "number" ||
+    typeof originLng !== "number" ||
+    typeof destLat !== "number" ||
+    typeof destLng !== "number" ||
+    Number.isNaN(originLat) ||
+    Number.isNaN(originLng) ||
+    Number.isNaN(destLat) ||
+    Number.isNaN(destLng)
+  ) {
+    return null;
   }
 
-  const data = await res.json();
-  const el = data?.rows?.[0]?.elements?.[0];
-  if (!el || el.status !== "OK") {
-    return { ok: false, status: res.status, miles: null };
-  }
-
-  const meters = el.distance?.value;
-  if (typeof meters !== "number") {
-    return { ok: false, status: res.status, miles: null };
-  }
-
-  return {
-    ok: true,
-    status: res.status,
-    miles: meters / 1609.344,
-  };
+  const dLat = toRad(destLat - originLat);
+  const dLng = toRad(destLng - originLng);
+  const lat1 = toRad(originLat);
+  const lat2 = toRad(destLat);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return EARTH_RADIUS_MILES * c;
 }

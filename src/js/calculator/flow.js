@@ -472,6 +472,19 @@ export function attachCalculatorFlow({
       fieldEl.parentElement.appendChild(err);
     }
 
+    if (!addr.mode) {
+      const modeGrid = document.querySelector("#step2Container .units-grid");
+      if (modeGrid) {
+        const err = document.createElement("p");
+        err.className = "step2-field-error insurance-hint";
+        err.textContent = "Please select Collection or Drop-off";
+        err.style.display = "block";
+        modeGrid.parentElement.appendChild(err);
+        modeGrid.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return true;
+    }
+
     if (addr.mode === "collection") {
       const postEl = document.getElementById("addressPostcode");
       const line1El = document.getElementById("addressLine1");
@@ -701,16 +714,95 @@ export function attachCalculatorFlow({
 
     fakeStripeCheckoutInFlight = true;
     continueBtn.setAttribute("aria-busy", "true");
-    continueBtn.setAttribute(
-      "title",
-      "Simulated Stripe checkout for testing — no charge",
-    );
     mobileContinueBtn.setAttribute("aria-busy", "true");
     if (continueBtnText) continueBtnText.style.display = "none";
     if (continueBtnSpinner) continueBtnSpinner.style.display = "block";
     continueBtn.disabled = true;
-    mobileContinueBtn.textContent = "Processing with Stripe (demo)…";
+    mobileContinueBtn.textContent = "Processing…";
     mobileContinueBtn.disabled = true;
+
+    const endpoint = store.siteConfig?.checkoutEndpoint;
+
+    if (endpoint) {
+      // ── Real checkout via WP / Stripe ──
+      continueBtn.setAttribute("title", "Redirecting to Stripe…");
+      const snap = store.getSnapshot();
+      const addr = store.modules.address?.getData() ?? null;
+      const dateData = store.modules.date?.getData() ?? null;
+      const extrasData = store.modules.extras?.getData() ?? null;
+      const itemsData = store.modules.items?.getData() ?? [];
+      const unitData = store.modules.units?.getSelectedUnit() ?? null;
+      const insuranceData = store.modules.insurance?.getSelected(snap.currentTab) ?? null;
+
+      const payload = {
+        tab: snap.currentTab,
+        customer: {
+          name: (contactName?.value ?? "").trim(),
+          phone: (contactPhone?.value ?? "").trim(),
+          email: (contactEmail?.value ?? "").trim(),
+        },
+        items: snap.currentTab === "boxes"
+          ? itemsData.filter((i) => i.qty > 0).map((i) => ({
+              id: i.id, name: i.name, qty: i.qty, price: i.price,
+            }))
+          : (unitData ? [{ id: unitData.id, name: unitData.name, qty: 1, price: unitData.price }] : []),
+        insurance: insuranceData,
+        address: addr,
+        date: dateData && dateData.date instanceof Date && !isNaN(dateData.date)
+          ? {
+              iso: dateData.date.toISOString(),
+              timeWindow: dateData.timeWindow || "",
+              windowType: dateData.windowType || "",
+            }
+          : null,
+        extras: extrasData,
+        duration: snap.duration,
+        isRolling: snap.isRolling,
+        totals: {
+          storagePrice: snap.storagePrice,
+          insurancePrice: snap.insurancePrice,
+          collectionFee: snap.collectionFee,
+          vatAmount: snap.vatAmount,
+          subtotal: snap.subtotal,
+          monthlyPayment: snap.monthlyPayment,
+        },
+        bookingDetails: snap.bookingDetails,
+      };
+
+      const headers = { "Content-Type": "application/json" };
+      const nonce = store.siteConfig?.wpNonce;
+      if (nonce) headers["X-WP-Nonce"] = nonce;
+
+      fetch(endpoint, {
+        method: "POST",
+        headers,
+        credentials: "same-origin",
+        body: JSON.stringify(payload),
+      })
+        .then((r) => r.json().then((body) => ({ ok: r.ok, body })))
+        .then(({ ok, body }) => {
+          if (!ok || !body || !body.checkout_url) {
+            throw new Error(body?.message || "Checkout failed");
+          }
+          localStorage.removeItem(LS_CALC_KEY);
+          window.location.assign(body.checkout_url);
+        })
+        .catch((err) => {
+          console.error("[SmartRoom] Checkout failed", err);
+          fakeStripeCheckoutInFlight = false;
+          store.currentStep = 4;
+          resetBookNowLoadingUi();
+          alert("Payment error: " + (err?.message || "please try again."));
+        });
+      return;
+    }
+
+    // ── Fallback: fake checkout for local dev ──
+    continueBtn.setAttribute(
+      "title",
+      "Simulated Stripe checkout for testing — no charge",
+    );
+    mobileContinueBtn.textContent = "Processing with Stripe (demo)…";
 
     setTimeout(() => {
       try {

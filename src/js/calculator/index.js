@@ -7,19 +7,25 @@ import { initCalculatorModules } from "./modules-init.js";
 import { store } from "./store.js";
 
 export function initCalculator(siteConfig) {
-  gsap.registerPlugin(ScrollToPlugin);
+  try {
+    if (typeof gsap !== "undefined" && typeof ScrollToPlugin !== "undefined") {
+      gsap.registerPlugin(ScrollToPlugin);
+    }
+  } catch (err) {
+    console.error("[SmartRoom] GSAP registerPlugin failed", err);
+  }
 
   const dom = getCalculatorDom();
   if (!dom.form) return;
 
-  store.siteConfig = siteConfig;
+  store.siteConfig = siteConfig ?? null;
   applySiteConfigUi(dom, siteConfig);
 
   // Prod (gh-pages): inline first so deploy matches Console referrers without relying on .env at build time.
-  const googleMapsApiKey = (
+  const googleMapsApiKey = String(
     import.meta.env.PROD
       ? INLINE_GOOGLE_MAPS_API_KEY || import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-      : import.meta.env.VITE_GOOGLE_MAPS_API_KEY || INLINE_GOOGLE_MAPS_API_KEY
+      : import.meta.env.VITE_GOOGLE_MAPS_API_KEY || INLINE_GOOGLE_MAPS_API_KEY,
   ).trim();
 
   if (!googleMapsApiKey && dom.initialView) {
@@ -38,16 +44,26 @@ export function initCalculator(siteConfig) {
     }
   }
 
-  const postcode = initCalculatorModules(dom, store, {
-    ...siteConfig,
-    googleMapsApiKey,
-  });
+  let postcode;
+  try {
+    postcode = initCalculatorModules(dom, store, {
+      ...(siteConfig && typeof siteConfig === "object" ? siteConfig : {}),
+      googleMapsApiKey,
+    });
+  } catch (err) {
+    console.error("[SmartRoom] initCalculatorModules failed", err);
+    return;
+  }
 
-  attachCalculatorFlow({
-    dom,
-    store,
-    postcode,
-    animateExpand,
-    animateCollapse,
-  });
+  try {
+    attachCalculatorFlow({
+      dom,
+      store,
+      postcode,
+      animateExpand,
+      animateCollapse,
+    });
+  } catch (err) {
+    console.error("[SmartRoom] attachCalculatorFlow failed", err);
+  }
 }

@@ -59,6 +59,12 @@ export function mergeSiteConfigLayer(base, patch) {
   if (Array.isArray(patch.items)) {
     next.items = cloneItems(patch.items);
   }
+  if (Array.isArray(patch.units)) {
+    next.units = cloneItems(patch.units);
+  }
+  if (Array.isArray(patch.durationDiscounts)) {
+    next.durationDiscounts = cloneItems(patch.durationDiscounts);
+  }
   return next;
 }
 
@@ -77,6 +83,12 @@ function cloneDefaultConfig() {
   }
   if (Array.isArray(defaultSiteConfig.extras)) {
     base.extras = defaultSiteConfig.extras.map((e) => ({ ...e }));
+  }
+  if (Array.isArray(defaultSiteConfig.units)) {
+    base.units = cloneItems(defaultSiteConfig.units);
+  }
+  if (Array.isArray(defaultSiteConfig.durationDiscounts)) {
+    base.durationDiscounts = cloneItems(defaultSiteConfig.durationDiscounts);
   }
   return base;
 }

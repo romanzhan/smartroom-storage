@@ -10,7 +10,7 @@ export const defaultSiteConfig = {
   // ── Collection / Moving pricing ──────────────────────────────
   collection: {
     // Mover hourly rates (£/hour)
-    moverRates: { 1: 72, 2: 84, 3: 120 },
+    moverRates: { 1: 72, 2: 84 },
     // Time per cubic metre (minutes)
     baseTimePerCubicMeter: 9.5,
     // Mover efficiency divisor
@@ -55,6 +55,15 @@ export const defaultSiteConfig = {
   },
 
   // ── Extras (add-on services) ─────────────────────────────────
+  // ── Duration discounts (sorted descending by minMonths) ───
+  durationDiscounts: [
+    { minMonths: 12, discount: 45 },
+    { minMonths: 9, discount: 35 },
+    { minMonths: 6, discount: 25 },
+    { minMonths: 3, discount: 15 },
+    { minMonths: 2, discount: 5 },
+  ],
+
   extras: [
     { id: "dismantling", name: "Dismantling & Reassembly", price: 20, perItem: true },
     { id: "packing", name: "Packing Service", price: 0, perItem: false },
@@ -73,6 +82,18 @@ export const defaultSiteConfig = {
     "SE1 9SG",
     "N1 9GU",
   ],
+  // ── Storage units (furniture tab) ─────────────────────────
+  units: [
+    { id: "locker", name: "Locker", size: "5 ft²", price: 65.0, volume: 1.0 },
+    { id: "cupboard", name: "Cupboard", size: "10 ft²", price: 70.0, volume: 2.0 },
+    { id: "box_room", name: "Box room", size: "15 ft²", price: 85.0, volume: 4.0 },
+    { id: "closet", name: "Closet", size: "25 ft²", price: 100.0, volume: 6.0 },
+    { id: "garden_shed", name: "Garden shed", size: "35 ft²", price: 115.0, volume: 8.0 },
+    { id: "walk_in_closet", name: "Walk in closet", size: "50 ft²", price: 125.0, volume: 12.0 },
+    { id: "room", name: "Room", size: "75 ft²", price: 190.0, volume: 16.0 },
+    { id: "flat_1bed", name: "1 Bedroom flat", size: "100 ft²", price: 240.0, volume: 22.0 },
+  ],
+
   items: [
     { id: "small_box", name: "Small Box", desc: "(45 x 35 x 35cm)", price: 8.20, volume: 0.055 },
     { id: "medium_box", name: "Medium box", desc: "(50 x 40 x 40cm)", price: 11.30, volume: 0.08 },

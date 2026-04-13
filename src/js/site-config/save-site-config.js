@@ -5,31 +5,95 @@ export function normalizeSiteConfigPayload(payload) {
   const body = {
     version: SITE_CONFIG_VERSION,
     updatedAt: Date.now(),
-    globalDiscount: Number(payload.globalDiscount),
-    baseFeeBoxes: Number(payload.baseFeeBoxes),
-    baseFeeFurniture: Number(payload.baseFeeFurniture),
-    allowedPostcodes: Array.isArray(payload.allowedPostcodes)
-      ? payload.allowedPostcodes
-      : [],
-    items: Array.isArray(payload.items)
-      ? payload.items.map((row) => ({ ...row }))
-      : [],
+    globalDiscount: Number(payload.globalDiscount) || 0,
+    restrictToAllowedPostcodes: Boolean(payload.restrictToAllowedPostcodes),
   };
 
-  if (payload.restrictToAllowedPostcodes != null) {
-    body.restrictToAllowedPostcodes = Boolean(payload.restrictToAllowedPostcodes);
-  }
   if (payload.warehouseLatitude != null && payload.warehouseLatitude !== "") {
     body.warehouseLatitude = Number(payload.warehouseLatitude);
   }
   if (payload.warehouseLongitude != null && payload.warehouseLongitude !== "") {
     body.warehouseLongitude = Number(payload.warehouseLongitude);
   }
-  if (payload.distancePricing && typeof payload.distancePricing === "object") {
-    body.distancePricing = {
-      freeMiles: Number(payload.distancePricing.freeMiles),
-      pricePerMile: Number(payload.distancePricing.pricePerMile),
+
+  // Collection pricing (deep copy with number coercion)
+  if (payload.collection && typeof payload.collection === "object") {
+    const c = payload.collection;
+    body.collection = {};
+    if (c.moverRates && typeof c.moverRates === "object") {
+      body.collection.moverRates = {};
+      for (const k of Object.keys(c.moverRates)) {
+        body.collection.moverRates[k] = Number(c.moverRates[k]) || 0;
+      }
+    }
+    const numericKeys = [
+      "baseTimePerCubicMeter", "moverEfficiencyFactor",
+      "floorMultiplierNoLift", "floorMultiplierWithLift",
+      "travelTimePerMile", "fixedDelayMinutes",
+      "smallJobThreshold", "smallJobLoadingTime", "smallJobUnloadingTime",
+      "smallJobTravelPerMile", "smallJobTravelDelay", "smallJobDefaultMiles", "smallJobMinPrice",
+      "normalJobDefaultMiles", "autoUpgradeThreshold",
+      "vanCapacity", "overloadThreshold", "overloadLightMultiplier", "overloadHeavyMultiplier",
+      "urgencyDaysThreshold", "urgencySurcharge", "weekendSurcharge", "holidaySurcharge", "twoHourWindowSurcharge",
+    ];
+    for (const key of numericKeys) {
+      if (c[key] != null) {
+        body.collection[key] = Number(c[key]);
+      }
+    }
+  }
+
+  // VAT
+  if (payload.vat && typeof payload.vat === "object") {
+    body.vat = {
+      enabled: Boolean(payload.vat.enabled),
+      rate: Number(payload.vat.rate) || 0,
+      applyToCollection: Boolean(payload.vat.applyToCollection),
+      applyToStorage: Boolean(payload.vat.applyToStorage),
     };
+  }
+
+  // Arrays
+  if (Array.isArray(payload.items)) {
+    body.items = payload.items.map((row) => ({
+      id: String(row.id || ""),
+      name: String(row.name || ""),
+      desc: String(row.desc || ""),
+      price: Number(row.price) || 0,
+      volume: Number(row.volume) || 0,
+    }));
+  }
+
+  if (Array.isArray(payload.units)) {
+    body.units = payload.units.map((row) => ({
+      id: String(row.id || ""),
+      name: String(row.name || ""),
+      size: String(row.size || ""),
+      price: Number(row.price) || 0,
+      volume: Number(row.volume) || 0,
+    }));
+  }
+
+  if (Array.isArray(payload.extras)) {
+    body.extras = payload.extras.map((row) => ({
+      id: String(row.id || ""),
+      name: String(row.name || ""),
+      price: Number(row.price) || 0,
+      perItem: Boolean(row.perItem),
+    }));
+  }
+
+  if (Array.isArray(payload.allowedPostcodes)) {
+    body.allowedPostcodes = payload.allowedPostcodes;
+  }
+
+  if (Array.isArray(payload.durationDiscounts)) {
+    body.durationDiscounts = payload.durationDiscounts
+      .map((row) => ({
+        minMonths: Number(row.minMonths) || 0,
+        discount: Number(row.discount) || 0,
+      }))
+      .sort((a, b) => b.minMonths - a.minMonths);
   }
 
   return body;
