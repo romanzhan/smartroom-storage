@@ -400,14 +400,14 @@ class SmartRoom_Calc_Standalone_Page {
 html, body { background: transparent; }
 
 /* ── Embedded (iframe) mode overrides ─────────────────────────
- * When the calculator is loaded inside an iframe via the [smartroom_calculator]
- * shortcode, we MUST neutralise any viewport-based sizing (min-height: 100vh,
- * etc). Otherwise setting the iframe height from the parent → grows viewport
- * → grows the 100vh element → grows body.scrollHeight → parent sets bigger
- * height → infinite feedback loop that can crash the browser.
+ * When the calculator is loaded inside an iframe via the
+ * [smartroom_calculator] shortcode, we MUST neutralise any viewport-
+ * based sizing (min-height: 100vh). Otherwise: parent sets
+ * iframe.height = N → viewport = N → 100vh = N → hero grows → body
+ * scrollHeight = N+footer → parent sets bigger iframe → infinite loop.
  *
- * We hide the big marketing hero (video + title) in embedded mode — users
- * wrap the iframe in their own section in Elementor, they don't need our hero.
+ * We keep the video background, overlay and title — only swap 100vh
+ * for a fixed min-height so the hero sizes to its actual content.
  */
 html.sr-embedded,
 body.sr-embedded {
@@ -417,22 +417,11 @@ body.sr-embedded {
     background: transparent !important;
 }
 body.sr-embedded .storage-hero {
-    min-height: auto !important;
+    min-height: 480px !important;   /* fixed — NOT vh, breaks the feedback */
     height: auto !important;
-    padding: 20px 16px !important;
     background: transparent !important;
-    display: block !important;
-}
-body.sr-embedded .storage-hero__video,
-body.sr-embedded .storage-hero__overlay,
-body.sr-embedded .storage-hero__title {
-    display: none !important;
-}
-body.sr-embedded .storage-hero__content {
-    max-width: none !important;
-    width: 100% !important;
-    padding: 0 !important;
-    position: static !important;
+    position: relative !important;
+    overflow: hidden !important;
 }
 </style>
 </head>
