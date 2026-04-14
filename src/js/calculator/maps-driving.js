@@ -173,7 +173,7 @@ async function distanceViaRouteMatrix(oLat, oLng, dLat, dLng) {
   const request = {
     origins: [{ lat: oLat, lng: oLng }],
     destinations: [{ lat: dLat, lng: dLng }],
-    travelMode: "DRIVE",
+    travelMode: "DRIVING",
     fields: [
       "originIndex",
       "destinationIndex",

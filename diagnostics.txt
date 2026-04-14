@@ -72,7 +72,7 @@ console.log({
     const result = await routes.RouteMatrix.computeRouteMatrix({
       origins: [{ lat: 51.5074, lng: -0.1278 }],
       destinations: [{ lat: 51.5229, lng: -0.1195 }],
-      travelMode: 'DRIVE',
+      travelMode: 'DRIVING',
       fields: ['originIndex','destinationIndex','distanceMeters','condition'],
     });
     console.log('Result:', result);
@@ -163,7 +163,7 @@ console.log({
     const result = await RouteMatrix.computeRouteMatrix({
       origins: [{ lat: 51.5074, lng: -0.1278 }],       // London centre
       destinations: [{ lat: 51.5229, lng: -0.1195 }],  // warehouse (Bloomsbury)
-      travelMode: 'DRIVE',
+      travelMode: 'DRIVING',
       fields: ['originIndex','destinationIndex','distanceMeters','condition'],
     });
     console.log('Result type:', Object.prototype.toString.call(result));
