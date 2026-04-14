@@ -68,17 +68,81 @@ class SmartRoom_Calc_Standalone_Page {
         $v = get_query_var(self::QUERY_VAR);
         if (!$v) return;
 
+        // Prevent the theme from treating this virtual URL as 404
+        global $wp_query;
+        if ($wp_query) {
+            $wp_query->is_404 = false;
+            $wp_query->is_home = false;
+            $wp_query->is_page = false;
+            $wp_query->is_singular = false;
+        }
         status_header(200);
         nocache_headers();
 
-        if ($v === 'success') {
-            self::render_success();
-        } elseif ($v === 'cancel') {
-            self::render_cancel();
+        if ($v === 'success' || $v === 'cancel') {
+            // Success / cancel pages are wrapped in the active theme's
+            // header and footer so they look like a native part of the site.
+            self::render_with_theme_chrome($v);
         } else {
+            // Standalone calculator page is served isolated (no theme chrome).
+            // Most users embed the calculator via [smartroom_calculator] shortcode
+            // in their page builder; this URL is a fallback for direct access.
             self::render_calculator();
         }
         exit;
+    }
+
+    private static function render_with_theme_chrome($type) {
+        $title = $type === 'success' ? 'Payment Successful' : 'Payment Cancelled';
+
+        // Set a nice browser title
+        add_filter('pre_get_document_title', function () use ($title) {
+            return $title . ' · ' . get_bloginfo('name');
+        });
+        // Ask search engines not to index the confirmation URL
+        add_action('wp_head', function () {
+            echo '<meta name="robots" content="noindex,nofollow">' . "\n";
+        });
+
+        if ($type === 'success') {
+            self::verify_stripe_session();
+        }
+
+        get_header();
+        echo '<main class="sr-theme-page" style="padding:48px 20px;min-height:60vh;background:#f1f5f9">';
+        if ($type === 'success') {
+            self::output_success_content();
+        } else {
+            self::output_cancel_content();
+        }
+        echo '</main>';
+        get_footer();
+    }
+
+    /**
+     * Verify the Stripe session for the current ?session_id and mark the
+     * order paid if Stripe confirms — fallback in case webhook isn't set up.
+     * Must be called BEFORE rendering (since mark_paid_and_notify sends email).
+     */
+    private static function verify_stripe_session() {
+        $session_id = isset($_GET['session_id']) ? sanitize_text_field($_GET['session_id']) : '';
+        if (!$session_id) return;
+
+        $order_id = SmartRoom_Calc_Orders::find_by_session($session_id);
+        if (!$order_id) return;
+        if (SmartRoom_Calc_Orders::get_status($order_id) === SmartRoom_Calc_Orders::STATUS_PAID) return;
+
+        $session = SmartRoom_Calc_Stripe::retrieve_checkout_session($session_id);
+        if (is_wp_error($session) || empty($session['payment_status'])) return;
+        if ($session['payment_status'] !== 'paid' && $session['payment_status'] !== 'no_payment_required') return;
+
+        $pi = '';
+        if (!empty($session['payment_intent'])) {
+            $pi = is_array($session['payment_intent'])
+                ? ($session['payment_intent']['id'] ?? '')
+                : $session['payment_intent'];
+        }
+        SmartRoom_Calc_Orders::mark_paid_and_notify($order_id, $pi);
     }
 
     private static function render_calculator() {
@@ -87,41 +151,15 @@ class SmartRoom_Calc_Standalone_Page {
         $markup = str_replace('./assets/', SMARTROOM_CALC_ASSETS_URL, $markup);
         $markup = str_replace('"./favicon.svg', '"' . SMARTROOM_CALC_ASSETS_URL . 'favicon.svg', $markup);
 
-        self::render_shell('Storage Calculator', '<main>' . $markup . '</main>', true);
+        self::render_shell('Storage Calculator', '<main>' . $markup . '</main>');
     }
 
-    private static function render_success() {
+    private static function output_success_content() {
         $session_id = isset($_GET['session_id']) ? sanitize_text_field($_GET['session_id']) : '';
         $order_id = $session_id ? SmartRoom_Calc_Orders::find_by_session($session_id) : null;
-
-        // Fallback verification — don't rely only on Stripe webhook. If the
-        // user landed here via redirect, retrieve the session directly and
-        // mark the order paid if Stripe confirms payment. This makes the
-        // plugin robust to webhooks being misconfigured or blocked.
-        if ($order_id && $session_id) {
-            $current_status = SmartRoom_Calc_Orders::get_status($order_id);
-            if ($current_status !== SmartRoom_Calc_Orders::STATUS_PAID) {
-                $session = SmartRoom_Calc_Stripe::retrieve_checkout_session($session_id);
-                if (!is_wp_error($session) && !empty($session['payment_status'])) {
-                    if ($session['payment_status'] === 'paid' || $session['payment_status'] === 'no_payment_required') {
-                        $pi = '';
-                        if (!empty($session['payment_intent'])) {
-                            $pi = is_array($session['payment_intent'])
-                                ? ($session['payment_intent']['id'] ?? '')
-                                : $session['payment_intent'];
-                        }
-                        SmartRoom_Calc_Orders::mark_paid_and_notify($order_id, $pi);
-                    }
-                }
-            }
-        }
-
         $is_collection = $order_id ? SmartRoom_Calc_Orders::is_collection($order_id) : false;
         $has_inventory = $order_id ? SmartRoom_Calc_Orders::get_inventory($order_id) : null;
-
         $rest_inventory_url = rest_url('smartroom/v1/inventory');
-
-        ob_start();
         ?>
         <div class="sr-success-page">
             <div class="sr-success-page__card">
@@ -192,8 +230,8 @@ class SmartRoom_Calc_Standalone_Page {
         </div>
 
         <style>
-            body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f1f5f9;min-height:100vh;color:#1e293b;padding:40px 20px}
-            .sr-success-page{max-width:720px;margin:0 auto}
+            .sr-success-page{max-width:720px;margin:0 auto;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1e293b}
+            .sr-success-page *{box-sizing:border-box}
             .sr-success-page__card{background:#fff;padding:48px 40px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);text-align:center}
             .sr-success-page__icon{width:80px;height:80px;margin:0 auto 24px;border-radius:50%;background:#16a34a;color:#fff;display:flex;align-items:center;justify-content:center}
             .sr-success-page__title{font-size:2rem;margin:0 0 16px;color:#1e293b}
@@ -289,33 +327,40 @@ class SmartRoom_Calc_Standalone_Page {
         </script>
         <?php endif; ?>
         <?php
-        self::render_shell('Payment Successful', ob_get_clean(), false);
     }
 
-    private static function render_cancel() {
-        ob_start();
+    private static function output_cancel_content() {
         ?>
-        <div class="sr-status">
-            <div class="sr-status__card">
-                <div class="sr-status__icon sr-status__icon--err">×</div>
-                <h1>Payment cancelled</h1>
+        <div class="sr-status-page">
+            <div class="sr-status-page__card">
+                <div class="sr-status-page__icon sr-status-page__icon--err" aria-hidden="true">×</div>
+                <h1 class="sr-status-page__title">Payment cancelled</h1>
                 <p>No worries — your booking was not completed and you haven't been charged.</p>
-                <a href="<?php echo esc_url(self::get_url()); ?>" class="sr-status__btn">Back to calculator</a>
+                <a href="<?php echo esc_url(home_url('/')); ?>" class="sr-status-page__btn">Back to homepage</a>
             </div>
         </div>
+        <style>
+            .sr-status-page{max-width:480px;margin:0 auto;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1e293b}
+            .sr-status-page__card{background:#fff;padding:48px 32px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);text-align:center}
+            .sr-status-page__icon{width:72px;height:72px;margin:0 auto 20px;border-radius:50%;color:#fff;font-size:36px;line-height:72px;display:block}
+            .sr-status-page__icon--ok{background:#16a34a}
+            .sr-status-page__icon--err{background:#dc2626}
+            .sr-status-page__title{font-size:1.75rem;margin:0 0 12px;color:#1e293b}
+            .sr-status-page p{color:#64748b;line-height:1.6;margin:.5rem 0}
+            .sr-status-page__btn{display:inline-block;margin-top:20px;padding:12px 24px;background:#0d0b9c;color:#fff;text-decoration:none;border-radius:8px;font-weight:500}
+            .sr-status-page__btn:hover{background:#090787}
+        </style>
         <?php
-        self::render_shell('Payment Cancelled', ob_get_clean(), false);
     }
 
     /**
-     * Render standalone HTML shell WITHOUT wp_head()/wp_footer().
-     * This ensures the active theme cannot inject its own styles/scripts.
-     *
-     * @param string $title
-     * @param string $body_html
-     * @param bool   $load_calculator  If true, loads full calculator JS/CSS. If false, only minimal inline styles.
+     * Render the isolated standalone calculator page — no theme chrome.
+     * Outputs a minimal HTML shell with just the calculator bundle.
+     * Used only for direct access to /smartroom-calculator/; most installs
+     * embed the calculator via the [smartroom_calculator] shortcode inside
+     * a theme / Elementor page instead.
      */
-    private static function render_shell($title, $body_html, $load_calculator) {
+    private static function render_shell($title, $body_html) {
         while (ob_get_level() > 0) {
             @ob_end_clean();
         }
@@ -343,7 +388,6 @@ class SmartRoom_Calc_Standalone_Page {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?php echo esc_html($title); ?></title>
 <link rel="icon" type="image/svg+xml" href="<?php echo esc_url($url . 'favicon.svg'); ?>">
-<?php if ($load_calculator): ?>
 <link rel="stylesheet" href="<?php echo esc_url(self::asset_url('runtime-utils.css')); ?>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
@@ -352,27 +396,10 @@ class SmartRoom_Calc_Standalone_Page {
 <link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('load-site-config.js')); ?>">
 <link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('calculator.js')); ?>">
 <script>window.__SMARTROOM_SITE_CONFIG__ = <?php echo $config_json; ?>;</script>
-<?php else: ?>
-<style>
-    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f1f5f9;min-height:100vh;color:#1e293b}
-    .sr-status{padding:2rem;width:100%;min-height:100vh;display:flex;align-items:center;justify-content:center}
-    .sr-status__card{max-width:480px;margin:0 auto;background:#fff;padding:3rem 2rem;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);text-align:center}
-    .sr-status__icon{width:72px;height:72px;margin:0 auto 1.5rem;border-radius:50%;color:#fff;font-size:36px;display:flex;align-items:center;justify-content:center}
-    .sr-status__icon--ok{background:#16a34a}
-    .sr-status__icon--err{background:#dc2626}
-    .sr-status h1{font-size:1.75rem;margin:0 0 1rem;color:#1e293b}
-    .sr-status p{color:#64748b;line-height:1.6;margin:.5rem 0}
-    .sr-status__ref{background:#f1f5f9;padding:.75rem;border-radius:8px;font-size:.9rem}
-    .sr-status__btn{display:inline-block;margin-top:1.5rem;padding:.75rem 1.5rem;background:#0d0b9c;color:#fff;text-decoration:none;border-radius:8px;font-weight:500}
-    .sr-status__btn:hover{background:#090787}
-</style>
-<?php endif; ?>
 </head>
 <body class="smartroom-calc-app">
 <?php echo $body_html; ?>
-<?php if ($load_calculator): ?>
-<script type="module" crossorigin src="<?php echo esc_url(self::asset_url('wp.js')); ?>"></script>
-<?php endif; ?>
+<script type="module" crossorigin src="<?php echo esc_url(self::asset_url('wp.js'));  ?>"></script>
 </body>
 </html><?php
     }
