@@ -619,14 +619,21 @@
                                 <label class="form-label" for="addressPostcode"
                                   >Postcode</label
                                 >
-                                <input
-                                  type="text"
-                                  class="storage-form__input-box"
-                                  id="addressPostcode"
-                                  name="address_postcode"
-                                  autocomplete="postal-code"
-                                  placeholder="e.g. SW1A 2AA"
-                                />
+                                <div class="storage-form__input-wrapper storage-form__input-wrapper--inline">
+                                  <input
+                                    type="text"
+                                    class="storage-form__input-box"
+                                    id="addressPostcode"
+                                    name="address_postcode"
+                                    autocomplete="postal-code"
+                                    placeholder="e.g. SW1A 2AA"
+                                    role="combobox"
+                                    aria-autocomplete="list"
+                                    aria-expanded="false"
+                                    aria-haspopup="listbox"
+                                  />
+                                  <ul class="autocomplete-list address-autocomplete" role="listbox"></ul>
+                                </div>
                               </div>
                               <div class="form-group">
                                 <label class="form-label" for="addressTown"
