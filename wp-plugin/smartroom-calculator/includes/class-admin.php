@@ -163,6 +163,21 @@ class SmartRoom_Calc_Admin {
                     </tr>
                 </table>
 
+                <h2>Google Maps API</h2>
+                <table class="form-table">
+                    <tr>
+                        <th><label for="google_maps_api_key">API Key</label></th>
+                        <td>
+                            <input type="text" class="regular-text" id="google_maps_api_key" name="google_maps_api_key" value="<?php echo esc_attr($s['google_maps_api_key'] ?? ''); ?>" placeholder="AIza...">
+                            <p class="description">
+                                Получите ключ в <a href="https://console.cloud.google.com/google/maps-apis/credentials" target="_blank">Google Cloud Console</a>.
+                                Включите <strong>Places API (New)</strong> и <strong>Maps JavaScript API</strong>.
+                                В разделе HTTP referrers добавьте: <code><?php echo esc_html(home_url('/*')); ?></code> и <code>*.<?php echo esc_html(parse_url(home_url(), PHP_URL_HOST)); ?>/*</code>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+
                 <h2>URL страницы калькулятора</h2>
                 <table class="form-table">
                     <tr>
@@ -259,6 +274,7 @@ class SmartRoom_Calc_Admin {
             'stripe_mode', 'stripe_test_pk', 'stripe_test_sk', 'stripe_test_whsec',
             'stripe_live_pk', 'stripe_live_sk', 'stripe_live_whsec',
             'currency', 'success_url', 'cancel_url', 'admin_email', 'page_slug',
+            'google_maps_api_key',
         ];
         $data = [];
         foreach ($fields as $f) {

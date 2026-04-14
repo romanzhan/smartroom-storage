@@ -21,11 +21,12 @@ export function initCalculator(siteConfig) {
   store.siteConfig = siteConfig ?? null;
   applySiteConfigUi(dom, siteConfig);
 
-  // Prod (gh-pages): inline first so deploy matches Console referrers without relying on .env at build time.
+  // Priority: siteConfig (WP plugin injection) → inline (gh-pages) → env (.env dev)
   const googleMapsApiKey = String(
-    import.meta.env.PROD
-      ? INLINE_GOOGLE_MAPS_API_KEY || import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-      : import.meta.env.VITE_GOOGLE_MAPS_API_KEY || INLINE_GOOGLE_MAPS_API_KEY,
+    siteConfig?.googleMapsApiKey ||
+      (import.meta.env.PROD
+        ? INLINE_GOOGLE_MAPS_API_KEY || import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+        : import.meta.env.VITE_GOOGLE_MAPS_API_KEY || INLINE_GOOGLE_MAPS_API_KEY),
   ).trim();
 
   if (!googleMapsApiKey && dom.initialView) {

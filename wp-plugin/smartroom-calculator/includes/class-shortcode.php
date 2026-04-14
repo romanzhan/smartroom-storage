@@ -73,6 +73,10 @@ class SmartRoom_Calc_Shortcode {
         }
         $site_config['checkoutEndpoint'] = rest_url('smartroom/v1/checkout');
         $site_config['wpNonce'] = wp_create_nonce('wp_rest');
+        $gkey = SmartRoom_Calc_Settings::get('google_maps_api_key', '');
+        if ($gkey) {
+            $site_config['googleMapsApiKey'] = $gkey;
+        }
 
         // Inject as global BEFORE the module script
         $json = wp_json_encode($site_config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

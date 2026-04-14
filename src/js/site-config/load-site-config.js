@@ -25,7 +25,13 @@ function mapLegacyWpConfig() {
 
 export async function loadSiteConfig() {
   let fromFile = null;
-  if (typeof window !== "undefined") {
+  // Skip file fetch when WP (or any other host) has already injected a config —
+  // avoids a noisy 404 on hosts where the JSON file is not served from the page path.
+  const hasInjectedConfig =
+    typeof window !== "undefined" &&
+    (window.__SMARTROOM_SITE_CONFIG__ || window.StorageCalcConfig);
+
+  if (typeof window !== "undefined" && !hasInjectedConfig) {
     try {
       const jsonUrl = new URL("calculator-config.json", window.location.href).href;
       const res = await fetch(jsonUrl, { cache: "no-store" });
