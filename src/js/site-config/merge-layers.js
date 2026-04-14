@@ -61,6 +61,16 @@ export function mergeSiteConfigLayer(base, patch) {
   if (Array.isArray(patch.durationDiscounts)) {
     next.durationDiscounts = cloneItems(patch.durationDiscounts);
   }
+  // Runtime-injected fields (WP plugin, hosting wrapper, etc)
+  if (typeof patch.checkoutEndpoint === "string" && patch.checkoutEndpoint) {
+    next.checkoutEndpoint = patch.checkoutEndpoint;
+  }
+  if (typeof patch.wpNonce === "string" && patch.wpNonce) {
+    next.wpNonce = patch.wpNonce;
+  }
+  if (typeof patch.googleMapsApiKey === "string" && patch.googleMapsApiKey) {
+    next.googleMapsApiKey = patch.googleMapsApiKey;
+  }
   return next;
 }
 

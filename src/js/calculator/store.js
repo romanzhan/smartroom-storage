@@ -272,7 +272,7 @@ export const store = {
       const extrasModule = modules.extras;
       const extrasData = extrasModule?.getData() ?? null;
 
-      const result = calculateCollectionFee({
+      const inputs = {
         volume: totalVolume,
         distanceMiles: addr.distanceMiles,
         propType: addr.propType,
@@ -280,9 +280,26 @@ export const store = {
         lift: addr.lift,
         dateData: currentStep >= 3 ? dateData : null,
         extrasData,
+      };
+      console.log("[SmartRoom] calculateCollectionFee inputs:", inputs);
+
+      const result = calculateCollectionFee({
+        ...inputs,
         cfg: collCfg,
         vatCfg,
         extrasList,
+      });
+      console.log("[SmartRoom] calculateCollectionFee result:", {
+        movers: result.movers,
+        totalTimeMin: Math.round(result.totalTimeMin),
+        loadingTime: Math.round(result.loadingTime),
+        unloadingTime: Math.round(result.unloadingTime),
+        travelTime: Math.round(result.travelTime),
+        basePrice: +result.basePrice.toFixed(2),
+        rawCollectionFee: +result.rawCollectionFee.toFixed(2),
+        extrasPrice: +result.extrasPrice.toFixed(2),
+        vatAmount: +result.vatAmount.toFixed(2),
+        collectionFee: +result.collectionFee.toFixed(2),
       });
 
       rawCollectionFee = result.rawCollectionFee;
@@ -401,7 +418,8 @@ export const store = {
     };
   },
 
-  notify() {
+  notify(reason) {
+    if (reason) console.log("[SmartRoom] store.notify ←", reason);
     runSafe("store.notify", () => this.dispatch({ type: "UPDATE" }));
   },
 };

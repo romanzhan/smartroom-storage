@@ -28,8 +28,26 @@ export function initSidebar({
   }
 
   const monthlyBox = document.getElementById("futureMonthlyAmount");
+  let renderCounter = 0;
 
   function renderSidebar(snapshot) {
+    renderCounter++;
+    console.log(
+      "[SmartRoom] sidebar render #" + renderCounter,
+      {
+        step: snapshot.currentStep,
+        tab: snapshot.currentTab,
+        storage: +snapshot.storagePrice.toFixed(2),
+        insurance: +snapshot.insurancePrice.toFixed(2),
+        collection: +snapshot.collectionFee.toFixed(2),
+        vat: +snapshot.vatAmount.toFixed(2),
+        subtotal: +snapshot.subtotal.toFixed(2),
+        monthly: +snapshot.monthlyPayment.toFixed(2),
+        volume: +snapshot.totalVolume.toFixed(3),
+        movers: snapshot.collMovers,
+        totalMin: Math.round(snapshot.collTotalTimeMin),
+      },
+    );
     summaryItems.innerHTML = "";
 
     if (!snapshot.hasItems) {

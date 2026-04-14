@@ -88,7 +88,16 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
   }
 
   function updateState(key, value) {
+    const prev = state[key];
     state[key] = value;
+    console.log(
+      "[SmartRoom] address change:",
+      key,
+      "=",
+      value,
+      "(was",
+      prev + ")",
+    );
     if (
       key === "addressLine1" ||
       key === "addressLine2" ||
