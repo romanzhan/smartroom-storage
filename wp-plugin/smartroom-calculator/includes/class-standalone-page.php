@@ -396,57 +396,145 @@ class SmartRoom_Calc_Standalone_Page {
 <link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('load-site-config.js')); ?>">
 <link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('calculator.js')); ?>">
 <script>window.__SMARTROOM_SITE_CONFIG__ = <?php echo $config_json; ?>;</script>
-<style>html,body{background:transparent}</style>
+<style>
+html, body { background: transparent; }
+
+/* ── Embedded (iframe) mode overrides ─────────────────────────
+ * When the calculator is loaded inside an iframe via the [smartroom_calculator]
+ * shortcode, we MUST neutralise any viewport-based sizing (min-height: 100vh,
+ * etc). Otherwise setting the iframe height from the parent → grows viewport
+ * → grows the 100vh element → grows body.scrollHeight → parent sets bigger
+ * height → infinite feedback loop that can crash the browser.
+ *
+ * We hide the big marketing hero (video + title) in embedded mode — users
+ * wrap the iframe in their own section in Elementor, they don't need our hero.
+ */
+html.sr-embedded,
+body.sr-embedded {
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: transparent !important;
+}
+body.sr-embedded .storage-hero {
+    min-height: auto !important;
+    height: auto !important;
+    padding: 20px 16px !important;
+    background: transparent !important;
+    display: block !important;
+}
+body.sr-embedded .storage-hero__video,
+body.sr-embedded .storage-hero__overlay,
+body.sr-embedded .storage-hero__title {
+    display: none !important;
+}
+body.sr-embedded .storage-hero__content {
+    max-width: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    position: static !important;
+}
+</style>
 </head>
 <body class="smartroom-calc-app">
+<script>
+/* Mark as embedded BEFORE anything else renders — CSS overrides kick in immediately */
+(function () {
+    if (window.parent !== window) {
+        document.documentElement.className += ' sr-embedded';
+        document.body.className += ' sr-embedded';
+    }
+})();
+</script>
 <?php echo $body_html; ?>
 <script type="module" crossorigin src="<?php echo esc_url(self::asset_url('wp.js')); ?>"></script>
 <script>
 /* Iframe host communication — auto-resize & break out of iframe for Stripe */
 (function () {
-    if (window.parent === window) return; // not in an iframe, nothing to do
+    if (window.parent === window) return; // not in iframe, nothing to do
 
-    function postHeight() {
-        try {
-            var h = Math.max(
-                document.body ? document.body.scrollHeight : 0,
-                document.documentElement ? document.documentElement.scrollHeight : 0
-            );
-            if (h > 0) {
-                window.parent.postMessage(
-                    { type: 'smartroom-calc-height', height: h },
-                    '*'
-                );
+    var MAX_HEIGHT = 15000;       // hard cap — protects against runaway loops
+    var MIN_DELTA  = 4;           // skip reports smaller than this
+    var RUNAWAY_STEPS = 12;       // consecutive growths of < 20px that trigger freeze
+
+    var lastReported = 0;
+    var rafPending = false;
+    var growCount = 0;
+    var frozen = false;
+
+    function measure() {
+        if (!document.body) return 0;
+        var h = Math.max(
+            document.body.offsetHeight || 0,
+            document.body.scrollHeight || 0
+        );
+        return Math.min(Math.round(h), MAX_HEIGHT);
+    }
+
+    function doPost() {
+        rafPending = false;
+        if (frozen) return;
+
+        var h = measure();
+        if (h <= 0) return;
+
+        // Detect slow runaway: small steady growth across many ticks
+        if (h > lastReported && (h - lastReported) < 20) {
+            growCount++;
+            if (growCount > RUNAWAY_STEPS) {
+                frozen = true;
+                console.warn('[SmartRoom] iframe height runaway detected — freezing at', lastReported);
+                return;
             }
+        } else {
+            growCount = 0;
+        }
+
+        if (Math.abs(h - lastReported) < MIN_DELTA) return;
+
+        lastReported = h;
+        try {
+            window.parent.postMessage(
+                { type: 'smartroom-calc-height', height: h },
+                '*'
+            );
         } catch (e) { /* noop */ }
     }
 
-    // Report initial height after a tick and then on every mutation / load
-    postHeight();
-    window.addEventListener('load', postHeight);
-    window.addEventListener('resize', postHeight);
-
-    if ('ResizeObserver' in window) {
-        var ro = new ResizeObserver(postHeight);
-        if (document.documentElement) ro.observe(document.documentElement);
-        if (document.body) ro.observe(document.body);
-    } else {
-        // Fallback — poll at a low rate
-        setInterval(postHeight, 500);
-    }
-
-    // Watch DOM mutations too (gsap animations don't always fire resize)
-    if ('MutationObserver' in window) {
-        var mo = new MutationObserver(postHeight);
-        if (document.body) {
-            mo.observe(document.body, {
-                childList: true,
-                subtree: true,
-                attributes: true,
-                characterData: true,
-            });
+    function schedulePost() {
+        if (rafPending || frozen) return;
+        rafPending = true;
+        if (window.requestAnimationFrame) {
+            requestAnimationFrame(doPost);
+        } else {
+            setTimeout(doPost, 50);
         }
     }
+
+    window.addEventListener('load', schedulePost);
+    window.addEventListener('resize', schedulePost);
+
+    if ('ResizeObserver' in window) {
+        try {
+            var ro = new ResizeObserver(schedulePost);
+            if (document.body) ro.observe(document.body);
+        } catch (e) {}
+    }
+
+    if ('MutationObserver' in window) {
+        try {
+            var mo = new MutationObserver(schedulePost);
+            if (document.body) {
+                mo.observe(document.body, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                });
+            }
+        } catch (e) {}
+    }
+
+    schedulePost();
 })();
 </script>
 </body>
