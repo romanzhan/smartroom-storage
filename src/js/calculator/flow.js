@@ -797,17 +797,7 @@ export function attachCalculatorFlow({
             throw new Error(body?.message || "Checkout failed");
           }
           localStorage.removeItem(LS_CALC_KEY);
-          // When the calculator is embedded in an iframe (shortcode),
-          // redirect the TOP window so Stripe loads full-page instead of
-          // trying (and failing) to render inside the iframe.
-          const target = (() => {
-            try {
-              return window.top && window.top !== window ? window.top : window;
-            } catch {
-              return window;
-            }
-          })();
-          target.location.assign(body.checkout_url);
+          window.location.assign(body.checkout_url);
         })
         .catch((err) => {
           console.error("[SmartRoom] Checkout failed", err);
@@ -863,14 +853,7 @@ export function attachCalculatorFlow({
     }
 
     localStorage.removeItem(LS_CALC_KEY);
-    const target = (() => {
-      try {
-        return window.top && window.top !== window ? window.top : window;
-      } catch {
-        return window;
-      }
-    })();
-    target.location.assign(getPaymentSuccessPageUrl());
+    window.location.assign(getPaymentSuccessPageUrl());
   }
 
   backBtn.addEventListener("click", () => {

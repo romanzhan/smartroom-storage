@@ -210,19 +210,31 @@ class SmartRoom_Calc_Shortcode {
         });
     });
 
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
+    var navigating = false;
+    function doSubmit(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (navigating) return;
         if (!selected || !selected.placeId) {
             markInvalid();
             input.focus();
             return;
         }
+        navigating = true;
         submit.classList.add('is-loading');
         var url = TARGET + (TARGET.indexOf('?') >= 0 ? '&' : '?') +
             'place_id=' + encodeURIComponent(selected.placeId) +
             '&postcode=' + encodeURIComponent(selected.text || '');
         window.location.assign(url);
-    });
+    }
+
+    form.addEventListener('submit', doSubmit);
+    // Explicit click handler on the submit button too, in case parent
+    // listeners intercept the form submit event (some themes attach global
+    // form handlers). The navigating guard prevents double redirects.
+    submit.addEventListener('click', doSubmit);
 })();
 </script>
         <?php
