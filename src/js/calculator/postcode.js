@@ -289,7 +289,10 @@ export function initPostcode({
   }
 
   async function resolvePlaceSelection(placeId, sessionRef, inputEl) {
-    if (!mapsEnabled || !placeId || !inputEl) return;
+    if (!mapsEnabled || !placeId) return;
+    // inputEl is optional — used for autocomplete flows where we need to
+    // clear the dropdown on the source field. For programmatic calls
+    // (URL-param resolve on page load) it's omitted.
 
     const cached = getCachedResolvedPlace(warehouseKey, placeId);
     if (cached) {
@@ -669,6 +672,11 @@ export function initPostcode({
       savedPostcode = (v || "").trim();
     },
     restoreSavedPlace,
+    /** Resolve a Google Places place_id programmatically (no UI source).
+     *  Used on the dedicated calculator page when ?place_id= comes from
+     *  the widget submit on another page. */
+    resolveByPlaceId: (placeId) =>
+      resolvePlaceSelection(placeId, "direct", null),
     resetForNewSession,
     commitSavedFromValidSubmit: (rawInput) => {
       const pc = resolvedSelection?.postcode

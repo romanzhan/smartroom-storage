@@ -32,6 +32,75 @@ class SmartRoom_Calc_Rest_Api {
             'callback' => [__CLASS__, 'save_inventory'],
             'permission_callback' => '__return_true',
         ]);
+
+        register_rest_route(self::NS, '/places/autocomplete', [
+            'methods'  => WP_REST_Server::CREATABLE,
+            'callback' => [__CLASS__, 'places_autocomplete'],
+            'permission_callback' => '__return_true',
+        ]);
+    }
+
+    /**
+     * Server-side proxy for Google Places API (New) Autocomplete.
+     * Keeps the API key off the wire — the widget on any host page never
+     * sees the key, all requests fan out from the WP server.
+     */
+    public static function places_autocomplete(WP_REST_Request $req) {
+        $key = SmartRoom_Calc_Settings::get('google_maps_api_key', '');
+        if (!$key) {
+            return new WP_REST_Response(['message' => 'Places API not configured'], 500);
+        }
+
+        $body  = $req->get_json_params();
+        $input = isset($body['input']) ? trim((string) $body['input']) : '';
+        if ($input === '' || strlen($input) < 2) {
+            return new WP_REST_Response(['suggestions' => []], 200);
+        }
+
+        $payload = [
+            'input'                => $input,
+            'includedRegionCodes'  => ['gb'],
+            'includedPrimaryTypes' => ['postal_code'],
+        ];
+
+        $response = wp_remote_post('https://places.googleapis.com/v1/places:autocomplete', [
+            'timeout' => 15,
+            'headers' => [
+                'Content-Type'     => 'application/json',
+                'X-Goog-Api-Key'   => $key,
+                'X-Goog-FieldMask' => 'suggestions.placePrediction.placeId,suggestions.placePrediction.text.text',
+            ],
+            'body' => wp_json_encode($payload),
+        ]);
+
+        if (is_wp_error($response)) {
+            return new WP_REST_Response(['message' => $response->get_error_message()], 502);
+        }
+
+        $code = wp_remote_retrieve_response_code($response);
+        $raw  = wp_remote_retrieve_body($response);
+        $data = json_decode($raw, true);
+
+        if ($code >= 400) {
+            return new WP_REST_Response([
+                'message' => $data['error']['message'] ?? 'Google Places error',
+                'code'    => $code,
+            ], $code);
+        }
+
+        $out = [];
+        if (is_array($data) && !empty($data['suggestions'])) {
+            foreach ($data['suggestions'] as $s) {
+                $p = $s['placePrediction'] ?? null;
+                if (!$p) continue;
+                $out[] = [
+                    'placeId' => $p['placeId'] ?? '',
+                    'text'    => $p['text']['text'] ?? '',
+                ];
+            }
+        }
+
+        return new WP_REST_Response(['suggestions' => $out], 200);
     }
 
     public static function save_inventory(WP_REST_Request $req) {

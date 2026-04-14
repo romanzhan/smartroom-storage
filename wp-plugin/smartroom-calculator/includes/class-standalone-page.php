@@ -375,6 +375,10 @@ class SmartRoom_Calc_Standalone_Page {
         }
         $site_config['checkoutEndpoint'] = rest_url('smartroom/v1/checkout');
         $site_config['wpNonce'] = wp_create_nonce('wp_rest');
+        // directMode: this page skips the initialView postcode step entirely —
+        // users reach it from the shortcode widget or via direct link, both
+        // open the calculator in expanded mode at step 1.
+        $site_config['directMode'] = true;
         $gkey = SmartRoom_Calc_Settings::get('google_maps_api_key', '');
         if ($gkey) {
             $site_config['googleMapsApiKey'] = $gkey;
@@ -397,122 +401,20 @@ class SmartRoom_Calc_Standalone_Page {
 <link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('calculator.js')); ?>">
 <script>window.__SMARTROOM_SITE_CONFIG__ = <?php echo $config_json; ?>;</script>
 <style>
-html, body { background: transparent; }
-
-/* ── Embedded (iframe) mode overrides ─────────────────────────
- * When the calculator is loaded inside an iframe via the
- * [smartroom_calculator] shortcode, we MUST neutralise any viewport-
- * based sizing (min-height: 100vh). Otherwise: parent sets
- * iframe.height = N → viewport = N → 100vh = N → hero grows → body
- * scrollHeight = N+footer → parent sets bigger iframe → infinite loop.
- *
- * We keep the video background, overlay and title — only swap 100vh
- * for a fixed min-height so the hero sizes to its actual content.
- */
-html.sr-embedded,
-body.sr-embedded {
-    min-height: 0 !important;
-    height: auto !important;
-    overflow: visible !important;
-    background: transparent !important;
-}
-body.sr-embedded .storage-hero {
-    min-height: 480px !important;   /* fixed — NOT vh, breaks the feedback */
-    height: auto !important;
-    background: transparent !important;
-    position: relative !important;
-    overflow: hidden !important;
-}
+/* Direct mode: hide the marketing hero entirely — this is a dedicated
+ * calculator page, reached from a widget click or direct link. The
+ * initialView postcode input is not used either (skipped by JS). */
+.storage-hero{min-height:auto !important;padding:20px 16px 40px !important;background:#f1f5f9 !important}
+.storage-hero__video,
+.storage-hero__overlay,
+.storage-hero__title{display:none !important}
+.storage-hero__content{max-width:1440px !important;width:100% !important;padding:0 !important;position:static !important}
+body.smartroom-calc-app{background:#f1f5f9}
 </style>
 </head>
 <body class="smartroom-calc-app">
-<script>
-/* Mark as embedded BEFORE anything else renders — CSS overrides kick in immediately */
-(function () {
-    if (window.parent !== window) {
-        document.documentElement.className += ' sr-embedded';
-        document.body.className += ' sr-embedded';
-    }
-})();
-</script>
 <?php echo $body_html; ?>
 <script type="module" crossorigin src="<?php echo esc_url(self::asset_url('wp.js')); ?>"></script>
-<script>
-/* Iframe host communication — auto-resize & break out of iframe for Stripe */
-(function () {
-    if (window.parent === window) return; // not in iframe, nothing to do
-
-    var MAX_HEIGHT = 15000;  // hard cap — protects against runaway loops
-    var MIN_DELTA  = 4;      // skip reports smaller than this
-
-    var lastReported = 0;
-    var rafPending = false;
-
-    function measure() {
-        var de = document.documentElement;
-        var b  = document.body;
-        if (!b && !de) return 0;
-        var h = Math.max(
-            b  ? (b.scrollHeight || 0)  : 0,
-            b  ? (b.offsetHeight || 0)  : 0,
-            de ? (de.scrollHeight || 0) : 0,
-            de ? (de.offsetHeight || 0) : 0
-        );
-        return Math.min(Math.round(h), MAX_HEIGHT);
-    }
-
-    function doPost() {
-        rafPending = false;
-
-        var h = measure();
-        if (h <= 0) return;
-        if (Math.abs(h - lastReported) < MIN_DELTA) return;
-
-        lastReported = h;
-        try {
-            window.parent.postMessage(
-                { type: 'smartroom-calc-height', height: h },
-                '*'
-            );
-        } catch (e) { /* noop */ }
-    }
-
-    function schedulePost() {
-        if (rafPending) return;
-        rafPending = true;
-        if (window.requestAnimationFrame) {
-            requestAnimationFrame(doPost);
-        } else {
-            setTimeout(doPost, 50);
-        }
-    }
-
-    window.addEventListener('load', schedulePost);
-    window.addEventListener('resize', schedulePost);
-
-    if ('ResizeObserver' in window) {
-        try {
-            var ro = new ResizeObserver(schedulePost);
-            if (document.body) ro.observe(document.body);
-        } catch (e) {}
-    }
-
-    if ('MutationObserver' in window) {
-        try {
-            var mo = new MutationObserver(schedulePost);
-            if (document.body) {
-                mo.observe(document.body, {
-                    childList: true,
-                    subtree: true,
-                    attributes: true,
-                });
-            }
-        } catch (e) {}
-    }
-
-    schedulePost();
-})();
-</script>
 </body>
 </html><?php
     }

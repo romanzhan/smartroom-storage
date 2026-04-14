@@ -34,6 +34,7 @@ export function attachCalculatorFlow({
   postcode,
   animateExpand,
   animateCollapse,
+  directMode = false,
 }) {
   let pendingSwitchValue = null;
   let pendingSwitchButton = null;
@@ -604,6 +605,15 @@ export function attachCalculatorFlow({
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
+    // directMode: initialView is not used, submit is only for step 4 (Book Now).
+    // Everything below is the legacy postcode → expand handler (kept for
+    // the gh-pages standalone build which still uses initialView).
+    if (directMode) {
+      if (store.currentStep === 4 && continueBtn && !continueBtn.disabled) {
+        handleNextStep();
+      }
+      return;
+    }
     if (store.currentStep > 1) {
       if (store.currentStep === 4 && continueBtn && !continueBtn.disabled) {
         handleNextStep();
@@ -864,6 +874,17 @@ export function attachCalculatorFlow({
   }
 
   backBtn.addEventListener("click", () => {
+    if (directMode) {
+      // On the dedicated calculator page, the × button becomes a
+      // "← Back" arrow that returns the user to wherever they came from
+      // (likely the page with the shortcode widget).
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.assign("/");
+      }
+      return;
+    }
     exitModal.style.display = "flex";
     gsapTo(g, exitModal, { opacity: 1, duration: 0.2 });
     gsapFromTo(
