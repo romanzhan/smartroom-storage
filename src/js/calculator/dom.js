@@ -26,6 +26,8 @@ export function getCalculatorDom() {
     postcodeText: doc.querySelector(".calc-postcode-text"),
     editInput: doc.querySelector(".calc-edit-input"),
     editAutocomplete: doc.querySelector(".edit-autocomplete"),
+    addressPostcodeInput: doc.getElementById("addressPostcode"),
+    addressAutocomplete: doc.querySelector(".address-autocomplete"),
     calcBoxesView: doc.getElementById("calcBoxesView"),
     calcFurnitureView: doc.getElementById("calcFurnitureView"),
     desktopStepBackBtn: doc.getElementById("desktopStepBackBtn"),

@@ -80,6 +80,8 @@ export function initCalculatorModules(dom, store, siteConfig) {
     postcodeText: dom.postcodeText,
     editInput: dom.editInput,
     editAutocomplete: dom.editAutocomplete,
+    addressPostcodeInput: dom.addressPostcodeInput,
+    addressAutocomplete: dom.addressAutocomplete,
   });
 
   store.modules.date =

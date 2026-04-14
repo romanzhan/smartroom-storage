@@ -308,6 +308,19 @@
   position: relative;
 }
 
+.storage-form__input-wrapper--inline {
+  display: block;
+  margin-right: 0;
+}
+
+.storage-form__input-wrapper--inline .storage-form__input-box {
+  width: 100%;
+}
+
+.address-autocomplete {
+  top: calc(100% + 4px);
+}
+
 .storage-form__input {
   width: 100%;
   border: none;

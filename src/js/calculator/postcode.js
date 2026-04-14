@@ -78,6 +78,8 @@ export function initPostcode({
   postcodeText,
   editInput,
   editAutocomplete,
+  addressPostcodeInput,
+  addressAutocomplete,
 }) {
   const apiKey = (googleMapsApiKey || "").trim();
   const mapsEnabled = Boolean(apiKey);
@@ -102,6 +104,8 @@ export function initPostcode({
   }
 
   let savedPostcode = "";
+  /** Last fully-resolved place payload — preserved across tab switches. */
+  let savedPayload = null;
   const list = Array.isArray(allowedPostcodes) ? allowedPostcodes : [];
   const mapsGuard = createMapsApiGuard();
 
@@ -119,6 +123,23 @@ export function initPostcode({
   let resolvedSelection = null;
   let mainSessionToken = newSessionToken();
   let editSessionToken = newSessionToken();
+  let addressSessionToken = newSessionToken();
+
+  /**
+   * Sync the resolved postcode to EVERY field on the page — main step-1 input,
+   * header pill, and step-2 Collection Details input. Called after any successful
+   * place resolution, from whichever source.
+   */
+  function syncPostcodeEverywhere(postcode) {
+    const pc = (postcode || "").trim().toUpperCase();
+    if (!pc) return;
+    savedPostcode = pc;
+    if (currentPostcodeInput) currentPostcodeInput.value = pc;
+    if (postcodeText) postcodeText.textContent = pc;
+    if (editInput) editInput.value = pc;
+    if (addressPostcodeInput) addressPostcodeInput.value = pc;
+    console.log("[SmartRoom] postcode synced everywhere:", pc);
+  }
 
   function showMapsHelper(message) {
     const helper = form.querySelector(".storage-form__helper");
@@ -261,21 +282,22 @@ export function initPostcode({
     return fb;
   }
 
+  function rotateSessionToken(sessionRef) {
+    if (sessionRef === "edit") editSessionToken = newSessionToken();
+    else if (sessionRef === "address") addressSessionToken = newSessionToken();
+    else mainSessionToken = newSessionToken();
+  }
+
   async function resolvePlaceSelection(placeId, sessionRef, inputEl) {
     if (!mapsEnabled || !placeId || !inputEl) return;
 
     const cached = getCachedResolvedPlace(warehouseKey, placeId);
     if (cached) {
-      if (sessionRef === "edit") {
-        editSessionToken = newSessionToken();
-      } else {
-        mainSessionToken = newSessionToken();
-      }
+      rotateSessionToken(sessionRef);
       resolvedSelection = {
         placeId: cached.placeId || placeId,
         postcode: cached.postcode,
       };
-      inputEl.value = (cached.postcode || "").toUpperCase();
       let distanceMiles = cached.distanceMiles;
       if (
         distanceMiles == null &&
@@ -284,10 +306,11 @@ export function initPostcode({
       ) {
         distanceMiles = await drivingMilesOrFallback(cached.lat, cached.lng);
       }
+      const payload = { ...cached, distanceMiles };
+      savedPayload = payload;
+      syncPostcodeEverywhere(cached.postcode);
       if (typeof onPlaceResolved === "function") {
-        runSafe("onPlaceResolved (cache)", () =>
-          onPlaceResolved({ ...cached, distanceMiles }),
-        );
+        runSafe("onPlaceResolved (cache)", () => onPlaceResolved(payload));
       }
       return;
     }
@@ -299,7 +322,11 @@ export function initPostcode({
     }
 
     const sessionTokenForDetails =
-      sessionRef === "edit" ? editSessionToken : mainSessionToken;
+      sessionRef === "edit"
+        ? editSessionToken
+        : sessionRef === "address"
+          ? addressSessionToken
+          : mainSessionToken;
     let detailsRes;
     try {
       detailsRes = await fetchPlaceDetails(
@@ -341,18 +368,12 @@ export function initPostcode({
       return;
     }
 
-    if (sessionRef === "edit") {
-      editSessionToken = newSessionToken();
-    } else {
-      mainSessionToken = newSessionToken();
-    }
+    rotateSessionToken(sessionRef);
 
     resolvedSelection = {
       placeId: resolved.placeId || placeId,
       postcode: resolved.postcode,
     };
-
-    inputEl.value = resolved.postcode.toUpperCase();
 
     const lat = resolved.lat;
     const lng = resolved.lng;
@@ -369,6 +390,9 @@ export function initPostcode({
       ...resolved,
       distanceMiles,
     };
+    savedPayload = payload;
+
+    syncPostcodeEverywhere(resolved.postcode);
 
     if (typeof onPlaceResolved === "function") {
       runSafe("onPlaceResolved", () => onPlaceResolved(payload));
@@ -446,7 +470,14 @@ export function initPostcode({
     }, 350);
 
     inputEl.addEventListener("input", () => {
-      clearResolved();
+      // Only invalidate the resolved selection if user typed something that
+      // no longer matches the resolved postcode — typing the same text
+      // (e.g. programmatic sync) should not drop the resolved state.
+      const typed = normPostcode(inputEl.value);
+      const resolved = normPostcode(resolvedSelection?.postcode || "");
+      if (!resolved || typed !== resolved) {
+        clearResolved();
+      }
 
       if (inputEl === currentPostcodeInput && form.classList.contains("is-invalid")) {
         form.classList.remove("is-invalid");
@@ -557,6 +588,9 @@ export function initPostcode({
 
   setupAutocomplete(currentPostcodeInput, mainAutocomplete, "main");
   setupAutocomplete(editInput, editAutocomplete, "edit");
+  if (addressPostcodeInput && addressAutocomplete) {
+    setupAutocomplete(addressPostcodeInput, addressAutocomplete, "address");
+  }
 
   editInput.addEventListener("keydown", (e) => {
     const items = [...editAutocomplete.querySelectorAll(".autocomplete-item")];
@@ -582,40 +616,65 @@ export function initPostcode({
     editInput.focus();
   });
 
-  function resetForNewSession() {
-    savedPostcode = "";
-    clearResolved();
+  function resetForNewSession(options = {}) {
+    const { keepPostcode = false } = options;
+    if (!keepPostcode) {
+      savedPostcode = "";
+      savedPayload = null;
+      clearResolved();
+      if (postcodeText) postcodeText.textContent = "";
+      if (currentPostcodeInput) currentPostcodeInput.value = "";
+      if (addressPostcodeInput) addressPostcodeInput.value = "";
+    }
     mainSessionToken = newSessionToken();
     editSessionToken = newSessionToken();
-    if (postcodeText) postcodeText.textContent = "";
-    if (currentPostcodeInput) currentPostcodeInput.value = "";
+    addressSessionToken = newSessionToken();
     if (mainAutocomplete) {
       mainAutocomplete.innerHTML = "";
       mainAutocomplete.style.display = "none";
     }
-    if (editInput) editInput.value = "";
+    if (editInput && !keepPostcode) editInput.value = "";
     if (editAutocomplete) {
       editAutocomplete.innerHTML = "";
       editAutocomplete.style.display = "none";
     }
+    if (addressAutocomplete) {
+      addressAutocomplete.innerHTML = "";
+      addressAutocomplete.style.display = "none";
+    }
     revertToPill();
+  }
+
+  /** Re-emit the last resolved payload — useful after tab switch to rehydrate
+   *  address/state/distance without forcing the user to re-type the postcode. */
+  function restoreSavedPlace() {
+    if (!savedPayload) return false;
+    syncPostcodeEverywhere(savedPayload.postcode || savedPostcode);
+    resolvedSelection = {
+      placeId: savedPayload.placeId || "",
+      postcode: savedPayload.postcode || "",
+    };
+    if (typeof onPlaceResolved === "function") {
+      runSafe("onPlaceResolved (restore)", () => onPlaceResolved(savedPayload));
+    }
+    return true;
   }
 
   return {
     mapsEnabled,
     validate,
     getSaved: () => savedPostcode,
+    getSavedPayload: () => savedPayload,
     setSaved: (v) => {
       savedPostcode = (v || "").trim();
     },
+    restoreSavedPlace,
     resetForNewSession,
     commitSavedFromValidSubmit: (rawInput) => {
-      if (resolvedSelection?.postcode) {
-        savedPostcode = resolvedSelection.postcode.trim().toUpperCase();
-      } else {
-        savedPostcode = (rawInput || "").trim().toUpperCase();
-      }
-      if (postcodeText) postcodeText.textContent = savedPostcode || "";
+      const pc = resolvedSelection?.postcode
+        ? resolvedSelection.postcode.trim().toUpperCase()
+        : (rawInput || "").trim().toUpperCase();
+      if (pc) syncPostcodeEverywhere(pc);
     },
     revertToPill,
     /** @returns {"missing"|"not_served"|"pick_required"|"no_api_key"|false} */

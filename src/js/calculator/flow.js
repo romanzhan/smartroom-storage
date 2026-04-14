@@ -299,7 +299,9 @@ export function attachCalculatorFlow({
         modalA11y.notifyClosed();
       },
     });
-    triggerFullReset();
+    // Keep the resolved postcode when switching between Boxes/Furniture tabs
+    // so users don't need to re-enter their address.
+    triggerFullReset({ keepPostcode: true });
     if (pendingSwitchButton && pendingSwitchValue) {
       executeSwitch(pendingSwitchButton, pendingSwitchValue);
     }
@@ -883,9 +885,15 @@ export function attachCalculatorFlow({
     closeCalculatorCompletely();
   });
 
-  function triggerFullReset() {
+  function triggerFullReset(options = {}) {
+    const { keepPostcode = false } = options;
     localStorage.removeItem(LS_CALC_KEY);
     clearAllCheckoutFieldErrors();
+
+    // Snapshot the resolved place so we can re-apply it after reset
+    const savedPayloadBeforeReset = keepPostcode
+      ? postcode.getSavedPayload?.() ?? null
+      : null;
 
     const itemInputs = document.querySelectorAll("#boxesItemsList .qty-input");
     itemInputs.forEach((input) => {
@@ -918,9 +926,15 @@ export function attachCalculatorFlow({
     });
 
     form.reset();
-    if (postcode.resetForNewSession) postcode.resetForNewSession();
+    if (postcode.resetForNewSession) postcode.resetForNewSession({ keepPostcode });
     if (store.modules.address?.resetCollectionFields) {
       store.modules.address.resetCollectionFields();
+    }
+
+    // Re-apply resolved place (postcode + lat/lng + distance) after a hard reset
+    // so that users who switch tab mid-flow don't have to re-enter everything.
+    if (keepPostcode && savedPayloadBeforeReset) {
+      if (postcode.restoreSavedPlace) postcode.restoreSavedPlace();
     }
 
     const defaultMode = document.querySelector(
