@@ -184,24 +184,31 @@ async function distanceViaRouteMatrix(oLat, oLng, dLat, dLng) {
 
   const result = await RouteMatrix.computeRouteMatrix(request);
 
-  // Result can be an AsyncIterable or an array-like. Handle both.
+  // Real response shape (JS SDK, v=weekly):
+  //   { matrix: { rows: [{ items: [{ distanceMeters, condition }, ...] }, ...] } }
+  // We only send one origin/destination so take the first available item.
+  const rows = result?.matrix?.rows ?? result?.rows ?? [];
+  for (const row of rows) {
+    const items = row?.items ?? row?.elements ?? [];
+    for (const item of items) {
+      const meters = extractMeters(item);
+      if (meters != null) return meters / 1609.344;
+    }
+  }
+
+  // Fallback shapes (AsyncIterable / Array / single element) for safety.
   if (result && typeof result[Symbol.asyncIterator] === "function") {
     for await (const element of result) {
       const meters = extractMeters(element);
       if (meters != null) return meters / 1609.344;
     }
-    return null;
   }
-
   if (Array.isArray(result)) {
     for (const element of result) {
       const meters = extractMeters(element);
       if (meters != null) return meters / 1609.344;
     }
-    return null;
   }
-
-  // Single-element response shape
   const meters = extractMeters(result);
   return meters != null ? meters / 1609.344 : null;
 }
