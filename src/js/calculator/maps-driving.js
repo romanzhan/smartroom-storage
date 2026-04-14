@@ -167,11 +167,19 @@ async function distanceViaRouteMatrix(oLat, oLng, dLat, dLng) {
     return null;
   }
 
-  // JS SDK accepts LatLngLiteral / LatLng / Place directly in origins/destinations
+  // JS SDK accepts LatLngLiteral / LatLng / Place directly in origins/destinations.
+  // `fields` is a required FieldMask telling Google which response fields to return
+  // (affects billing and performance). Request only what we need.
   const request = {
     origins: [{ lat: oLat, lng: oLng }],
     destinations: [{ lat: dLat, lng: dLng }],
     travelMode: "DRIVE",
+    fields: [
+      "originIndex",
+      "destinationIndex",
+      "distanceMeters",
+      "condition",
+    ],
   };
 
   const result = await RouteMatrix.computeRouteMatrix(request);
