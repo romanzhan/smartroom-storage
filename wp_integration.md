@@ -18,7 +18,6 @@
 ```json
 {
   "version": 1,
-  "globalDiscount": 45,
   "baseFeeBoxes": 0,
   "baseFeeFurniture": 25,
   "allowedPostcodes": ["SW1A 1AA"],
@@ -41,7 +40,6 @@ add_action('wp_enqueue_scripts', function () {
 
     wp_localize_script('smartroom-calc', '__SMARTROOM_SITE_CONFIG__', [
         'version'           => 1,
-        'globalDiscount'    => (float) ($settings['globalDiscount'] ?? 45),
         'baseFeeBoxes'      => (float) ($settings['baseFeeBoxes'] ?? 0),
         'baseFeeFurniture'  => (float) ($settings['baseFeeFurniture'] ?? 25),
         'allowedPostcodes'  => $settings['postcodes'] ?? [],

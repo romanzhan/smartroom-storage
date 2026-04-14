@@ -5,7 +5,6 @@ export function normalizeSiteConfigPayload(payload) {
   const body = {
     version: SITE_CONFIG_VERSION,
     updatedAt: Date.now(),
-    globalDiscount: Number(payload.globalDiscount) || 0,
     restrictToAllowedPostcodes: Boolean(payload.restrictToAllowedPostcodes),
   };
 

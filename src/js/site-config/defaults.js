@@ -2,7 +2,6 @@ export const SITE_CONFIG_VERSION = 1;
 
 export const defaultSiteConfig = {
   version: SITE_CONFIG_VERSION,
-  globalDiscount: 45,
   restrictToAllowedPostcodes: false,
   warehouseLatitude: 51.5229,
   warehouseLongitude: -0.1195,

@@ -27,10 +27,6 @@ function mergeObject(base, patch) {
 export function mergeSiteConfigLayer(base, patch) {
   if (!patch || typeof patch !== "object") return base;
   const next = { ...base };
-  if (patch.globalDiscount != null && patch.globalDiscount !== "") {
-    const n = finiteNumber(patch.globalDiscount);
-    if (n != null) next.globalDiscount = n;
-  }
   if (patch.version != null) next.version = patch.version;
   if (Array.isArray(patch.allowedPostcodes)) {
     next.allowedPostcodes = [...patch.allowedPostcodes];

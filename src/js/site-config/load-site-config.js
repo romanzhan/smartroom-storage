@@ -17,7 +17,6 @@ function mapLegacyWpConfig() {
   const out = {};
   if (Array.isArray(legacy.postcodes)) out.allowedPostcodes = legacy.postcodes;
   if (Array.isArray(legacy.boxItemsData)) out.items = legacy.boxItemsData;
-  if (legacy.globalDiscount != null) out.globalDiscount = legacy.globalDiscount;
   if (legacy.collection && typeof legacy.collection === "object") out.collection = legacy.collection;
   if (legacy.vat && typeof legacy.vat === "object") out.vat = legacy.vat;
   if (Array.isArray(legacy.extras)) out.extras = legacy.extras;
