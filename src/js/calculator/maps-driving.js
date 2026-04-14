@@ -158,12 +158,21 @@ export async function getDrivingDistanceMilesJs(
  * Returns distance in miles, or null on failure.
  */
 async function distanceViaRouteMatrix(oLat, oLng, dLat, dLng) {
-  if (!window.google?.maps?.importLibrary) return null;
+  console.log("[SmartRoom] RouteMatrix request:", {
+    origin: { lat: oLat, lng: oLng },
+    destination: { lat: dLat, lng: dLng },
+  });
+
+  if (!window.google?.maps?.importLibrary) {
+    console.warn("[SmartRoom] importLibrary not available");
+    return null;
+  }
 
   const routes = await window.google.maps.importLibrary("routes");
   const RouteMatrix =
     routes?.RouteMatrix ?? window.google?.maps?.routes?.RouteMatrix;
   if (!RouteMatrix || typeof RouteMatrix.computeRouteMatrix !== "function") {
+    console.warn("[SmartRoom] RouteMatrix.computeRouteMatrix not found");
     return null;
   }
 
@@ -183,6 +192,7 @@ async function distanceViaRouteMatrix(oLat, oLng, dLat, dLng) {
   };
 
   const result = await RouteMatrix.computeRouteMatrix(request);
+  console.log("[SmartRoom] RouteMatrix raw result:", result);
 
   // Real response shape (JS SDK, v=weekly):
   //   { matrix: { rows: [{ items: [{ distanceMeters, condition }, ...] }, ...] } }
@@ -192,9 +202,20 @@ async function distanceViaRouteMatrix(oLat, oLng, dLat, dLng) {
     const items = row?.items ?? row?.elements ?? [];
     for (const item of items) {
       const meters = extractMeters(item);
-      if (meters != null) return meters / 1609.344;
+      if (meters != null) {
+        const miles = meters / 1609.344;
+        console.log(
+          "[SmartRoom] ✓ Distance:",
+          meters,
+          "meters ≈",
+          miles.toFixed(2),
+          "miles",
+        );
+        return miles;
+      }
     }
   }
+  console.warn("[SmartRoom] RouteMatrix: no usable items in response");
 
   // Fallback shapes (AsyncIterable / Array / single element) for safety.
   if (result && typeof result[Symbol.asyncIterator] === "function") {

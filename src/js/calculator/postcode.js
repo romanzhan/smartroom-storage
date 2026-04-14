@@ -214,8 +214,23 @@ export function initPostcode({
   }
 
   async function drivingMilesOrFallback(originLat, originLng) {
+    console.log("[SmartRoom] drivingMilesOrFallback start", {
+      origin: { lat: originLat, lng: originLng },
+      dest: { lat: destLat, lng: destLng },
+      warehouseKey,
+    });
     if (!mapsGuard.tryDistanceMatrix()) {
-      return greatCircleDistanceMiles(originLat, originLng, destLat, destLng);
+      console.warn(
+        "[SmartRoom] mapsGuard BLOCKED the call — using great-circle fallback",
+      );
+      const fb = greatCircleDistanceMiles(
+        originLat,
+        originLng,
+        destLat,
+        destLng,
+      );
+      console.log("[SmartRoom] great-circle distance:", fb);
+      return fb;
     }
     try {
       await loadMapsJavaScriptApi(apiKey);
@@ -227,13 +242,23 @@ export function initPostcode({
       );
       if (miles != null) {
         mapsGuard.recordSuccess();
+        console.log("[SmartRoom] driving miles (API):", miles);
         return miles;
       }
+      console.warn("[SmartRoom] API returned null, using great-circle fallback");
       mapsGuard.recordFailure(0);
-    } catch {
+    } catch (err) {
+      console.error("[SmartRoom] drivingMilesOrFallback error:", err);
       mapsGuard.recordFailure(0);
     }
-    return greatCircleDistanceMiles(originLat, originLng, destLat, destLng);
+    const fb = greatCircleDistanceMiles(
+      originLat,
+      originLng,
+      destLat,
+      destLng,
+    );
+    console.log("[SmartRoom] fallback great-circle distance:", fb);
+    return fb;
   }
 
   async function resolvePlaceSelection(placeId, sessionRef, inputEl) {

@@ -22,6 +22,11 @@ export function initCalculator(siteConfig) {
   store.siteConfig = siteConfig ?? null;
   applySiteConfigUi(dom, siteConfig);
 
+  // Expose store for debugging / diagnostics (read-only usage is fine)
+  if (typeof window !== "undefined") {
+    window.__SR__ = store;
+  }
+
   // Priority: siteConfig (WP plugin injection) → inline (gh-pages) → env (.env dev)
   const googleMapsApiKey = String(
     siteConfig?.googleMapsApiKey ||
