@@ -69,8 +69,9 @@ register_activation_hook(__FILE__, function () {
             'admin_email'           => get_option('admin_email'),
             'email_customer'        => 1,
             'email_admin'           => 1,
-            'success_url'           => home_url('/smartroom-calculator/success/'),
-            'cancel_url'            => home_url('/smartroom-calculator/'),
+            'page_slug'             => 'smartroom-calculator',
+            'success_url'           => '',
+            'cancel_url'            => '',
         ]);
     }
 });

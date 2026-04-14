@@ -55,6 +55,12 @@ class SmartRoom_Calc_Shortcode {
     }
 
     public static function enqueue() {
+        // Ensure assets are registered — register_assets() hooks into wp_enqueue_scripts,
+        // but this method may be called earlier (from template_redirect in standalone page)
+        if (!wp_style_is(self::HANDLE, 'registered')) {
+            self::register_assets();
+        }
+
         wp_enqueue_style(self::HANDLE);
         wp_enqueue_script('gsap');
         wp_enqueue_script('gsap-scrollto');

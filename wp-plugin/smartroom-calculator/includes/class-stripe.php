@@ -35,10 +35,15 @@ class SmartRoom_Calc_Stripe {
         }
 
         $settings = SmartRoom_Calc_Settings::all();
-        $success_url = ($settings['success_url'] ?? home_url('/smartroom-calculator/success/'))
-            . (strpos($settings['success_url'] ?? '', '?') === false ? '?' : '&')
+        $success_base = !empty($settings['success_url'])
+            ? $settings['success_url']
+            : SmartRoom_Calc_Standalone_Page::get_url('success');
+        $success_url = $success_base
+            . (strpos($success_base, '?') === false ? '?' : '&')
             . 'session_id={CHECKOUT_SESSION_ID}';
-        $cancel_url = $settings['cancel_url'] ?? home_url('/smartroom-calculator/cancel/');
+        $cancel_url = !empty($settings['cancel_url'])
+            ? $settings['cancel_url']
+            : SmartRoom_Calc_Standalone_Page::get_url('cancel');
 
         // Line items breakdown
         $line_items = [];

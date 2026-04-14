@@ -99,7 +99,7 @@ class SmartRoom_Calc_Admin {
                         <small>Скопируйте Signing secret (whsec_...) и вставьте в настройки плагина.</small>
                     </li>
                     <li>Настройте калькулятор в <a href="<?php echo esc_url(admin_url('admin.php?page=smartroom-calc-config')); ?>">Настройки калькулятора</a></li>
-                    <li>Калькулятор доступен по адресу: <a href="<?php echo esc_url(home_url('/smartroom-calculator/')); ?>" target="_blank"><?php echo esc_html(home_url('/smartroom-calculator/')); ?></a></li>
+                    <li>Калькулятор доступен по адресу: <a href="<?php echo esc_url(SmartRoom_Calc_Standalone_Page::get_url()); ?>" target="_blank"><?php echo esc_html(SmartRoom_Calc_Standalone_Page::get_url()); ?></a></li>
                     <li>Или вставьте шорткод <code>[smartroom_calculator]</code> на любую страницу</li>
                 </ol>
             </div>
@@ -163,7 +163,19 @@ class SmartRoom_Calc_Admin {
                     </tr>
                 </table>
 
-                <h2>Валюта и URLs</h2>
+                <h2>URL страницы калькулятора</h2>
+                <table class="form-table">
+                    <tr>
+                        <th><label for="page_slug">Slug страницы</label></th>
+                        <td>
+                            <code><?php echo esc_html(home_url('/')); ?></code><input type="text" class="regular-text" id="page_slug" name="page_slug" value="<?php echo esc_attr($s['page_slug'] ?? 'smartroom-calculator'); ?>" style="width:240px"><code>/</code>
+                            <p class="description">Текущий URL: <a href="<?php echo esc_url(SmartRoom_Calc_Standalone_Page::get_url()); ?>" target="_blank"><?php echo esc_html(SmartRoom_Calc_Standalone_Page::get_url()); ?></a></p>
+                            <p class="description">После сохранения rewrite-правила будут обновлены автоматически. Если URL даёт 404 — зайдите в Settings → Permalinks и нажмите Save (без изменений).</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <h2>Валюта и URLs оплаты</h2>
                 <table class="form-table">
                     <tr>
                         <th><label for="currency">Валюта</label></th>
@@ -177,11 +189,17 @@ class SmartRoom_Calc_Admin {
                     </tr>
                     <tr>
                         <th><label for="success_url">Success URL</label></th>
-                        <td><input type="url" class="regular-text" id="success_url" name="success_url" value="<?php echo esc_attr($s['success_url'] ?? ''); ?>"></td>
+                        <td>
+                            <input type="url" class="regular-text" id="success_url" name="success_url" value="<?php echo esc_attr($s['success_url'] ?? ''); ?>" placeholder="<?php echo esc_attr(SmartRoom_Calc_Standalone_Page::get_url('success')); ?>">
+                            <p class="description">Оставьте пустым, чтобы использовать <code><?php echo esc_html(SmartRoom_Calc_Standalone_Page::get_url('success')); ?></code></p>
+                        </td>
                     </tr>
                     <tr>
                         <th><label for="cancel_url">Cancel URL</label></th>
-                        <td><input type="url" class="regular-text" id="cancel_url" name="cancel_url" value="<?php echo esc_attr($s['cancel_url'] ?? ''); ?>"></td>
+                        <td>
+                            <input type="url" class="regular-text" id="cancel_url" name="cancel_url" value="<?php echo esc_attr($s['cancel_url'] ?? ''); ?>" placeholder="<?php echo esc_attr(SmartRoom_Calc_Standalone_Page::get_url('cancel')); ?>">
+                            <p class="description">Оставьте пустым, чтобы использовать <code><?php echo esc_html(SmartRoom_Calc_Standalone_Page::get_url('cancel')); ?></code></p>
+                        </td>
                     </tr>
                 </table>
 
@@ -240,7 +258,7 @@ class SmartRoom_Calc_Admin {
         $fields = [
             'stripe_mode', 'stripe_test_pk', 'stripe_test_sk', 'stripe_test_whsec',
             'stripe_live_pk', 'stripe_live_sk', 'stripe_live_whsec',
-            'currency', 'success_url', 'cancel_url', 'admin_email',
+            'currency', 'success_url', 'cancel_url', 'admin_email', 'page_slug',
         ];
         $data = [];
         foreach ($fields as $f) {
@@ -251,7 +269,22 @@ class SmartRoom_Calc_Admin {
         $data['email_customer'] = !empty($_POST['email_customer']) ? 1 : 0;
         $data['email_admin'] = !empty($_POST['email_admin']) ? 1 : 0;
 
+        // Normalize page slug
+        if (isset($data['page_slug'])) {
+            $data['page_slug'] = trim(sanitize_title($data['page_slug']), '/');
+            if (!$data['page_slug']) {
+                $data['page_slug'] = SmartRoom_Calc_Standalone_Page::DEFAULT_SLUG;
+            }
+        }
+
+        $old = SmartRoom_Calc_Settings::all();
         SmartRoom_Calc_Settings::save($data);
+
+        // Flush rewrite rules if slug changed
+        if (!empty($data['page_slug']) && ($old['page_slug'] ?? '') !== $data['page_slug']) {
+            SmartRoom_Calc_Standalone_Page::add_rewrite_rule();
+            flush_rewrite_rules();
+        }
 
         wp_safe_redirect(add_query_arg('saved', '1', admin_url('admin.php?page=smartroom-calc-settings')));
         exit;
