@@ -1,68 +1,114 @@
 /**
- * Driving distance via Maps JavaScript API (DistanceMatrixService).
- * Works in the browser (unlike Distance Matrix REST, which is blocked by CORS).
- * No map div required.
+ * Driving distance via Maps JavaScript API.
+ *
+ * Uses the modern inline bootstrap loader (`google.maps.importLibrary`) which
+ * loads with `loading=async` and exposes libraries on demand. Primary path is
+ * `RouteMatrix.computeRouteMatrix` (Routes library, non-deprecated). Falls back
+ * to the legacy `DistanceMatrixService` only if the modern API isn't available.
  */
 
-let mapsScriptPromise = null;
-let mapsScriptKey = "";
+let bootstrapKey = "";
+let bootstrapCalled = false;
 
 /**
+ * Inject Google's official inline bootstrap loader. Idempotent per page —
+ * creates `window.google.maps.importLibrary(name)` that dynamically loads
+ * Maps libraries with `loading=async` baked into the URL.
+ *
+ * @param {string} apiKey
+ */
+function injectBootstrapLoader(apiKey) {
+  if (typeof window === "undefined") return;
+  if (window.google?.maps?.importLibrary) return;
+  if (bootstrapCalled && bootstrapKey === apiKey) return;
+
+  bootstrapCalled = true;
+  bootstrapKey = apiKey;
+
+  // Verbatim from https://developers.google.com/maps/documentation/javascript/load-maps-js-api
+  // Produces the URL:
+  //   https://maps.googleapis.com/maps/api/js?key=…&v=weekly&loading=async&libraries=…&callback=google.maps.__ib__
+  (function (g) {
+    let h;
+    let a;
+    let k;
+    const p = "The Google Maps JavaScript API";
+    const c = "google";
+    const l = "importLibrary";
+    const q = "__ib__";
+    const m = document;
+    let b = window;
+    b = b[c] || (b[c] = {});
+    const d = b.maps || (b.maps = {});
+    const r = new Set();
+    const e = new URLSearchParams();
+    const u = () =>
+      h ||
+      (h = new Promise((f, n) => {
+        a = m.createElement("script");
+        e.set("libraries", [...r] + "");
+        for (k in g) {
+          e.set(
+            k.replace(/[A-Z]/g, (t) => "_" + t[0].toLowerCase()),
+            g[k],
+          );
+        }
+        e.set("callback", c + ".maps." + q);
+        a.src = `https://maps.${c}apis.com/maps/api/js?` + e;
+        d[q] = f;
+        a.onerror = () => {
+          h = null;
+          n(new Error(p + " could not load."));
+        };
+        a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+        m.head.append(a);
+      }));
+    if (d[l]) {
+      console.warn(p + " only loads once. Ignoring:", g);
+    } else {
+      d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n));
+    }
+  })({
+    key: apiKey,
+    v: "weekly",
+    loading: "async",
+  });
+}
+
+/**
+ * Ensure the Maps JavaScript API bootstrap loader is injected.
+ * Returns a promise that resolves once `importLibrary` is available.
+ *
  * @param {string} apiKey
  * @returns {Promise<void>}
  */
 export function loadMapsJavaScriptApi(apiKey) {
   const key = (apiKey || "").trim();
-  if (!key) {
-    return Promise.reject(new Error("Missing Google Maps API key"));
+  if (!key) return Promise.reject(new Error("Missing Google Maps API key"));
+
+  try {
+    injectBootstrapLoader(key);
+  } catch (err) {
+    return Promise.reject(err);
   }
 
-  if (typeof window !== "undefined" && window.google?.maps?.DistanceMatrixService) {
-    return Promise.resolve();
+  if (!window.google?.maps?.importLibrary) {
+    return Promise.reject(new Error("Google Maps importLibrary bootstrap failed"));
   }
 
-  if (mapsScriptPromise && mapsScriptKey === key) {
-    return mapsScriptPromise;
-  }
-
-  mapsScriptKey = key;
-  mapsScriptPromise = new Promise((resolve, reject) => {
-    const cbName = `__smartroomGmInit_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    window[cbName] = () => {
-      try {
-        delete window[cbName];
-        if (window.google?.maps?.DistanceMatrixService) {
-          resolve();
-        } else {
-          mapsScriptPromise = null;
-          reject(new Error("Google Maps loaded without DistanceMatrixService"));
-        }
-      } catch (e) {
-        mapsScriptPromise = null;
-        reject(e);
-      }
-    };
-
-    const script = document.createElement("script");
-    script.async = true;
-    script.defer = true;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=${cbName}`;
-    script.onerror = () => {
-      delete window[cbName];
-      mapsScriptPromise = null;
-      reject(new Error("Failed to load Google Maps JavaScript API"));
-    };
-    document.head.appendChild(script);
-  });
-
-  return mapsScriptPromise;
+  return Promise.resolve();
 }
 
 /**
- * Driving route distance in miles (Distance Matrix via JS API).
+ * Driving distance in miles between two points.
+ *
+ * @param {number} originLat
+ * @param {number} originLng
+ * @param {number} destLat
+ * @param {number} destLng
  * @returns {Promise<number|null>}
  */
-export function getDrivingDistanceMilesJs(
+export async function getDrivingDistanceMilesJs(
   originLat,
   originLng,
   destLat,
@@ -78,16 +124,122 @@ export function getDrivingDistanceMilesJs(
     Number.isNaN(destLat) ||
     Number.isNaN(destLng)
   ) {
-    return Promise.resolve(null);
+    return null;
   }
+
+  // Try modern RouteMatrix (no deprecation warning).
+  try {
+    const distance = await distanceViaRouteMatrix(
+      originLat,
+      originLng,
+      destLat,
+      destLng,
+    );
+    if (distance != null) return distance;
+  } catch (err) {
+    console.warn("[SmartRoom] RouteMatrix failed, falling back:", err);
+  }
+
+  // Fallback to legacy DistanceMatrixService.
+  try {
+    return await distanceViaLegacyMatrix(
+      originLat,
+      originLng,
+      destLat,
+      destLng,
+    );
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Modern path — `google.maps.routes.RouteMatrix.computeRouteMatrix`.
+ * Returns distance in miles, or null on failure.
+ */
+async function distanceViaRouteMatrix(oLat, oLng, dLat, dLng) {
+  if (!window.google?.maps?.importLibrary) return null;
+
+  const routes = await window.google.maps.importLibrary("routes");
+  const RouteMatrix =
+    routes?.RouteMatrix ?? window.google?.maps?.routes?.RouteMatrix;
+  if (!RouteMatrix || typeof RouteMatrix.computeRouteMatrix !== "function") {
+    return null;
+  }
+
+  const request = {
+    origins: [
+      {
+        waypoint: {
+          location: { latLng: { latitude: oLat, longitude: oLng } },
+        },
+      },
+    ],
+    destinations: [
+      {
+        waypoint: {
+          location: { latLng: { latitude: dLat, longitude: dLng } },
+        },
+      },
+    ],
+    travelMode: "DRIVE",
+  };
+
+  const result = await RouteMatrix.computeRouteMatrix(request);
+
+  // Result can be an AsyncIterable or an array-like. Handle both.
+  if (result && typeof result[Symbol.asyncIterator] === "function") {
+    for await (const element of result) {
+      const meters = extractMeters(element);
+      if (meters != null) return meters / 1609.344;
+    }
+    return null;
+  }
+
+  if (Array.isArray(result)) {
+    for (const element of result) {
+      const meters = extractMeters(element);
+      if (meters != null) return meters / 1609.344;
+    }
+    return null;
+  }
+
+  // Single-element response shape
+  const meters = extractMeters(result);
+  return meters != null ? meters / 1609.344 : null;
+}
+
+function extractMeters(element) {
+  if (!element) return null;
+  const condition = element.condition;
+  if (condition && condition !== "ROUTE_EXISTS") return null;
+  const meters = element.distanceMeters;
+  return typeof meters === "number" && Number.isFinite(meters) ? meters : null;
+}
+
+/**
+ * Legacy path — DistanceMatrixService. Still works but triggers a
+ * deprecation warning. Used only when RouteMatrix is unavailable.
+ */
+async function distanceViaLegacyMatrix(oLat, oLng, dLat, dLng) {
+  // Load the legacy "core" / routes library so DistanceMatrixService is defined.
+  if (window.google?.maps?.importLibrary) {
+    try {
+      await window.google.maps.importLibrary("routes");
+    } catch {
+      /* fall through — library may already be loaded */
+    }
+  }
+
+  if (!window.google?.maps?.DistanceMatrixService) return null;
 
   return new Promise((resolve) => {
     try {
       const service = new window.google.maps.DistanceMatrixService();
       service.getDistanceMatrix(
         {
-          origins: [{ lat: originLat, lng: originLng }],
-          destinations: [{ lat: destLat, lng: destLng }],
+          origins: [{ lat: oLat, lng: oLng }],
+          destinations: [{ lat: dLat, lng: dLng }],
           travelMode: window.google.maps.TravelMode.DRIVING,
           unitSystem: window.google.maps.UnitSystem.IMPERIAL,
         },
@@ -96,18 +248,11 @@ export function getDrivingDistanceMilesJs(
             resolve(null);
             return;
           }
-          const row = response?.rows?.[0];
-          const element = row?.elements?.[0];
-          if (!element || element.status !== "OK") {
-            resolve(null);
-            return;
-          }
-          const meters = element.distance?.value;
-          if (typeof meters !== "number") {
-            resolve(null);
-            return;
-          }
-          resolve(meters / 1609.344);
+          const meters =
+            response?.rows?.[0]?.elements?.[0]?.distance?.value ?? null;
+          resolve(
+            typeof meters === "number" ? meters / 1609.344 : null,
+          );
         },
       );
     } catch {
