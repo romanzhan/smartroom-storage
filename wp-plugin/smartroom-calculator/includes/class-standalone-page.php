@@ -396,10 +396,59 @@ class SmartRoom_Calc_Standalone_Page {
 <link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('load-site-config.js')); ?>">
 <link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('calculator.js')); ?>">
 <script>window.__SMARTROOM_SITE_CONFIG__ = <?php echo $config_json; ?>;</script>
+<style>html,body{background:transparent}</style>
 </head>
 <body class="smartroom-calc-app">
 <?php echo $body_html; ?>
-<script type="module" crossorigin src="<?php echo esc_url(self::asset_url('wp.js'));  ?>"></script>
+<script type="module" crossorigin src="<?php echo esc_url(self::asset_url('wp.js')); ?>"></script>
+<script>
+/* Iframe host communication — auto-resize & break out of iframe for Stripe */
+(function () {
+    if (window.parent === window) return; // not in an iframe, nothing to do
+
+    function postHeight() {
+        try {
+            var h = Math.max(
+                document.body ? document.body.scrollHeight : 0,
+                document.documentElement ? document.documentElement.scrollHeight : 0
+            );
+            if (h > 0) {
+                window.parent.postMessage(
+                    { type: 'smartroom-calc-height', height: h },
+                    '*'
+                );
+            }
+        } catch (e) { /* noop */ }
+    }
+
+    // Report initial height after a tick and then on every mutation / load
+    postHeight();
+    window.addEventListener('load', postHeight);
+    window.addEventListener('resize', postHeight);
+
+    if ('ResizeObserver' in window) {
+        var ro = new ResizeObserver(postHeight);
+        if (document.documentElement) ro.observe(document.documentElement);
+        if (document.body) ro.observe(document.body);
+    } else {
+        // Fallback — poll at a low rate
+        setInterval(postHeight, 500);
+    }
+
+    // Watch DOM mutations too (gsap animations don't always fire resize)
+    if ('MutationObserver' in window) {
+        var mo = new MutationObserver(postHeight);
+        if (document.body) {
+            mo.observe(document.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                characterData: true,
+            });
+        }
+    }
+})();
+</script>
 </body>
 </html><?php
     }
