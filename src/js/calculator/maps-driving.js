@@ -167,21 +167,10 @@ async function distanceViaRouteMatrix(oLat, oLng, dLat, dLng) {
     return null;
   }
 
+  // JS SDK accepts LatLngLiteral / LatLng / Place directly in origins/destinations
   const request = {
-    origins: [
-      {
-        waypoint: {
-          location: { latLng: { latitude: oLat, longitude: oLng } },
-        },
-      },
-    ],
-    destinations: [
-      {
-        waypoint: {
-          location: { latLng: { latitude: dLat, longitude: dLng } },
-        },
-      },
-    ],
+    origins: [{ lat: oLat, lng: oLng }],
+    destinations: [{ lat: dLat, lng: dLng }],
     travelMode: "DRIVE",
   };
 
@@ -213,8 +202,16 @@ function extractMeters(element) {
   if (!element) return null;
   const condition = element.condition;
   if (condition && condition !== "ROUTE_EXISTS") return null;
-  const meters = element.distanceMeters;
-  return typeof meters === "number" && Number.isFinite(meters) ? meters : null;
+
+  const candidates = [
+    element.distanceMeters,
+    element?.distance?.meters,
+    element?.distance?.value,
+  ];
+  for (const v of candidates) {
+    if (typeof v === "number" && Number.isFinite(v)) return v;
+  }
+  return null;
 }
 
 /**
