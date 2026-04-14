@@ -26,6 +26,47 @@ class SmartRoom_Calc_Rest_Api {
             'callback' => [__CLASS__, 'get_config'],
             'permission_callback' => '__return_true',
         ]);
+
+        register_rest_route(self::NS, '/inventory', [
+            'methods'  => WP_REST_Server::CREATABLE,
+            'callback' => [__CLASS__, 'save_inventory'],
+            'permission_callback' => '__return_true',
+        ]);
+    }
+
+    public static function save_inventory(WP_REST_Request $req) {
+        $data = $req->get_json_params();
+        if (!is_array($data)) {
+            return new WP_REST_Response(['message' => 'Invalid payload'], 400);
+        }
+
+        $session_id = isset($data['session_id']) ? sanitize_text_field($data['session_id']) : '';
+        if (!$session_id) {
+            return new WP_REST_Response(['message' => 'session_id required'], 400);
+        }
+
+        $order_id = SmartRoom_Calc_Orders::find_by_session($session_id);
+        if (!$order_id) {
+            return new WP_REST_Response(['message' => 'Order not found'], 404);
+        }
+
+        $items = isset($data['items']) && is_array($data['items']) ? $data['items'] : [];
+        $notes = isset($data['notes']) ? sanitize_textarea_field($data['notes']) : '';
+
+        $clean = [
+            'items' => array_map(function ($it) {
+                return [
+                    'label' => sanitize_text_field($it['label'] ?? ''),
+                    'qty'   => max(0, (int) ($it['qty'] ?? 0)),
+                ];
+            }, $items),
+            'notes' => $notes,
+        ];
+
+        SmartRoom_Calc_Orders::save_inventory($order_id, $clean);
+        SmartRoom_Calc_Email::send_inventory_submitted($order_id, $clean);
+
+        return new WP_REST_Response(['ok' => true], 200);
     }
 
     public static function checkout(WP_REST_Request $req) {
@@ -96,13 +137,7 @@ class SmartRoom_Calc_Rest_Api {
             $order_id = SmartRoom_Calc_Orders::find_by_session($session_id);
 
             if ($order_id) {
-                $prev_status = SmartRoom_Calc_Orders::get_status($order_id);
-                SmartRoom_Calc_Orders::mark_paid($order_id, $payment_intent);
-
-                // Send emails only once
-                if ($prev_status !== SmartRoom_Calc_Orders::STATUS_PAID) {
-                    SmartRoom_Calc_Email::send_order_confirmation($order_id);
-                }
+                SmartRoom_Calc_Orders::mark_paid_and_notify($order_id, $payment_intent);
             }
         } elseif ($type === 'checkout.session.expired' || $type === 'payment_intent.payment_failed') {
             $session_id = $obj['id'] ?? '';

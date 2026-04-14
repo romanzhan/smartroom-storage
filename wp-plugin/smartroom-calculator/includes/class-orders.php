@@ -75,6 +75,43 @@ class SmartRoom_Calc_Orders {
         }
     }
 
+    /**
+     * Mark order as paid AND fire email notifications exactly once.
+     * Safe to call multiple times — emails are sent only on the first transition.
+     *
+     * @return bool True if this call did the marking, false if already paid.
+     */
+    public static function mark_paid_and_notify($post_id, $payment_intent_id = '') {
+        $was = self::get_status($post_id);
+        if ($was === self::STATUS_PAID) {
+            return false;
+        }
+        self::mark_paid($post_id, $payment_intent_id);
+        if (class_exists('SmartRoom_Calc_Email')) {
+            SmartRoom_Calc_Email::send_order_confirmation($post_id);
+        }
+        return true;
+    }
+
+    public static function get_mode($post_id) {
+        $data = self::get_data($post_id);
+        return $data['address']['mode'] ?? '';
+    }
+
+    public static function is_collection($post_id) {
+        return self::get_mode($post_id) === 'collection';
+    }
+
+    public static function save_inventory($post_id, $inventory) {
+        update_post_meta($post_id, '_sr_inventory', wp_json_encode($inventory));
+        update_post_meta($post_id, '_sr_inventory_submitted_at', time());
+    }
+
+    public static function get_inventory($post_id) {
+        $raw = get_post_meta($post_id, '_sr_inventory', true);
+        return $raw ? json_decode($raw, true) : null;
+    }
+
     public static function mark_failed($post_id) {
         update_post_meta($post_id, '_sr_status', self::STATUS_FAILED);
     }

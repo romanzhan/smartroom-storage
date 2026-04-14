@@ -112,6 +112,44 @@ class SmartRoom_Calc_Stripe {
     }
 
     /**
+     * Retrieve a Checkout Session from Stripe.
+     * Used as a fallback when webhook is not configured — lets the success page
+     * confirm payment directly without waiting for a webhook.
+     *
+     * @param string $session_id
+     * @return array|WP_Error
+     */
+    public static function retrieve_checkout_session($session_id) {
+        $sk = SmartRoom_Calc_Settings::stripe_sk();
+        if (!$sk) {
+            return new WP_Error('stripe_not_configured', 'Stripe secret key is not set');
+        }
+        if (!$session_id) {
+            return new WP_Error('missing_session', 'Session ID is required');
+        }
+
+        $url = self::API_BASE . '/checkout/sessions/' . urlencode($session_id);
+        $response = wp_remote_get($url, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $sk,
+            ],
+            'timeout' => 30,
+        ]);
+
+        if (is_wp_error($response)) return $response;
+
+        $code = wp_remote_retrieve_response_code($response);
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if ($code >= 200 && $code < 300) {
+            return $body;
+        }
+
+        $msg = $body['error']['message'] ?? 'Stripe API error';
+        return new WP_Error('stripe_api_error', $msg, ['status' => $code, 'body' => $body]);
+    }
+
+    /**
      * Verify a Stripe webhook signature.
      *
      * @param string $payload Raw request body

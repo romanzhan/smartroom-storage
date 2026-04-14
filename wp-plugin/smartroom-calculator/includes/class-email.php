@@ -6,6 +6,51 @@ class SmartRoom_Calc_Email {
         // no-op
     }
 
+    public static function send_inventory_submitted($order_id, $inventory) {
+        $settings = SmartRoom_Calc_Settings::all();
+        if (empty($settings['email_admin'])) return;
+
+        $customer = SmartRoom_Calc_Orders::get_customer($order_id);
+        $subject  = sprintf('[SmartRoom] Pickup checklist submitted — order #%d', $order_id);
+
+        $lines = [];
+        foreach (($inventory['items'] ?? []) as $it) {
+            if (!empty($it['qty']) && !empty($it['label'])) {
+                $lines[] = sprintf('%dx %s', (int) $it['qty'], $it['label']);
+            }
+        }
+        $notes = $inventory['notes'] ?? '';
+
+        ob_start(); ?>
+<!doctype html><html><body style="font-family:Arial,sans-serif;color:#1e293b;padding:20px;background:#f1f5f9">
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;padding:24px">
+<h2 style="color:#0d0b9c;margin-top:0">Pickup checklist submitted</h2>
+<p>Customer <strong><?php echo esc_html($customer['name'] ?? ''); ?></strong> (<?php echo esc_html($customer['email'] ?? ''); ?>) submitted a pickup checklist for order #<?php echo esc_html($order_id); ?>.</p>
+<h3>Items</h3>
+<?php if ($lines): ?>
+<ul><?php foreach ($lines as $l): ?><li><?php echo esc_html($l); ?></li><?php endforeach; ?></ul>
+<?php else: ?>
+<p><em>No items marked.</em></p>
+<?php endif; ?>
+<?php if ($notes): ?>
+<h3>Notes</h3>
+<p style="background:#f8fafc;padding:12px;border-radius:6px;white-space:pre-wrap"><?php echo esc_html($notes); ?></p>
+<?php endif; ?>
+<p style="margin-top:24px"><a href="<?php echo esc_url(admin_url('post.php?post=' . $order_id . '&action=edit')); ?>" style="background:#0d0b9c;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none">View order in admin</a></p>
+</div>
+</body></html>
+        <?php
+        $body = ob_get_clean();
+
+        $headers = [
+            'Content-Type: text/html; charset=UTF-8',
+            'From: ' . get_bloginfo('name') . ' <' . get_option('admin_email') . '>',
+        ];
+
+        $admin_email = $settings['admin_email'] ?? get_option('admin_email');
+        wp_mail($admin_email, $subject, $body, $headers);
+    }
+
     public static function send_order_confirmation($order_id) {
         $settings = SmartRoom_Calc_Settings::all();
         $customer = SmartRoom_Calc_Orders::get_customer($order_id);
