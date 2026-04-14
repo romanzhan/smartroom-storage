@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('SMARTROOM_CALC_VERSION', '1.0.0');
+define('SMARTROOM_CALC_VERSION', '1.0.2');
 define('SMARTROOM_CALC_FILE', __FILE__);
 define('SMARTROOM_CALC_PATH', plugin_dir_path(__FILE__));
 define('SMARTROOM_CALC_URL', plugin_dir_url(__FILE__));

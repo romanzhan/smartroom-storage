@@ -16,6 +16,17 @@ class SmartRoom_Calc_Standalone_Page {
         add_action('template_redirect', [__CLASS__, 'maybe_render']);
     }
 
+    /**
+     * Build an asset URL with a cache-busting query string (file mtime).
+     * Only useful for entry assets (HTML-referenced) — ESM chunks imported
+     * from inside other modules cannot be cache-busted this way.
+     */
+    public static function asset_url($relative) {
+        $file = SMARTROOM_CALC_PATH . 'assets/' . $relative;
+        $v = file_exists($file) ? filemtime($file) : SMARTROOM_CALC_VERSION;
+        return SMARTROOM_CALC_ASSETS_URL . $relative . '?v=' . $v;
+    }
+
     public static function get_slug() {
         $slug = SmartRoom_Calc_Settings::get('page_slug', self::DEFAULT_SLUG);
         $slug = trim((string) $slug, '/');
@@ -153,13 +164,13 @@ class SmartRoom_Calc_Standalone_Page {
 <title><?php echo esc_html($title); ?></title>
 <link rel="icon" type="image/svg+xml" href="<?php echo esc_url($url . 'favicon.svg'); ?>">
 <?php if ($load_calculator): ?>
-<link rel="stylesheet" href="<?php echo esc_url($url . 'runtime-utils.css'); ?>">
+<link rel="stylesheet" href="<?php echo esc_url(self::asset_url('runtime-utils.css')); ?>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
-<link rel="modulepreload" crossorigin href="<?php echo esc_url($url . 'modulepreload-polyfill.js'); ?>">
-<link rel="modulepreload" crossorigin href="<?php echo esc_url($url . 'runtime-utils.js'); ?>">
-<link rel="modulepreload" crossorigin href="<?php echo esc_url($url . 'load-site-config.js'); ?>">
-<link rel="modulepreload" crossorigin href="<?php echo esc_url($url . 'calculator.js'); ?>">
+<link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('modulepreload-polyfill.js')); ?>">
+<link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('runtime-utils.js')); ?>">
+<link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('load-site-config.js')); ?>">
+<link rel="modulepreload" crossorigin href="<?php echo esc_url(self::asset_url('calculator.js')); ?>">
 <script>window.__SMARTROOM_SITE_CONFIG__ = <?php echo $config_json; ?>;</script>
 <?php else: ?>
 <style>
@@ -180,7 +191,7 @@ class SmartRoom_Calc_Standalone_Page {
 <body class="smartroom-calc-app">
 <?php echo $body_html; ?>
 <?php if ($load_calculator): ?>
-<script type="module" crossorigin src="<?php echo esc_url($url . 'wp.js'); ?>"></script>
+<script type="module" crossorigin src="<?php echo esc_url(self::asset_url('wp.js')); ?>"></script>
 <?php endif; ?>
 </body>
 </html><?php
