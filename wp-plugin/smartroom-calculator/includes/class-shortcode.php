@@ -225,7 +225,6 @@ class SmartRoom_Calc_Shortcode {
     });
 })();
 </script>
-</div>
         <?php
         return ob_get_clean();
     }
