@@ -442,43 +442,30 @@ body.sr-embedded .storage-hero {
 (function () {
     if (window.parent === window) return; // not in iframe, nothing to do
 
-    var MAX_HEIGHT = 15000;       // hard cap — protects against runaway loops
-    var MIN_DELTA  = 4;           // skip reports smaller than this
-    var RUNAWAY_STEPS = 12;       // consecutive growths of < 20px that trigger freeze
+    var MAX_HEIGHT = 15000;  // hard cap — protects against runaway loops
+    var MIN_DELTA  = 4;      // skip reports smaller than this
 
     var lastReported = 0;
     var rafPending = false;
-    var growCount = 0;
-    var frozen = false;
 
     function measure() {
-        if (!document.body) return 0;
+        var de = document.documentElement;
+        var b  = document.body;
+        if (!b && !de) return 0;
         var h = Math.max(
-            document.body.offsetHeight || 0,
-            document.body.scrollHeight || 0
+            b  ? (b.scrollHeight || 0)  : 0,
+            b  ? (b.offsetHeight || 0)  : 0,
+            de ? (de.scrollHeight || 0) : 0,
+            de ? (de.offsetHeight || 0) : 0
         );
         return Math.min(Math.round(h), MAX_HEIGHT);
     }
 
     function doPost() {
         rafPending = false;
-        if (frozen) return;
 
         var h = measure();
         if (h <= 0) return;
-
-        // Detect slow runaway: small steady growth across many ticks
-        if (h > lastReported && (h - lastReported) < 20) {
-            growCount++;
-            if (growCount > RUNAWAY_STEPS) {
-                frozen = true;
-                console.warn('[SmartRoom] iframe height runaway detected — freezing at', lastReported);
-                return;
-            }
-        } else {
-            growCount = 0;
-        }
-
         if (Math.abs(h - lastReported) < MIN_DELTA) return;
 
         lastReported = h;
@@ -491,7 +478,7 @@ body.sr-embedded .storage-hero {
     }
 
     function schedulePost() {
-        if (rafPending || frozen) return;
+        if (rafPending) return;
         rafPending = true;
         if (window.requestAnimationFrame) {
             requestAnimationFrame(doPost);
