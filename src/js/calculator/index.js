@@ -3,6 +3,7 @@ import { applySiteConfigUi } from "./apply-site-config-ui.js";
 import { getCalculatorDom } from "./dom.js";
 import { attachCalculatorFlow } from "./flow.js";
 import { INLINE_GOOGLE_MAPS_API_KEY } from "./inline-maps-api-key.js";
+import { loadMapsJavaScriptApi } from "./maps-driving.js";
 import { initCalculatorModules } from "./modules-init.js";
 import { store } from "./store.js";
 
@@ -43,6 +44,16 @@ export function initCalculator(siteConfig) {
     } else {
       dom.initialView.insertAdjacentElement("afterbegin", note);
     }
+  }
+
+  // Inject the Google Maps bootstrap loader eagerly so that
+  // window.google.maps.importLibrary is available for any caller —
+  // including the distance calc flow and manual console diagnostics.
+  // This does not load the SDK yet; the first importLibrary() call does.
+  if (googleMapsApiKey) {
+    loadMapsJavaScriptApi(googleMapsApiKey).catch((err) => {
+      console.warn("[SmartRoom] Early Maps loader injection failed:", err);
+    });
   }
 
   let postcode;
