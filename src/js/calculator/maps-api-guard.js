@@ -104,7 +104,11 @@ export function createMapsApiGuard(options = {}) {
     },
 
     tryDistanceMatrix() {
-      if (inCooldown()) return false;
+      if (inCooldown()) {
+        lastMessage =
+          "Location services are briefly paused. Please wait before trying again.";
+        return false;
+      }
       pruneWindow(distanceMatrixTimes);
       if (distanceMatrixTimes.length >= MAX_DISTANCE_MATRIX_JS_PER_MIN) {
         lastMessage =

@@ -288,7 +288,8 @@ async function distanceViaLegacyMatrix(oLat, oLng, dLat, dLng) {
           );
         },
       );
-    } catch {
+    } catch (err) {
+      console.warn("[SmartRoom] distanceViaLegacyMatrix error:", err);
       resolve(null);
     }
   });

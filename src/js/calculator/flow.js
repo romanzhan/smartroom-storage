@@ -377,41 +377,9 @@ export function attachCalculatorFlow({
 
   function populateCheckoutSummary() {
     if (!checkoutSummaryBox) return;
-    const addr = store.modules.address?.getData();
-    const date = store.modules.date?.getData();
-
-    let html = "";
-    if (addr?.mode === "collection") {
-      html += `<p><strong>Service:</strong> Home Collection</p>`;
-      html += `<p><strong>Address:</strong> ${addr.address || "Not provided"}, Postcode: ${postcode.getSaved()}</p>`;
-      if (date && isValidDate(date.date)) {
-        const dateStr = date.date.toLocaleDateString("en-GB", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        });
-        const tw =
-          typeof date.timeWindow === "string" ? date.timeWindow : "";
-        html += `<p><strong>Date & Time:</strong> ${dateStr}${tw ? ` between ${tw}` : ""}</p>`;
-      }
-    } else {
-      const facName =
-        addr?.facility === "bloomsbury"
-          ? "Bloomsbury (WC1N 3QA)"
-          : "Hackney (N16 8DR)";
-      html += `<p><strong>Service:</strong> Drop-off</p>`;
-      html += `<p><strong>Location:</strong> ${facName}</p>`;
-      if (date && isValidDate(date.date)) {
-        const dateStr = date.date.toLocaleDateString("en-GB", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-        });
-        html += `<p><strong>Drop-off Date:</strong> ${dateStr}</p>`;
-      }
-    }
-    checkoutSummaryBox.innerHTML = html;
+    // Checkout summary is now rendered via store.getSnapshot().bookingDetails
+    // in the sidebar subscriber — no innerHTML needed here.
+    checkoutSummaryBox.textContent = "";
   }
 
   function transitionSteps(hideId, showId, newStepNumber) {
@@ -564,7 +532,7 @@ export function attachCalculatorFlow({
         }
         return;
       }
-      if (!dateData || dateData.hasInteracted) {
+      if (dateData?.hasInteracted) {
         moveToStep4();
       } else {
         dateModal.style.display = "flex";

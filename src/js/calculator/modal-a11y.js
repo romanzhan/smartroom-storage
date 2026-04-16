@@ -65,6 +65,16 @@ export function createCalcModalA11y({
   return {
     notifyOpened(overlay) {
       returnFocus = document.activeElement;
+      // Set ARIA attributes
+      if (overlay) {
+        overlay.setAttribute("role", "dialog");
+        overlay.setAttribute("aria-modal", "true");
+        const heading = overlay.querySelector("h2, h3, .calc-modal__title");
+        if (heading) {
+          if (!heading.id) heading.id = "modal-title-" + Date.now();
+          overlay.setAttribute("aria-labelledby", heading.id);
+        }
+      }
       const panel = overlay?.querySelector?.(".calc-modal");
       const list = focusableElements(panel);
       const closeBtn = panel?.querySelector(".calc-modal__close");

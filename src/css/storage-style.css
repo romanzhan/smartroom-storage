@@ -1,3 +1,16 @@
+/* Visually hidden but accessible to screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .storage-hero {
   position: relative;
   width: 100%;
@@ -273,6 +286,10 @@
   width: 100%;
   padding: 2px 0;
 }
+.calc-edit-input:focus-visible {
+  outline: 2px solid #0d0b9c;
+  outline-offset: 2px;
+}
 
 .storage-form__divider {
   width: 1px;
@@ -330,6 +347,10 @@
   color: #111827;
   outline: none;
   padding: 10px 0 10px 16px;
+}
+.storage-form__input:focus-visible {
+  outline: 2px solid #0d0b9c;
+  outline-offset: -2px;
 }
 
 .storage-form__input::placeholder,
@@ -1730,7 +1751,8 @@
 
 .storage-form__input-box:focus,
 .storage-form__textarea:focus {
-  outline: none;
+  outline: 2px solid #0d0b9c;
+  outline-offset: -2px;
   border-color: #0d0b9c;
   box-shadow: 0 0 0 3px rgba(13, 11, 156, 0.1);
 }

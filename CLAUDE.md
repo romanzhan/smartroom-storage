@@ -6,7 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm run dev          # Vite dev server on localhost:3000
-npm run build        # Production build to /dist/
+npm run build        # Production build to /dist/ (base: /smartroom-storage/)
+npm run build:wp     # WordPress build to /dist/ (base: ./ — relative paths)
 npm run preview      # Preview built site
 npm run test         # Vitest single run
 npm run test:watch   # Vitest watch mode
@@ -15,6 +16,8 @@ npm run deploy       # Build + deploy to gh-pages
 # Run a single test file
 npx vitest run src/js/calculator/store.test.js
 ```
+
+Requires Node >=18.
 
 Tests are co-located as `*.test.js` next to source files. Vitest config is in `vitest.config.js` (separate from vite.config.js), environment: `node`, pattern: `src/**/*.test.js`.
 
@@ -83,6 +86,12 @@ Small jobs (<2 m3) use fixed loading/unloading times and minimum price £65. Mov
 - Step 4: Contact details + checkout
 
 Each step validates before advancing. GSAP handles animations and scroll-to-error.
+
+### Build & entry points
+
+Vite has multiple entry points: `src/index.html` (main), `src/admin.html`, `src/wp.html`, `src/payment-success.html`. Build output uses stable filenames (no content hashes) for predictable WordPress asset URLs.
+
+CSS uses PostCSS with PurgeCSS in production to strip unused styles.
 
 ### HTML templating
 

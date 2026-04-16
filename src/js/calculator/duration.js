@@ -55,7 +55,7 @@ export function initDuration({
   function emitChange() {
     if (isRolling) {
       if (promoText) {
-        promoText.innerHTML = `Discounts apply to fixed-term plans only. Choose a duration to unlock savings.`;
+        promoText.innerHTML = `Discounts apply to fixed-term plans only. Switch to a fixed term to unlock savings.`;
         promoText.style.display = "";
       }
     } else {

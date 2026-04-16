@@ -87,7 +87,7 @@ export function calculateCollectionFee({
 
     // Pickup floor multiplier (customer's property)
     const pickupFloor =
-      propType === "apartment" ? Math.max(1, floor || 1) : 0;
+      propType === "apartment" ? Math.max(0, floor ?? 0) : 0;
     const hasLift = lift === "yes";
     const pickupMul = floorMultiplier(pickupFloor, hasLift, cfg);
 

@@ -1,135 +1,953 @@
+<section class="storage-hero smartroom-calc-app">
+  <video class="storage-hero__video" autoplay loop muted playsinline>
+    <source
+      src="https://smartroom.co.uk/wp-content/themes/hello-elementor/4569931-uhd_4096_2160_25fps.mp4"
+      type="video/mp4"
+    />
+  </video>
 
-      <section class="storage-hero smartroom-calc-app">
-        <video class="storage-hero__video" autoplay loop muted playsinline>
-          <source
-            src="https://smartroom.co.uk/wp-content/themes/hello-elementor/4569931-uhd_4096_2160_25fps.mp4"
-            type="video/mp4"
-          />
-        </video>
-      
-        <div class="storage-hero__overlay"></div>
-      
-        <div class="storage-hero__content">
-          <h1 class="storage-hero__title">
-            London storage with collection and delivery
-          </h1>
-      
-          <form class="storage-form" id="storageForm" action="#" novalidate>
-            <div class="storage-form__panel" id="formPanel">
-              <div class="calc-initial-view" id="initialView">
-                <div class="storage-form__toggle" id="sharedToggle">
-                  <button
-                    type="button"
-                    class="storage-toggle-btn is-active"
-                    data-value="boxes"
+  <div class="storage-hero__overlay"></div>
+
+  <div class="storage-hero__content">
+    <h1 class="storage-hero__title">
+      London storage with collection and delivery
+    </h1>
+
+    <form class="storage-form" id="storageForm" action="#" novalidate>
+      <div class="storage-form__panel" id="formPanel">
+        <div class="calc-initial-view" id="initialView">
+          <div class="storage-form__toggle" id="sharedToggle">
+            <button
+              type="button"
+              class="storage-toggle-btn is-active"
+              data-value="boxes"
+            >
+              For boxes
+            </button>
+            <button
+              type="button"
+              class="storage-toggle-btn"
+              data-value="furniture"
+            >
+              For furniture and boxes
+            </button>
+            <input
+              type="hidden"
+              name="storage_type"
+              id="storageType"
+              value="boxes"
+            />
+          </div>
+
+          <div class="storage-form__divider"></div>
+
+          <div class="storage-form__action-group">
+            <div class="storage-form__input-wrapper">
+              <label for="postcode" class="visually-hidden">Postcode</label>
+              <input
+                type="text"
+                id="postcode"
+                name="postcode"
+                class="storage-form__input"
+                placeholder="Enter Postcode"
+                autocomplete="off"
+                aria-label="Enter your postcode"
+              />
+              <ul class="autocomplete-list main-autocomplete"></ul>
+            </div>
+
+            <button
+              type="submit"
+              class="storage-form__submit"
+              aria-label="Get prices"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 12H19M19 12L12 5M19 12L12 19"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="calc-expanded-view" id="expandedView" style="display: none">
+          <div class="panel-top-bar" id="panelTopBar">
+            <button
+              type="button"
+              class="calc-back-btn"
+              aria-label="Close calculator"
+            >
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div
+              class="toggle-container-expanded"
+              id="toggleExpandedSlot"
+            ></div>
+
+            <div class="calc-postcode-display">
+              <div class="postcode-pill" id="postcodePill">
+                <svg
+                  class="pill-icon"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                <span class="calc-postcode-text" aria-label="Postcode"></span>
+                <button
+                  type="button"
+                  class="calc-edit-btn"
+                  aria-label="Edit postcode"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
                   >
-                    For boxes
-                  </button>
-                  <button
-                    type="button"
-                    class="storage-toggle-btn"
-                    data-value="furniture"
-                  >
-                    For furniture and boxes
-                  </button>
-                  <input
-                    type="hidden"
-                    name="storage_type"
-                    id="storageType"
-                    value="boxes"
-                  />
-                </div>
-      
-                <div class="storage-form__divider"></div>
-      
-                <div class="storage-form__action-group">
-                  <div class="storage-form__input-wrapper">
-                    <input
-                      type="text"
-                      id="postcode"
-                      name="postcode"
-                      class="storage-form__input"
-                      placeholder="Enter Postcode"
-                      autocomplete="off"
+                    <path
+                      d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"
                     />
-                    <ul class="autocomplete-list main-autocomplete"></ul>
-                  </div>
-      
-                  <button
-                    type="submit"
-                    class="storage-form__submit"
-                    aria-label="Get prices"
-                  >
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M5 12H19M19 12L12 5M19 12L12 19"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                    <path d="m15 5 4 4" />
+                  </svg>
+                </button>
               </div>
-      
-              <div class="calc-expanded-view" id="expandedView" style="display: none">
-                <div class="panel-top-bar" id="panelTopBar">
-                  <button
-                    type="button"
-                    class="calc-back-btn"
-                    aria-label="Close calculator"
-                  >
-                    <svg
-                      width="28"
-                      height="28"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    </svg>
-                  </button>
-      
+              <div
+                class="postcode-search-mode"
+                id="postcodeSearchMode"
+                style="display: none"
+              >
+                <svg
+                  class="search-icon"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input
+                  type="text"
+                  class="calc-edit-input"
+                  autocomplete="off"
+                  placeholder="Enter Postcode"
+                />
+                <ul class="autocomplete-list edit-autocomplete"></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-content">
+            <div class="calc-steps" id="calcStepsHeader">
+              <div class="step is-active">
+                <span class="step-num">1</span>
+                <span class="step-text">Storage</span>
+              </div>
+              <div class="step-divider"></div>
+              <div class="step">
+                <span class="step-num">2</span>
+                <span class="step-text">Address</span>
+              </div>
+              <div class="step-divider"></div>
+              <div class="step">
+                <span class="step-num">3</span>
+                <span class="step-text">Date</span>
+              </div>
+              <div class="step-divider"></div>
+              <div class="step">
+                <span class="step-num">4</span>
+                <span class="step-text">Checkout</span>
+              </div>
+            </div>
+
+            <div class="calc-layout" id="calcLayoutArea">
+              <div class="calc-main">
+                <div id="step1Container">
+                  <p class="calc-step1-intro">
+                    We collect from anywhere in London, store your items, and deliver them back.
+                    Drop-off and final pick-up available in Hackney &amp; Bloomsbury.
+                    No in-person access to the storage.
+                    Need daily access? <a href="https://smartroom.co.uk/#selfstorage" class="calc-step1-intro__link">Click here.</a>
+                  </p>
+                  <div class="calc-wrapper" id="calcBoxesView">
+                    <section class="calc-section">
+                      <h2 class="calc-section-title">
+                        How long are you storing?
+                      </h2>
+                      <div class="duration-card" id="durationCard">
+                        <div class="duration-card__header">
+                          <p class="duration-card__rolling-label">
+                            You are on a monthly rolling plan
+                          </p>
+                          <p class="duration-card__billing-note">
+                            Billed every 4 weeks. Unused weeks refunded with 2 weeks' notice. Minimum 2 weeks of storage.
+                          </p>
+                          <p class="duration-card__rolling-note" id="rollingNote" style="display:none">
+                            You've selected a rolling monthly plan — order your boxes back anytime.
+                          </p>
+                        </div>
+                        <div class="duration-card__controls">
+                          <div class="qty-control duration-qty">
+                            <button
+                              type="button"
+                              class="qty-btn"
+                              id="durationMinus"
+                            >
+                              −
+                            </button>
+                            <input
+                              type="number"
+                              class="qty-input"
+                              id="durationInput"
+                              value="6"
+                              min="1"
+                              max="36"
+                              readonly
+                            />
+                            <span class="qty-label">months</span>
+                            <button
+                              type="button"
+                              class="qty-btn"
+                              id="durationPlus"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            class="btn-text"
+                            id="rollingPlanToggle"
+                          >
+                            Not sure how long?
+                          </button>
+                        </div>
+                        <hr class="duration-card__divider" />
+                        <p class="duration-card__promo" id="durationPromo">
+                          The longer you store, the more you save. Enjoy a
+                          <strong>25% discount!</strong>
+                        </p>
+                      </div>
+                    </section>
+
+                    <section class="calc-section">
+                      <h2 class="calc-section-title">What are you storing?</h2>
+                      <div class="items-list" id="boxesItemsList"></div>
+                    </section>
+
+                    <section class="calc-section">
+                      <h2 class="calc-section-title">Insurance for box</h2>
+                      <div class="insurance-options" id="insuranceBoxes">
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_boxes" value="100" data-price="0" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;100</span>
+                            <span class="insurance-option__price">Free</span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_boxes" value="200" data-price="1.30" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;200</span>
+                            <span class="insurance-option__price">&pound;1.30 <small>per item/mo</small></span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_boxes" value="500" data-price="2.50" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;500</span>
+                            <span class="insurance-option__price">&pound;2.50 <small>per box/mo</small></span>
+                          </div>
+                        </label>
+                      </div>
+                      <p class="insurance-hint" id="insuranceBoxesHint" style="display:none">Please select an insurance option to continue</p>
+                    </section>
+                  </div>
+
                   <div
-                    class="toggle-container-expanded"
-                    id="toggleExpandedSlot"
-                  ></div>
-      
-                  <div class="calc-postcode-display">
-                    <div class="postcode-pill" id="postcodePill">
-                      <svg
-                        class="pill-icon"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                    class="calc-wrapper"
+                    id="calcFurnitureView"
+                    style="display: none; opacity: 0"
+                  >
+                    <section class="calc-section">
+                      <h2 class="calc-section-title">
+                        How long are you storing?
+                      </h2>
+                      <div class="duration-card" id="durationCardFurn">
+                        <div class="duration-card__header">
+                          <p class="duration-card__rolling-label">
+                            You are on a monthly rolling plan
+                          </p>
+                          <p class="duration-card__billing-note">
+                            Billed every 4 weeks. Unused weeks refunded with 2 weeks' notice. Minimum 2 weeks of storage.
+                          </p>
+                          <p class="duration-card__rolling-note" id="rollingNoteFurn" style="display:none">
+                            You've selected a rolling monthly plan — request your items back anytime.
+                          </p>
+                        </div>
+                        <div class="duration-card__controls">
+                          <div
+                            class="qty-control duration-qty"
+                            id="qtyWrapFurn"
+                          >
+                            <button
+                              type="button"
+                              class="qty-btn"
+                              id="durationMinusFurn"
+                            >
+                              −
+                            </button>
+                            <input
+                              type="number"
+                              class="qty-input"
+                              id="durationInputFurn"
+                              value="6"
+                              min="1"
+                              max="36"
+                              readonly
+                            />
+                            <span class="qty-label">months</span>
+                            <button
+                              type="button"
+                              class="qty-btn"
+                              id="durationPlusFurn"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            class="btn-text"
+                            id="rollingPlanToggleFurn"
+                          >
+                            Not sure how long?
+                          </button>
+                        </div>
+                        <hr class="duration-card__divider" />
+                        <p class="duration-card__promo" id="durationPromoFurn">
+                          The longer you store, the more you save. Enjoy a
+                          <strong>25% discount!</strong>
+                        </p>
+                      </div>
+                    </section>
+
+                    <section class="calc-section">
+                      <h2 class="calc-section-title">Select your unit size</h2>
+                      <div class="units-grid" id="unitsListContainer"></div>
+                    </section>
+
+                    <section class="calc-section">
+                      <h2 class="calc-section-title">Insurance for room</h2>
+                      <div class="insurance-options" id="insuranceFurniture">
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_furniture" value="500" data-price="4.50" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;500</span>
+                            <span class="insurance-option__price">&pound;4.50 <small>/mo</small></span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_furniture" value="2000" data-price="12.10" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;2,000</span>
+                            <span class="insurance-option__price">&pound;12.10 <small>/mo</small></span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_furniture" value="5000" data-price="29.50" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;5,000</span>
+                            <span class="insurance-option__price">&pound;29.50 <small>/mo</small></span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_furniture" value="7500" data-price="41.50" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;7,500</span>
+                            <span class="insurance-option__price">&pound;41.50 <small>/mo</small></span>
+                          </div>
+                        </label>
+                        <label class="insurance-option">
+                          <input type="radio" name="insurance_furniture" value="10000" data-price="60.90" />
+                          <div class="insurance-option__card">
+                            <span class="insurance-option__cover">&pound;10,000</span>
+                            <span class="insurance-option__price">&pound;60.90 <small>/mo</small></span>
+                          </div>
+                        </label>
+                      </div>
+                      <p class="insurance-hint" id="insuranceFurnitureHint" style="display:none">Please select an insurance option to continue</p>
+                    </section>
+                  </div>
+                </div>
+
+                <div
+                  id="step2Container"
+                  class="calc-wrapper"
+                  style="display: none; opacity: 0"
+                >
+                  <section class="calc-section">
+                    <h2 class="calc-section-title">
+                      How would you like to store?
+                    </h2>
+                    <div class="units-grid mb-4">
+                      <label
+                        class="unit-card"
+                        id="cardModeCollection"
                       >
-                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                        <circle cx="12" cy="10" r="3" />
-                      </svg>
-                      <span class="calc-postcode-text" aria-label="Postcode"></span>
+                        <input
+                          type="radio"
+                          name="delivery_mode"
+                          value="collection"
+                          class="unit-card__radio"
+                        />
+                        <div class="unit-card__info">
+                          <div class="unit-card__title">Collection</div>
+                          <div class="unit-card__size">
+                            We collect from your place, as soon as tomorrow.
+                          </div>
+                        </div>
+                      </label>
+                      <label class="unit-card" id="cardModeDropoff">
+                        <input
+                          type="radio"
+                          name="delivery_mode"
+                          value="dropoff"
+                          class="unit-card__radio"
+                        />
+                        <div class="unit-card__info">
+                          <div class="unit-card__title">Drop-off</div>
+                          <div class="unit-card__size">
+                            Drop off for free, anytime at WC1N 3QA or N16 8DR.
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </section>
+
+                  <div id="collectionBlock" style="display: none">
+                    <section class="calc-section">
+                      <h2 class="calc-section-title">Collection Details</h2>
+                      <p
+                        class="form-hint mb-3"
+                        id="collectionDistanceHint"
+                        hidden
+                      ></p>
+                      <div class="form-row split-2 mb-4">
+                        <div class="form-group">
+                          <label class="form-label" for="addressPostcode"
+                            >Postcode</label
+                          >
+                          <div class="storage-form__input-wrapper storage-form__input-wrapper--inline">
+                            <input
+                              type="text"
+                              class="storage-form__input-box"
+                              id="addressPostcode"
+                              name="address_postcode"
+                              autocomplete="postal-code"
+                              placeholder="e.g. SW1A 2AA"
+                              role="combobox"
+                              aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="listbox"
+                            />
+                            <ul class="autocomplete-list address-autocomplete" role="listbox"></ul>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label" for="addressTown"
+                            >Town / City</label
+                          >
+                          <input
+                            type="text"
+                            class="storage-form__input-box"
+                            id="addressTown"
+                            name="address_town"
+                            autocomplete="address-level2"
+                            placeholder="Town or city"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group mb-4">
+                        <label class="form-label" for="addressLine1"
+                          >Address line 1</label
+                        >
+                        <input
+                          type="text"
+                          class="storage-form__input-box"
+                          id="addressLine1"
+                          name="address_line1"
+                          autocomplete="address-line1"
+                          placeholder="Street and number"
+                        />
+                      </div>
+                      <div class="form-group mb-4">
+                        <label class="form-label" for="addressLine2"
+                          >Address line 2 (optional)</label
+                        >
+                        <input
+                          type="text"
+                          class="storage-form__input-box"
+                          id="addressLine2"
+                          name="address_line2"
+                          autocomplete="address-line2"
+                          placeholder="Flat, building name…"
+                        />
+                      </div>
+                      <div class="form-row split-2 mb-4">
+                        <div class="form-group">
+                          <label class="form-label">Property type</label>
+                          <div class="radio-pill-group">
+                            <label class="radio-pill"
+                              ><input
+                                type="radio"
+                                name="prop_type"
+                                value="ground"
+                                checked
+                              /><span>Ground Floor</span></label
+                            >
+                            <label class="radio-pill"
+                              ><input
+                                type="radio"
+                                name="prop_type"
+                                value="apartment"
+                              /><span>Other floor</span></label
+                            >
+                          </div>
+                        </div>
+                        <!-- Movers auto-calculated based on volume -->
+                      </div>
+                      <div
+                        class="form-row split-2 mb-4"
+                        id="apartmentFields"
+                        style="display: none"
+                      >
+                        <div class="form-group">
+                          <label class="form-label">Is there a lift?</label>
+                          <div class="radio-pill-group">
+                            <label class="radio-pill"
+                              ><input
+                                type="radio"
+                                name="lift"
+                                value="yes"
+                                checked
+                              /><span>Yes</span></label
+                            >
+                            <label class="radio-pill"
+                              ><input
+                                type="radio"
+                                name="lift"
+                                value="no"
+                              /><span>No</span></label
+                            >
+                          </div>
+                        </div>
+                        <div class="form-group" id="floorField" style="display: none">
+                          <label class="form-label">Floor</label>
+                          <div class="select-wrapper">
+                            <select
+                              id="aptFloor"
+                              class="storage-form__input-box storage-form__select"
+                            >
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                              <option value="7">7</option>
+                              <option value="8">8</option>
+                              <option value="9">9</option>
+                              <option value="10">10</option>
+                            </select>
+                            <svg class="select-wrapper__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M3 4.5 6 7.5 9 4.5"/>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label"
+                          >Special instructions (optional)</label
+                        >
+                        <textarea
+                          id="specialInstructions"
+                          class="storage-form__textarea"
+                          rows="3"
+                          placeholder="Parking details, access codes, etc."
+                        ></textarea>
+                      </div>
+                    </section>
+
+                    <!-- Extras (only visible for collection + furniture) -->
+                    <section class="calc-section" id="extrasSection" style="display: none">
+                      <h2 class="calc-section-title">Additional Services</h2>
+                      <div id="extrasContainer"></div>
+                    </section>
+                  </div>
+
+                  <div id="dropoffBlock" style="display: none">
+                    <section class="calc-section">
+                      <h2 class="calc-section-title">Select Facility</h2>
+                      <div class="units-grid">
+                        <label class="unit-card" id="facBloomsbury">
+                          <input
+                            type="radio"
+                            name="facility"
+                            value="bloomsbury"
+                            class="unit-card__radio"
+                          />
+                          <div class="unit-card__info">
+                            <div class="unit-card__title">
+                              Bloomsbury Facility
+                            </div>
+                            <div class="unit-card__size">
+                              20 Emerald St, WC1N 3QA
+                            </div>
+                          </div>
+                        </label>
+                        <label class="unit-card" id="facHackney">
+                          <input
+                            type="radio"
+                            name="facility"
+                            value="hackney"
+                            class="unit-card__radio"
+                          />
+                          <div class="unit-card__info">
+                            <div class="unit-card__title">Hackney Facility</div>
+                            <div class="unit-card__size">
+                              35 Stoke Newington High St, N16 8DR
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+
+                <div
+                  id="step3Container"
+                  class="calc-wrapper"
+                  style="display: none; opacity: 0"
+                >
+                  <section class="calc-section">
+                    <h2 class="calc-section-title">
+                      When do you want to move?
+                    </h2>
+
+                    <div class="date-summary-box" id="dateSummaryBox">
+                      <div class="date-summary-box__info">
+                        <span class="date-summary-box__label"
+                          >Collection Date</span
+                        >
+                        <div
+                          class="date-summary-box__value"
+                          id="currentDateDisplay"
+                        >
+                          Sunday, 5 April 2026
+                        </div>
+                      </div>
                       <button
                         type="button"
-                        class="calc-edit-btn"
-                        aria-label="Edit postcode"
+                        class="btn-secondary btn-sm"
+                        id="btnOpenCalendar"
                       >
+                        Change Date
+                      </button>
+                    </div>
+                    <p class="date-summary-box__today-note">
+                      For today, please call <a href="tel:02079936365" class="date-summary-box__phone">020 7993 6365</a>
+                    </p>
+
+                    <div
+                      class="custom-calendar-wrapper"
+                      id="calendarWrapper"
+                      style="display: none"
+                    >
+                      <div class="custom-calendar__header">
+                        <button
+                          type="button"
+                          class="custom-calendar__nav"
+                          id="calPrevMonth"
+                        >
+                          ❮
+                        </button>
+                        <div class="custom-calendar__month" id="calMonthYear">
+                          April 2026
+                        </div>
+                        <button
+                          type="button"
+                          class="custom-calendar__nav"
+                          id="calNextMonth"
+                        >
+                          ❯
+                        </button>
+                      </div>
+                      <div class="custom-calendar__days-row">
+                        <span>Mon</span><span>Tue</span><span>Wed</span
+                        ><span>Thu</span><span>Fri</span><span>Sat</span
+                        ><span>Sun</span>
+                      </div>
+                      <div
+                        class="custom-calendar__grid"
+                        id="calendarGrid"
+                      ></div>
+                      <div
+                        class="custom-calendar__footer"
+                        style="margin-top: 16px; text-align: right"
+                      >
+                        <button
+                          type="button"
+                          class="btn-primary btn-sm"
+                          id="btnSaveDate"
+                        >
+                          Save Date
+                        </button>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="calc-section">
+                    <h2 class="calc-section-title">Preferred Start Time</h2>
+                    <p class="calc-section-note">You will receive an updated 2 hour window the day before your collection date.</p>
+
+                    <h4
+                      class="calc-section-subtitle"
+                      style="font-size: 1rem; margin-bottom: 8px"
+                    >
+                      6-Hour Window <span style="color: #059669">(Free)</span>
+                    </h4>
+                    <div class="radio-pill-group time-slots-group mb-4">
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="8:00 AM - 2:00 PM"
+                          data-type="6-hour"
+                        /><span>8:00 AM - 2:00 PM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="2:00 PM - 8:00 PM"
+                          data-type="6-hour"
+                        /><span>2:00 PM - 8:00 PM</span></label
+                      >
+                    </div>
+
+                    <h4
+                      class="calc-section-subtitle"
+                      style="font-size: 1rem; margin-bottom: 8px"
+                    >
+                      2-Hour Window <span style="color: #ef4444">(+10%)</span>
+                    </h4>
+                    <div class="radio-pill-group time-slots-group is-grid mb-4">
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="8:00 AM - 10:00 AM"
+                          data-type="2-hour"
+                        /><span>8:00 AM - 10:00 AM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="10:00 AM - 12:00 PM"
+                          data-type="2-hour"
+                        /><span>10:00 AM - 12:00 PM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="12:00 PM - 2:00 PM"
+                          data-type="2-hour"
+                        /><span>12:00 PM - 2:00 PM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="2:00 PM - 4:00 PM"
+                          data-type="2-hour"
+                        /><span>2:00 PM - 4:00 PM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="4:00 PM - 6:00 PM"
+                          data-type="2-hour"
+                        /><span>4:00 PM - 6:00 PM</span></label
+                      >
+                      <label class="radio-pill"
+                        ><input
+                          type="radio"
+                          name="time_slot"
+                          value="6:00 PM - 8:00 PM"
+                          data-type="2-hour"
+                        /><span>6:00 PM - 8:00 PM</span></label
+                      >
+                    </div>
+                    <p class="insurance-hint" id="timeSlotHint" style="display:none">Please select a time window to continue</p>
+                  </section>
+                </div>
+
+                <div
+                  id="step4Container"
+                  class="calc-wrapper"
+                  style="display: none; opacity: 0"
+                >
+                  <section class="calc-section mb-5">
+                    <h2 class="calc-section-title">Booking Summary</h2>
+                    <div
+                      class="checkout-summary-box"
+                      id="checkoutSummaryBox"
+                    ></div>
+                  </section>
+
+                  <section class="calc-section">
+                    <h2 class="calc-section-title">Your Contact Details</h2>
+                    <div class="form-row split-2 mb-4">
+                      <div class="form-group" data-checkout-field="name">
+                        <label class="form-label" for="contactName"
+                          >Full Name *</label
+                        >
+                        <input
+                          type="text"
+                          class="storage-form__input-box"
+                          id="contactName"
+                          placeholder="John Doe"
+                          required
+                          autocomplete="name"
+                        />
+                        <p
+                          class="form-error-msg"
+                          id="contactNameError"
+                          role="alert"
+                          hidden
+                        ></p>
+                      </div>
+                      <div class="form-group" data-checkout-field="phone">
+                        <label class="form-label" for="contactPhone"
+                          >Phone Number *</label
+                        >
+                        <input
+                          type="tel"
+                          class="storage-form__input-box"
+                          id="contactPhone"
+                          placeholder="+44 7700 900077"
+                          required
+                          autocomplete="tel"
+                        />
+                        <p
+                          class="form-error-msg"
+                          id="contactPhoneError"
+                          role="alert"
+                          hidden
+                        ></p>
+                      </div>
+                    </div>
+                    <div class="form-group mb-4" data-checkout-field="email">
+                      <label class="form-label" for="contactEmail"
+                        >Email Address *</label
+                      >
+                      <input
+                        type="email"
+                        class="storage-form__input-box"
+                        id="contactEmail"
+                        placeholder="john@example.com"
+                        required
+                        autocomplete="email"
+                      />
+                      <p
+                        class="form-error-msg"
+                        id="contactEmailError"
+                        role="alert"
+                        hidden
+                      ></p>
+                    </div>
+                    <div class="form-group mb-4">
+                      <label class="form-label">Notes (optional)</label>
+                      <textarea
+                        id="contactNotes"
+                        class="storage-form__textarea"
+                        rows="2"
+                        placeholder="Any details for the driver..."
+                      ></textarea>
+                    </div>
+                    <p
+                      class="text-xs text-gray-500"
+                      style="
+                        font-size: 0.8rem;
+                        color: #6b7280;
+                        line-height: 1.4;
+                      "
+                    >
+                      It's your responsibility to inform this person that our
+                      driver will contact them during the job. By clicking 'Book
+                      Now', you authorise us to share essential booking details
+                      with them and the driver.
+                    </p>
+                  </section>
+                </div>
+              </div>
+
+              <div class="calc-sidebar-col">
+              <div class="calc-sidebar" id="calcSidebar">
+                <div class="summary-card" id="summaryCard">
+                  <div class="summary-mobile-header" id="summaryMobileToggle">
+                    <div class="summary-mobile-info">
+                      <span class="summary-mobile-label">Total due</span>
+                      <div class="summary-mobile-price-row">
+                        <span
+                          class="summary-mobile-total"
+                          id="mobileSummaryTotal"
+                          >£0.00</span
+                        >
                         <svg
-                          width="16"
-                          height="16"
+                          class="summary-mobile-icon"
+                          width="20"
+                          height="20"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
@@ -137,20 +955,78 @@
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         >
-                          <path
-                            d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"
-                          />
-                          <path d="m15 5 4 4" />
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="summary-actions-mobile">
+                      <button
+                        type="button"
+                        class="btn-step-back"
+                        id="mobileStepBackBtn"
+                        style="display: none"
+                        aria-label="Go back"
+                      >
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="m15 18-6-6 6-6" />
                         </svg>
                       </button>
+                      <button
+                        type="button"
+                        class="btn-continue"
+                        id="mobileContinueBtn"
+                        disabled
+                      >
+                        Continue
+                      </button>
                     </div>
+                  </div>
+
+                  <div class="summary-card__content">
+                    <h3 class="summary-card__title">
+                      Due now - upfront payment
+                    </h3>
+                    <div class="summary-card__items" id="summaryItems">
+                      <div class="summary-empty">
+                        Please select items to store.
+                      </div>
+                    </div>
+
+                    <div class="summary-card__totals">
+                      <div class="summary-row summary-total">
+                        <span>Total due today</span>
+                        <span id="summaryTotal">£0.00</span>
+                      </div>
+                    </div>
+
+                    <div class="summary-card__monthly">
+                      <div class="summary-row">
+                        <span>Future monthly payments</span>
+                        <span id="futureMonthlyAmount">£0.00</span>
+                      </div>
+                      <p class="summary-card__monthly-note">
+                        This is the amount you'll pay each month while your stuff's in storage.
+                      </p>
+                    </div>
+
                     <div
-                      class="postcode-search-mode"
-                      id="postcodeSearchMode"
-                      style="display: none"
+                      class="summary-card__info"
+                      id="summaryCardInfo"
+                      role="button"
+                      tabindex="-1"
+                      aria-expanded="false"
+                      aria-label="Flexible and transparent policy. Expand full text when truncated."
                     >
                       <svg
-                        class="search-icon"
                         width="20"
                         height="20"
                         viewBox="0 0 24 24"
@@ -159,1089 +1035,180 @@
                         stroke-width="2"
                         stroke-linecap="round"
                         stroke-linejoin="round"
+                        aria-hidden="true"
                       >
-                        <circle cx="11" cy="11" r="8" />
-                        <path d="m21 21-4.3-4.3" />
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 16v-4" />
+                        <path d="M12 8h.01" />
                       </svg>
-                      <input
-                        type="text"
-                        class="calc-edit-input"
-                        autocomplete="off"
-                        placeholder="Enter Postcode"
-                      />
-                      <ul class="autocomplete-list edit-autocomplete"></ul>
-                    </div>
-                  </div>
-                </div>
-      
-                <div class="calc-content">
-                  <div class="calc-steps" id="calcStepsHeader">
-                    <div class="step is-active">
-                      <span class="step-num">1</span>
-                      <span class="step-text">Storage</span>
-                    </div>
-                    <div class="step-divider"></div>
-                    <div class="step">
-                      <span class="step-num">2</span>
-                      <span class="step-text">Address</span>
-                    </div>
-                    <div class="step-divider"></div>
-                    <div class="step">
-                      <span class="step-num">3</span>
-                      <span class="step-text">Date</span>
-                    </div>
-                    <div class="step-divider"></div>
-                    <div class="step">
-                      <span class="step-num">4</span>
-                      <span class="step-text">Checkout</span>
-                    </div>
-                  </div>
-      
-                  <div class="calc-layout" id="calcLayoutArea">
-                    <div class="calc-main">
-                      <div id="step1Container">
-                        <p class="calc-step1-intro">
-                          We collect from anywhere in London, store your items, and deliver them back.
-                          Drop-off and final pick-up available in Hackney &amp; Bloomsbury.
-                          No in-person access to the storage.
-                          Need daily access? <a href="https://smartroom.co.uk/#selfstorage" class="calc-step1-intro__link">Click here.</a>
-                        </p>
-                        <div class="calc-wrapper" id="calcBoxesView">
-                          <section class="calc-section">
-                            <h3 class="calc-section-title">
-                              How long are you storing?
-                            </h3>
-                            <div class="duration-card" id="durationCard">
-                              <div class="duration-card__header">
-                                <p class="duration-card__rolling-label">
-                                  You are on a monthly rolling plan
-                                </p>
-                                <p class="duration-card__billing-note">
-                                  Billed every 4 weeks. Unused weeks refunded with 2 weeks' notice. Minimum 2 weeks of storage.
-                                </p>
-                                <p class="duration-card__rolling-note" id="rollingNote" style="display:none">
-                                  You've selected a rolling monthly plan — order your boxes back anytime.
-                                </p>
-                              </div>
-                              <div class="duration-card__controls">
-                                <div class="qty-control duration-qty">
-                                  <button
-                                    type="button"
-                                    class="qty-btn"
-                                    id="durationMinus"
-                                  >
-                                    −
-                                  </button>
-                                  <input
-                                    type="number"
-                                    class="qty-input"
-                                    id="durationInput"
-                                    value="6"
-                                    min="1"
-                                    max="36"
-                                    readonly
-                                  />
-                                  <span class="qty-label">months</span>
-                                  <button
-                                    type="button"
-                                    class="qty-btn"
-                                    id="durationPlus"
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                                <button
-                                  type="button"
-                                  class="btn-text"
-                                  id="rollingPlanToggle"
-                                >
-                                  Not sure how long?
-                                </button>
-                              </div>
-                              <hr class="duration-card__divider" />
-                              <p class="duration-card__promo" id="durationPromo">
-                                The longer you store, the more you save. Enjoy a
-                                <strong>25% discount!</strong>
-                              </p>
-                            </div>
-                          </section>
-      
-                          <section class="calc-section">
-                            <h3 class="calc-section-title">What are you storing?</h3>
-                            <div class="items-list" id="boxesItemsList"></div>
-                          </section>
-      
-                          <section class="calc-section">
-                            <h3 class="calc-section-title">Insurance for box</h3>
-                            <div class="insurance-options" id="insuranceBoxes">
-                              <label class="insurance-option">
-                                <input type="radio" name="insurance_boxes" value="100" data-price="0" />
-                                <div class="insurance-option__card">
-                                  <span class="insurance-option__cover">&pound;100</span>
-                                  <span class="insurance-option__price">Free</span>
-                                </div>
-                              </label>
-                              <label class="insurance-option">
-                                <input type="radio" name="insurance_boxes" value="200" data-price="1.30" />
-                                <div class="insurance-option__card">
-                                  <span class="insurance-option__cover">&pound;200</span>
-                                  <span class="insurance-option__price">&pound;1.30 <small>per item/mo</small></span>
-                                </div>
-                              </label>
-                              <label class="insurance-option">
-                                <input type="radio" name="insurance_boxes" value="500" data-price="2.50" />
-                                <div class="insurance-option__card">
-                                  <span class="insurance-option__cover">&pound;500</span>
-                                  <span class="insurance-option__price">&pound;2.50 <small>per box/mo</small></span>
-                                </div>
-                              </label>
-                            </div>
-                            <p class="insurance-hint" id="insuranceBoxesHint" style="display:none">Please select an insurance option to continue</p>
-                          </section>
-                        </div>
-      
-                        <div
-                          class="calc-wrapper"
-                          id="calcFurnitureView"
-                          style="display: none; opacity: 0"
+                      <p class="summary-card__info-text">
+                        <strong>Flexible & Transparent.</strong> Cancel or
+                        modify your collection for free up to 48 hours before
+                        your scheduled slot. No hidden fees.
+                      </p>
+                      <span
+                        class="summary-card__info-chevron"
+                        aria-hidden="true"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
                         >
-                          <section class="calc-section">
-                            <h3 class="calc-section-title">
-                              How long are you storing?
-                            </h3>
-                            <div class="duration-card" id="durationCardFurn">
-                              <div class="duration-card__header">
-                                <p class="duration-card__rolling-label">
-                                  You are on a monthly rolling plan
-                                </p>
-                                <p class="duration-card__billing-note">
-                                  Billed every 4 weeks. Unused weeks refunded with 2 weeks' notice. Minimum 2 weeks of storage.
-                                </p>
-                                <p class="duration-card__rolling-note" id="rollingNoteFurn" style="display:none">
-                                  You've selected a rolling monthly plan — request your items back anytime.
-                                </p>
-                              </div>
-                              <div class="duration-card__controls">
-                                <div
-                                  class="qty-control duration-qty"
-                                  id="qtyWrapFurn"
-                                >
-                                  <button
-                                    type="button"
-                                    class="qty-btn"
-                                    id="durationMinusFurn"
-                                  >
-                                    −
-                                  </button>
-                                  <input
-                                    type="number"
-                                    class="qty-input"
-                                    id="durationInputFurn"
-                                    value="6"
-                                    min="1"
-                                    max="36"
-                                    readonly
-                                  />
-                                  <span class="qty-label">months</span>
-                                  <button
-                                    type="button"
-                                    class="qty-btn"
-                                    id="durationPlusFurn"
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                                <button
-                                  type="button"
-                                  class="btn-text"
-                                  id="rollingPlanToggleFurn"
-                                >
-                                  Not sure how long?
-                                </button>
-                              </div>
-                              <hr class="duration-card__divider" />
-                              <p class="duration-card__promo" id="durationPromoFurn">
-                                The longer you store, the more you save. Enjoy a
-                                <strong>25% discount!</strong>
-                              </p>
-                            </div>
-                          </section>
-      
-                          <section class="calc-section">
-                            <h3 class="calc-section-title">Select your unit size</h3>
-                            <div class="units-grid" id="unitsListContainer"></div>
-                          </section>
-      
-                          <section class="calc-section">
-                            <h3 class="calc-section-title">Insurance for room</h3>
-                            <div class="insurance-options" id="insuranceFurniture">
-                              <label class="insurance-option">
-                                <input type="radio" name="insurance_furniture" value="500" data-price="4.50" />
-                                <div class="insurance-option__card">
-                                  <span class="insurance-option__cover">&pound;500</span>
-                                  <span class="insurance-option__price">&pound;4.50 <small>/mo</small></span>
-                                </div>
-                              </label>
-                              <label class="insurance-option">
-                                <input type="radio" name="insurance_furniture" value="2000" data-price="12.10" />
-                                <div class="insurance-option__card">
-                                  <span class="insurance-option__cover">&pound;2,000</span>
-                                  <span class="insurance-option__price">&pound;12.10 <small>/mo</small></span>
-                                </div>
-                              </label>
-                              <label class="insurance-option">
-                                <input type="radio" name="insurance_furniture" value="5000" data-price="29.50" />
-                                <div class="insurance-option__card">
-                                  <span class="insurance-option__cover">&pound;5,000</span>
-                                  <span class="insurance-option__price">&pound;29.50 <small>/mo</small></span>
-                                </div>
-                              </label>
-                              <label class="insurance-option">
-                                <input type="radio" name="insurance_furniture" value="7500" data-price="41.50" />
-                                <div class="insurance-option__card">
-                                  <span class="insurance-option__cover">&pound;7,500</span>
-                                  <span class="insurance-option__price">&pound;41.50 <small>/mo</small></span>
-                                </div>
-                              </label>
-                              <label class="insurance-option">
-                                <input type="radio" name="insurance_furniture" value="10000" data-price="60.90" />
-                                <div class="insurance-option__card">
-                                  <span class="insurance-option__cover">&pound;10,000</span>
-                                  <span class="insurance-option__price">&pound;60.90 <small>/mo</small></span>
-                                </div>
-                              </label>
-                            </div>
-                            <p class="insurance-hint" id="insuranceFurnitureHint" style="display:none">Please select an insurance option to continue</p>
-                          </section>
-                        </div>
-                      </div>
-      
-                      <div
-                        id="step2Container"
-                        class="calc-wrapper"
-                        style="display: none; opacity: 0"
-                      >
-                        <section class="calc-section">
-                          <h3 class="calc-section-title">
-                            How would you like to store?
-                          </h3>
-                          <div class="units-grid mb-4">
-                            <label
-                              class="unit-card"
-                              id="cardModeCollection"
-                            >
-                              <input
-                                type="radio"
-                                name="delivery_mode"
-                                value="collection"
-                                class="unit-card__radio"
-                              />
-                              <div class="unit-card__info">
-                                <div class="unit-card__title">Collection</div>
-                                <div class="unit-card__size">
-                                  We collect from your place, as soon as tomorrow.
-                                </div>
-                              </div>
-                            </label>
-                            <label class="unit-card" id="cardModeDropoff">
-                              <input
-                                type="radio"
-                                name="delivery_mode"
-                                value="dropoff"
-                                class="unit-card__radio"
-                              />
-                              <div class="unit-card__info">
-                                <div class="unit-card__title">Drop-off</div>
-                                <div class="unit-card__size">
-                                  Drop off for free, anytime at WC1N 3QA or N16 8DR.
-                                </div>
-                              </div>
-                            </label>
-                          </div>
-                        </section>
-      
-                        <div id="collectionBlock" style="display: none">
-                          <section class="calc-section">
-                            <h3 class="calc-section-title">Collection Details</h3>
-                            <p
-                              class="form-hint mb-3"
-                              id="collectionDistanceHint"
-                              hidden
-                            ></p>
-                            <div class="form-row split-2 mb-4">
-                              <div class="form-group">
-                                <label class="form-label" for="addressPostcode"
-                                  >Postcode</label
-                                >
-                                <div class="storage-form__input-wrapper storage-form__input-wrapper--inline">
-                                  <input
-                                    type="text"
-                                    class="storage-form__input-box"
-                                    id="addressPostcode"
-                                    name="address_postcode"
-                                    autocomplete="postal-code"
-                                    placeholder="e.g. SW1A 2AA"
-                                    role="combobox"
-                                    aria-autocomplete="list"
-                                    aria-expanded="false"
-                                    aria-haspopup="listbox"
-                                  />
-                                  <ul class="autocomplete-list address-autocomplete" role="listbox"></ul>
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label class="form-label" for="addressTown"
-                                  >Town / City</label
-                                >
-                                <input
-                                  type="text"
-                                  class="storage-form__input-box"
-                                  id="addressTown"
-                                  name="address_town"
-                                  autocomplete="address-level2"
-                                  placeholder="Town or city"
-                                />
-                              </div>
-                            </div>
-                            <div class="form-group mb-4">
-                              <label class="form-label" for="addressLine1"
-                                >Address line 1</label
-                              >
-                              <input
-                                type="text"
-                                class="storage-form__input-box"
-                                id="addressLine1"
-                                name="address_line1"
-                                autocomplete="address-line1"
-                                placeholder="Street and number"
-                              />
-                            </div>
-                            <div class="form-group mb-4">
-                              <label class="form-label" for="addressLine2"
-                                >Address line 2 (optional)</label
-                              >
-                              <input
-                                type="text"
-                                class="storage-form__input-box"
-                                id="addressLine2"
-                                name="address_line2"
-                                autocomplete="address-line2"
-                                placeholder="Flat, building name…"
-                              />
-                            </div>
-                            <div class="form-row split-2 mb-4">
-                              <div class="form-group">
-                                <label class="form-label">Property type</label>
-                                <div class="radio-pill-group">
-                                  <label class="radio-pill"
-                                    ><input
-                                      type="radio"
-                                      name="prop_type"
-                                      value="ground"
-                                      checked
-                                    /><span>Ground Floor</span></label
-                                  >
-                                  <label class="radio-pill"
-                                    ><input
-                                      type="radio"
-                                      name="prop_type"
-                                      value="apartment"
-                                    /><span>Other floor</span></label
-                                  >
-                                </div>
-                              </div>
-                              <!-- Movers auto-calculated based on volume -->
-                            </div>
-                            <div
-                              class="form-row split-2 mb-4"
-                              id="apartmentFields"
-                              style="display: none"
-                            >
-                              <div class="form-group">
-                                <label class="form-label">Is there a lift?</label>
-                                <div class="radio-pill-group">
-                                  <label class="radio-pill"
-                                    ><input
-                                      type="radio"
-                                      name="lift"
-                                      value="yes"
-                                      checked
-                                    /><span>Yes</span></label
-                                  >
-                                  <label class="radio-pill"
-                                    ><input
-                                      type="radio"
-                                      name="lift"
-                                      value="no"
-                                    /><span>No</span></label
-                                  >
-                                </div>
-                              </div>
-                              <div class="form-group" id="floorField" style="display: none">
-                                <label class="form-label">Floor</label>
-                                <div class="select-wrapper">
-                                  <select
-                                    id="aptFloor"
-                                    class="storage-form__input-box storage-form__select"
-                                  >
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
-                                  </select>
-                                  <svg class="select-wrapper__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 4.5 6 7.5 9 4.5"/>
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label class="form-label"
-                                >Special instructions (optional)</label
-                              >
-                              <textarea
-                                id="specialInstructions"
-                                class="storage-form__textarea"
-                                rows="3"
-                                placeholder="Parking details, access codes, etc."
-                              ></textarea>
-                            </div>
-                          </section>
-      
-                          <!-- Extras (only visible for collection + furniture) -->
-                          <section class="calc-section" id="extrasSection" style="display: none">
-                            <h3 class="calc-section-title">Additional Services</h3>
-                            <div id="extrasContainer"></div>
-                          </section>
-                        </div>
-      
-                        <div id="dropoffBlock" style="display: none">
-                          <section class="calc-section">
-                            <h3 class="calc-section-title">Select Facility</h3>
-                            <div class="units-grid">
-                              <label class="unit-card" id="facBloomsbury">
-                                <input
-                                  type="radio"
-                                  name="facility"
-                                  value="bloomsbury"
-                                  class="unit-card__radio"
-                                />
-                                <div class="unit-card__info">
-                                  <div class="unit-card__title">
-                                    Bloomsbury Facility
-                                  </div>
-                                  <div class="unit-card__size">
-                                    20 Emerald St, WC1N 3QA
-                                  </div>
-                                </div>
-                              </label>
-                              <label class="unit-card" id="facHackney">
-                                <input
-                                  type="radio"
-                                  name="facility"
-                                  value="hackney"
-                                  class="unit-card__radio"
-                                />
-                                <div class="unit-card__info">
-                                  <div class="unit-card__title">Hackney Facility</div>
-                                  <div class="unit-card__size">
-                                    35 Stoke Newington High St, N16 8DR
-                                  </div>
-                                </div>
-                              </label>
-                            </div>
-                          </section>
-                        </div>
-                      </div>
-      
-                      <div
-                        id="step3Container"
-                        class="calc-wrapper"
-                        style="display: none; opacity: 0"
-                      >
-                        <section class="calc-section">
-                          <h3 class="calc-section-title">
-                            When do you want to move?
-                          </h3>
-      
-                          <div class="date-summary-box" id="dateSummaryBox">
-                            <div class="date-summary-box__info">
-                              <span class="date-summary-box__label"
-                                >Collection Date</span
-                              >
-                              <div
-                                class="date-summary-box__value"
-                                id="currentDateDisplay"
-                              >
-                                Sunday, 5 April 2026
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              class="btn-secondary btn-sm"
-                              id="btnOpenCalendar"
-                            >
-                              Change Date
-                            </button>
-                          </div>
-                          <p class="date-summary-box__today-note">
-                            For today, please call <a href="tel:02079936365" class="date-summary-box__phone">020 7993 6365</a>
-                          </p>
-      
-                          <div
-                            class="custom-calendar-wrapper"
-                            id="calendarWrapper"
-                            style="display: none"
-                          >
-                            <div class="custom-calendar__header">
-                              <button
-                                type="button"
-                                class="custom-calendar__nav"
-                                id="calPrevMonth"
-                              >
-                                ❮
-                              </button>
-                              <div class="custom-calendar__month" id="calMonthYear">
-                                April 2026
-                              </div>
-                              <button
-                                type="button"
-                                class="custom-calendar__nav"
-                                id="calNextMonth"
-                              >
-                                ❯
-                              </button>
-                            </div>
-                            <div class="custom-calendar__days-row">
-                              <span>Mon</span><span>Tue</span><span>Wed</span
-                              ><span>Thu</span><span>Fri</span><span>Sat</span
-                              ><span>Sun</span>
-                            </div>
-                            <div
-                              class="custom-calendar__grid"
-                              id="calendarGrid"
-                            ></div>
-                            <div
-                              class="custom-calendar__footer"
-                              style="margin-top: 16px; text-align: right"
-                            >
-                              <button
-                                type="button"
-                                class="btn-primary btn-sm"
-                                id="btnSaveDate"
-                              >
-                                Save Date
-                              </button>
-                            </div>
-                          </div>
-                        </section>
-      
-                        <section class="calc-section">
-                          <h3 class="calc-section-title">Preferred Start Time</h3>
-                          <p class="calc-section-note">You will receive an updated 2 hour window the day before your collection date.</p>
-      
-                          <h4
-                            class="calc-section-subtitle"
-                            style="font-size: 1rem; margin-bottom: 8px"
-                          >
-                            6-Hour Window <span style="color: #059669">(Free)</span>
-                          </h4>
-                          <div class="radio-pill-group time-slots-group mb-4">
-                            <label class="radio-pill"
-                              ><input
-                                type="radio"
-                                name="time_slot"
-                                value="8:00 AM - 2:00 PM"
-                                data-type="6-hour"
-                              /><span>8:00 AM - 2:00 PM</span></label
-                            >
-                            <label class="radio-pill"
-                              ><input
-                                type="radio"
-                                name="time_slot"
-                                value="2:00 PM - 8:00 PM"
-                                data-type="6-hour"
-                              /><span>2:00 PM - 8:00 PM</span></label
-                            >
-                          </div>
-      
-                          <h4
-                            class="calc-section-subtitle"
-                            style="font-size: 1rem; margin-bottom: 8px"
-                          >
-                            2-Hour Window <span style="color: #ef4444">(+10%)</span>
-                          </h4>
-                          <div class="radio-pill-group time-slots-group is-grid mb-4">
-                            <label class="radio-pill"
-                              ><input
-                                type="radio"
-                                name="time_slot"
-                                value="8:00 AM - 10:00 AM"
-                                data-type="2-hour"
-                              /><span>8:00 AM - 10:00 AM</span></label
-                            >
-                            <label class="radio-pill"
-                              ><input
-                                type="radio"
-                                name="time_slot"
-                                value="10:00 AM - 12:00 PM"
-                                data-type="2-hour"
-                              /><span>10:00 AM - 12:00 PM</span></label
-                            >
-                            <label class="radio-pill"
-                              ><input
-                                type="radio"
-                                name="time_slot"
-                                value="12:00 PM - 2:00 PM"
-                                data-type="2-hour"
-                              /><span>12:00 PM - 2:00 PM</span></label
-                            >
-                            <label class="radio-pill"
-                              ><input
-                                type="radio"
-                                name="time_slot"
-                                value="2:00 PM - 4:00 PM"
-                                data-type="2-hour"
-                              /><span>2:00 PM - 4:00 PM</span></label
-                            >
-                            <label class="radio-pill"
-                              ><input
-                                type="radio"
-                                name="time_slot"
-                                value="4:00 PM - 6:00 PM"
-                                data-type="2-hour"
-                              /><span>4:00 PM - 6:00 PM</span></label
-                            >
-                            <label class="radio-pill"
-                              ><input
-                                type="radio"
-                                name="time_slot"
-                                value="6:00 PM - 8:00 PM"
-                                data-type="2-hour"
-                              /><span>6:00 PM - 8:00 PM</span></label
-                            >
-                          </div>
-                          <p class="insurance-hint" id="timeSlotHint" style="display:none">Please select a time window to continue</p>
-                        </section>
-                      </div>
-      
-                      <div
-                        id="step4Container"
-                        class="calc-wrapper"
-                        style="display: none; opacity: 0"
-                      >
-                        <section class="calc-section mb-5">
-                          <h3 class="calc-section-title">Booking Summary</h3>
-                          <div
-                            class="checkout-summary-box"
-                            id="checkoutSummaryBox"
-                          ></div>
-                        </section>
-      
-                        <section class="calc-section">
-                          <h3 class="calc-section-title">Your Contact Details</h3>
-                          <div class="form-row split-2 mb-4">
-                            <div class="form-group" data-checkout-field="name">
-                              <label class="form-label" for="contactName"
-                                >Full Name *</label
-                              >
-                              <input
-                                type="text"
-                                class="storage-form__input-box"
-                                id="contactName"
-                                placeholder="John Doe"
-                                required
-                                autocomplete="name"
-                              />
-                              <p
-                                class="form-error-msg"
-                                id="contactNameError"
-                                role="alert"
-                                hidden
-                              ></p>
-                            </div>
-                            <div class="form-group" data-checkout-field="phone">
-                              <label class="form-label" for="contactPhone"
-                                >Phone Number *</label
-                              >
-                              <input
-                                type="tel"
-                                class="storage-form__input-box"
-                                id="contactPhone"
-                                placeholder="+44 7700 900077"
-                                required
-                                autocomplete="tel"
-                              />
-                              <p
-                                class="form-error-msg"
-                                id="contactPhoneError"
-                                role="alert"
-                                hidden
-                              ></p>
-                            </div>
-                          </div>
-                          <div class="form-group mb-4" data-checkout-field="email">
-                            <label class="form-label" for="contactEmail"
-                              >Email Address *</label
-                            >
-                            <input
-                              type="email"
-                              class="storage-form__input-box"
-                              id="contactEmail"
-                              placeholder="john@example.com"
-                              required
-                              autocomplete="email"
-                            />
-                            <p
-                              class="form-error-msg"
-                              id="contactEmailError"
-                              role="alert"
-                              hidden
-                            ></p>
-                          </div>
-                          <div class="form-group mb-4">
-                            <label class="form-label">Notes (optional)</label>
-                            <textarea
-                              id="contactNotes"
-                              class="storage-form__textarea"
-                              rows="2"
-                              placeholder="Any details for the driver..."
-                            ></textarea>
-                          </div>
-                          <p
-                            class="text-xs text-gray-500"
-                            style="
-                              font-size: 0.8rem;
-                              color: #6b7280;
-                              line-height: 1.4;
-                            "
-                          >
-                            It's your responsibility to inform this person that our
-                            driver will contact them during the job. By clicking 'Book
-                            Now', you authorise us to share essential booking details
-                            with them and the driver.
-                          </p>
-                        </section>
-                      </div>
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      </span>
                     </div>
-      
-                    <div class="calc-sidebar-col">
-                    <div class="calc-sidebar" id="calcSidebar">
-                      <div class="summary-card" id="summaryCard">
-                        <div class="summary-mobile-header" id="summaryMobileToggle">
-                          <div class="summary-mobile-info">
-                            <span class="summary-mobile-label">Total due</span>
-                            <div class="summary-mobile-price-row">
-                              <span
-                                class="summary-mobile-total"
-                                id="mobileSummaryTotal"
-                                >£0.00</span
-                              >
-                              <svg
-                                class="summary-mobile-icon"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              >
-                                <path d="m6 9 6 6 6-6" />
-                              </svg>
-                            </div>
-                          </div>
-                          <div class="summary-actions-mobile">
-                            <button
-                              type="button"
-                              class="btn-step-back"
-                              id="mobileStepBackBtn"
-                              style="display: none"
-                              aria-label="Go back"
-                            >
-                              <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              >
-                                <path d="m15 18-6-6 6-6" />
-                              </svg>
-                            </button>
-                            <button
-                              type="button"
-                              class="btn-continue"
-                              id="mobileContinueBtn"
-                              disabled
-                            >
-                              Continue
-                            </button>
-                          </div>
-                        </div>
-      
-                        <div class="summary-card__content">
-                          <h3 class="summary-card__title">
-                            Due now - upfront payment
-                          </h3>
-                          <div class="summary-card__items" id="summaryItems">
-                            <div class="summary-empty">
-                              Please select items to store.
-                            </div>
-                          </div>
-      
-                          <div class="summary-card__totals">
-                            <div class="summary-row summary-total">
-                              <span>Total due today</span>
-                              <span id="summaryTotal">£0.00</span>
-                            </div>
-                          </div>
-      
-                          <div class="summary-card__monthly">
-                            <div class="summary-row">
-                              <span>Future monthly payments</span>
-                              <span id="futureMonthlyAmount">£0.00</span>
-                            </div>
-                            <p class="summary-card__monthly-note">
-                              This is the amount you'll pay each month while your stuff's in storage.
-                            </p>
-                          </div>
-      
-                          <div
-                            class="summary-card__info"
-                            id="summaryCardInfo"
-                            role="button"
-                            tabindex="-1"
-                            aria-expanded="false"
-                            aria-label="Flexible and transparent policy. Expand full text when truncated."
+
+                    <div
+                      class="sidebar-terms-box"
+                      id="sidebarTermsBox"
+                      data-checkout-field="terms"
+                      style="
+                        display: none;
+                        margin-bottom: 16px;
+                        background: #f8fafc;
+                        padding: 12px;
+                        border-radius: 8px;
+                        border: 1px solid #e2e8f0;
+                      "
+                    >
+                      <label
+                        class="custom-terms-label"
+                        style="
+                          display: flex;
+                          align-items: flex-start;
+                          gap: 10px;
+                          cursor: pointer;
+                        "
+                      >
+                        <input
+                          type="checkbox"
+                          id="termsCheckbox"
+                          style="
+                            margin-top: 3px;
+                            width: 16px;
+                            height: 16px;
+                            accent-color: #0d0b9c;
+                            cursor: pointer;
+                          "
+                        />
+                        <span
+                          style="
+                            font-size: 0.8rem;
+                            color: #4b5563;
+                            line-height: 1.4;
+                          "
+                        >
+                          I agree to the
+                          <a
+                            href="https://smartroom.co.uk/terms-and-conditions/"
+                            target="_blank"
+                            rel="noopener"
+                            style="color: #0d0b9c; text-decoration: underline"
+                            >Terms & Conditions</a
+                          >,
+                          <a
+                            href="https://smartroom.co.uk/insurance/"
+                            target="_blank"
+                            rel="noopener"
+                            style="color: #0d0b9c; text-decoration: underline"
+                            >Insurance</a
                           >
-                            <svg
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              aria-hidden="true"
-                            >
-                              <circle cx="12" cy="12" r="10" />
-                              <path d="M12 16v-4" />
-                              <path d="M12 8h.01" />
-                            </svg>
-                            <p class="summary-card__info-text">
-                              <strong>Flexible & Transparent.</strong> Cancel or
-                              modify your collection for free up to 48 hours before
-                              your scheduled slot. No hidden fees.
-                            </p>
-                            <span
-                              class="summary-card__info-chevron"
-                              aria-hidden="true"
-                            >
-                              <svg
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              >
-                                <path d="m6 9 6 6 6-6" />
-                              </svg>
-                            </span>
-                          </div>
-      
-                          <div
-                            class="sidebar-terms-box"
-                            id="sidebarTermsBox"
-                            data-checkout-field="terms"
-                            style="
-                              display: none;
-                              margin-bottom: 16px;
-                              background: #f8fafc;
-                              padding: 12px;
-                              border-radius: 8px;
-                              border: 1px solid #e2e8f0;
-                            "
+                          &
+                          <a
+                            href="https://smartroom.co.uk/privacy-policy/"
+                            target="_blank"
+                            rel="noopener"
+                            style="color: #0d0b9c; text-decoration: underline"
+                            >Privacy Policy</a
                           >
-                            <label
-                              class="custom-terms-label"
-                              style="
-                                display: flex;
-                                align-items: flex-start;
-                                gap: 10px;
-                                cursor: pointer;
-                              "
-                            >
-                              <input
-                                type="checkbox"
-                                id="termsCheckbox"
-                                style="
-                                  margin-top: 3px;
-                                  width: 16px;
-                                  height: 16px;
-                                  accent-color: #0d0b9c;
-                                  cursor: pointer;
-                                "
-                              />
-                              <span
-                                style="
-                                  font-size: 0.8rem;
-                                  color: #4b5563;
-                                  line-height: 1.4;
-                                "
-                              >
-                                I agree to the
-                                <a
-                                  href="#"
-                                  style="color: #0d0b9c; text-decoration: underline"
-                                  >Terms & Conditions</a
-                                >,
-                                <a
-                                  href="#"
-                                  style="color: #0d0b9c; text-decoration: underline"
-                                  >Insurance</a
-                                >
-                                &
-                                <a
-                                  href="#"
-                                  style="color: #0d0b9c; text-decoration: underline"
-                                  >Privacy Policy</a
-                                >
-                              </span>
-                            </label>
-                            <p
-                              class="form-error-msg form-error-msg--terms"
-                              id="termsError"
-                              role="alert"
-                              hidden
-                            ></p>
-                          </div>
-      
-                          <div class="summary-actions">
-                            <button
-                              type="button"
-                              class="btn-step-back"
-                              id="desktopStepBackBtn"
-                              style="display: none"
-                              aria-label="Go back"
-                            >
-                              <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              >
-                                <path d="m15 18-6-6 6-6" />
-                              </svg>
-                            </button>
-                            <button
-                              type="button"
-                              class="btn-continue desktop-continue"
-                              id="continueBtn"
-                              disabled
-                            >
-                              <span class="btn-text-content">Continue</span>
-                              <svg
-                                class="btn-spinner"
-                                style="
-                                  display: none;
-                                  animation: spin 1s linear infinite;
-                                "
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                              >
-                                <circle
-                                  cx="12"
-                                  cy="12"
-                                  r="10"
-                                  stroke-dasharray="30"
-                                  stroke-dashoffset="10"
-                                ></circle>
-                              </svg>
-                            </button>
-                          </div>
-      
-                          <div class="sidebar-disclaimers sidebar-disclaimers--mobile">
-                            <p class="sidebar-disclaimers__warning">
-                              Extra charges may apply if undeclared items, access details, or dismantling information are inaccurate.
-                            </p>
-      
-                            <details class="sidebar-disclaimers__detail">
-                              <summary class="sidebar-disclaimers__summary">Pack securely</summary>
-                              <p class="sidebar-disclaimers__body">
-                                Please ensure your items are well packed, as they may be heavy and will be lifted during handling.
-                              </p>
-                            </details>
-      
-                            <details class="sidebar-disclaimers__detail">
-                              <summary class="sidebar-disclaimers__summary">Delivery fees apply on return</summary>
-                              <p class="sidebar-disclaimers__body">
-                                Estimate your delivery fee by entering your new address as a collection in the calculator (prices may change), or call us.
-                              </p>
-                            </details>
-      
-                            <div class="sidebar-disclaimers__help">
-                              <p class="sidebar-disclaimers__help-title">Need help?</p>
-                              <a href="tel:02079936365" class="sidebar-disclaimers__help-link">
-                                <svg class="sidebar-disclaimers__help-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                                </svg>
-                                020 7993 6365
-                              </a>
-                              <a href="mailto:hello@smartroom.co.uk" class="sidebar-disclaimers__help-link">
-                                <svg class="sidebar-disclaimers__help-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                  <rect x="2" y="4" width="20" height="16" rx="2"/>
-                                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                                </svg>
-                                hello@smartroom.co.uk
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                        </span>
+                      </label>
+                      <p
+                        class="form-error-msg form-error-msg--terms"
+                        id="termsError"
+                        role="alert"
+                        hidden
+                      ></p>
                     </div>
-      
-                    <div class="sidebar-disclaimers sidebar-disclaimers--desktop">
+
+                    <div class="summary-actions">
+                      <button
+                        type="button"
+                        class="btn-step-back"
+                        id="desktopStepBackBtn"
+                        style="display: none"
+                        aria-label="Go back"
+                      >
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="m15 18-6-6 6-6" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-continue desktop-continue"
+                        id="continueBtn"
+                        disabled
+                      >
+                        <span class="btn-text-content">Continue</span>
+                        <svg
+                          class="btn-spinner"
+                          style="
+                            display: none;
+                            animation: spin 1s linear infinite;
+                          "
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke-dasharray="30"
+                            stroke-dashoffset="10"
+                          ></circle>
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div class="sidebar-disclaimers sidebar-disclaimers--mobile">
                       <p class="sidebar-disclaimers__warning">
                         Extra charges may apply if undeclared items, access details, or dismantling information are inaccurate.
                       </p>
-      
+
                       <details class="sidebar-disclaimers__detail">
                         <summary class="sidebar-disclaimers__summary">Pack securely</summary>
                         <p class="sidebar-disclaimers__body">
                           Please ensure your items are well packed, as they may be heavy and will be lifted during handling.
                         </p>
                       </details>
-      
+
                       <details class="sidebar-disclaimers__detail">
                         <summary class="sidebar-disclaimers__summary">Delivery fees apply on return</summary>
                         <p class="sidebar-disclaimers__body">
                           Estimate your delivery fee by entering your new address as a collection in the calculator (prices may change), or call us.
                         </p>
                       </details>
-      
+
                       <div class="sidebar-disclaimers__help">
                         <p class="sidebar-disclaimers__help-title">Need help?</p>
                         <a href="tel:02079936365" class="sidebar-disclaimers__help-link">
@@ -1259,113 +1226,152 @@
                         </a>
                       </div>
                     </div>
-                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-      
-            <div class="storage-form__messages">
-              <p class="storage-form__helper">
-                We collect boxes and furniture, store them, and deliver back anywhere in the world — even item by item.
-              </p>
-              <p class="storage-form__error-text">
-                Please enter your Postcode to continue
-              </p>
-            </div>
-      
-            <div class="calc-modal-overlay" id="confirmDateModal">
-              <div
-                class="calc-modal"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="confirmDateModalTitle"
-              >
-                <h3 class="calc-modal__title" id="confirmDateModalTitle">
-                  Confirm Move Date
-                </h3>
-                <p class="calc-modal__text">
-                  Your move date is set to
-                  <strong id="modalDateDisplay">Sunday, 5 April 2026</strong>. Is this
-                  correct?
+
+              <div class="sidebar-disclaimers sidebar-disclaimers--desktop">
+                <p class="sidebar-disclaimers__warning">
+                  Extra charges may apply if undeclared items, access details, or dismantling information are inaccurate.
                 </p>
-                <div class="calc-modal__actions">
-                  <button type="button" class="btn-secondary" id="modalBtnChange">
-                    Change Date</button
-                  ><button type="button" class="btn-primary" id="modalBtnConfirm">
-                    Yes, Continue
-                  </button>
+
+                <details class="sidebar-disclaimers__detail">
+                  <summary class="sidebar-disclaimers__summary">Pack securely</summary>
+                  <p class="sidebar-disclaimers__body">
+                    Please ensure your items are well packed, as they may be heavy and will be lifted during handling.
+                  </p>
+                </details>
+
+                <details class="sidebar-disclaimers__detail">
+                  <summary class="sidebar-disclaimers__summary">Delivery fees apply on return</summary>
+                  <p class="sidebar-disclaimers__body">
+                    Estimate your delivery fee by entering your new address as a collection in the calculator (prices may change), or call us.
+                  </p>
+                </details>
+
+                <div class="sidebar-disclaimers__help">
+                  <p class="sidebar-disclaimers__help-title">Need help?</p>
+                  <a href="tel:02079936365" class="sidebar-disclaimers__help-link">
+                    <svg class="sidebar-disclaimers__help-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    020 7993 6365
+                  </a>
+                  <a href="mailto:hello@smartroom.co.uk" class="sidebar-disclaimers__help-link">
+                    <svg class="sidebar-disclaimers__help-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2"/>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                    hello@smartroom.co.uk
+                  </a>
                 </div>
               </div>
-            </div>
-            <div class="calc-modal-overlay" id="exitWarningModal">
-              <div
-                class="calc-modal calc-modal--exit"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="exitWarningModalTitle"
-              >
-                <button
-                  type="button"
-                  class="calc-modal__close"
-                  id="btnExitCancel"
-                  aria-label="Close dialog"
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M18 6 6 18M6 6l12 12" />
-                  </svg>
-                </button>
-                <h3 class="calc-modal__title" id="exitWarningModalTitle">
-                  Close Calculator?
-                </h3>
-                <p class="calc-modal__text">
-                  Are you sure you want to close? Your unsaved data will be lost
-                  unless you save it.
-                </p>
-                <div class="calc-modal__actions">
-                  <button type="button" class="btn-secondary" id="btnExitDiscard">
-                    Close without saving
-                  </button>
-                  <button type="button" class="btn-primary" id="btnExitSave">
-                    Save & Close
-                  </button>
-                </div>
               </div>
             </div>
-            <div class="calc-modal-overlay" id="switchTypeModal">
-              <div
-                class="calc-modal"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="switchTypeModalTitle"
-              >
-                <h3 class="calc-modal__title" id="switchTypeModalTitle">
-                  Change Storage Type?
-                </h3>
-                <p class="calc-modal__text">
-                  Switching between "Boxes" and "Furniture" will reset your current
-                  progress. Are you sure?
-                </p>
-                <div class="calc-modal__actions">
-                  <button type="button" class="btn-secondary" id="btnCancelSwitch">
-                    Cancel</button
-                  ><button type="button" class="btn-primary" id="btnConfirmSwitch">
-                    Yes, Start Over
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
+          </div>
         </div>
-      </section>
-    
+      </div>
+
+      <div class="storage-form__messages">
+        <p class="storage-form__helper">
+          We collect boxes and furniture, store them, and deliver back anywhere in the world — even item by item.
+        </p>
+        <p class="storage-form__error-text">
+          Please enter your Postcode to continue
+        </p>
+      </div>
+
+      <div class="calc-modal-overlay" id="confirmDateModal">
+        <div
+          class="calc-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="confirmDateModalTitle"
+        >
+          <h3 class="calc-modal__title" id="confirmDateModalTitle">
+            Confirm Move Date
+          </h3>
+          <p class="calc-modal__text">
+            Your move date is set to
+            <strong id="modalDateDisplay">Sunday, 5 April 2026</strong>. Is this
+            correct?
+          </p>
+          <div class="calc-modal__actions">
+            <button type="button" class="btn-secondary" id="modalBtnChange">
+              Change Date</button
+            ><button type="button" class="btn-primary" id="modalBtnConfirm">
+              Yes, Continue
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="calc-modal-overlay" id="exitWarningModal">
+        <div
+          class="calc-modal calc-modal--exit"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="exitWarningModalTitle"
+        >
+          <button
+            type="button"
+            class="calc-modal__close"
+            id="btnExitCancel"
+            aria-label="Close dialog"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+          <h3 class="calc-modal__title" id="exitWarningModalTitle">
+            Close Calculator?
+          </h3>
+          <p class="calc-modal__text">
+            Are you sure you want to close? Your unsaved data will be lost
+            unless you save it.
+          </p>
+          <div class="calc-modal__actions">
+            <button type="button" class="btn-secondary" id="btnExitDiscard">
+              Close without saving
+            </button>
+            <button type="button" class="btn-primary" id="btnExitSave">
+              Save & Close
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="calc-modal-overlay" id="switchTypeModal">
+        <div
+          class="calc-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="switchTypeModalTitle"
+        >
+          <h3 class="calc-modal__title" id="switchTypeModalTitle">
+            Change Storage Type?
+          </h3>
+          <p class="calc-modal__text">
+            Switching between "Boxes" and "Furniture" will reset your current
+            progress. Are you sure?
+          </p>
+          <div class="calc-modal__actions">
+            <button type="button" class="btn-secondary" id="btnCancelSwitch">
+              Cancel</button
+            ><button type="button" class="btn-primary" id="btnConfirmSwitch">
+              Yes, Start Over
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

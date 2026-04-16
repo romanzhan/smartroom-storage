@@ -117,7 +117,13 @@ export function initSidebar({
       for (const d of snapshot.bookingDetails) {
         const r = document.createElement("div");
         r.className = "checkout-summary-row";
-        r.innerHTML = `<span class="checkout-summary-row__label">${d.label}</span><span class="checkout-summary-row__value">${d.value}</span>`;
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "checkout-summary-row__label";
+        labelSpan.textContent = d.label;
+        const valueSpan = document.createElement("span");
+        valueSpan.className = "checkout-summary-row__value";
+        valueSpan.textContent = d.value;
+        r.append(labelSpan, valueSpan);
         checkoutBox.appendChild(r);
       }
     }
@@ -170,9 +176,23 @@ export function initSidebar({
     ro.observe(summaryCardInfoText);
     ro.observe(summaryCardInfo);
     requestAnimationFrame(syncSummaryInfoTruncation);
+
+    // Store reference for cleanup
+    if (typeof window !== "undefined") {
+      window.__smartroomSidebarRo = ro;
+    }
   }
 
   store.subscribe(render);
 
   render(null, store.getSnapshot());
+
+  return {
+    destroy() {
+      if (typeof window !== "undefined" && window.__smartroomSidebarRo) {
+        window.__smartroomSidebarRo.disconnect();
+        delete window.__smartroomSidebarRo;
+      }
+    },
+  };
 }

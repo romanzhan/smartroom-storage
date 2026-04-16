@@ -1,6 +1,66 @@
 import { SITE_CONFIG_STORAGE_KEY } from "./constants.js";
 import { mergeSiteConfigChain } from "./merge-layers.js";
 
+/**
+ * Sanitise an external config layer: coerce numeric collection/vat fields,
+ * drop values with wrong types so they don't corrupt calculations.
+ */
+function sanitizeConfigLayer(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const out = { ...raw };
+
+  // Coerce collection numeric fields
+  if (out.collection && typeof out.collection === "object") {
+    const c = { ...out.collection };
+    for (const key of Object.keys(c)) {
+      if (key === "moverRates") {
+        if (c.moverRates && typeof c.moverRates === "object") {
+          const rates = {};
+          for (const [k, v] of Object.entries(c.moverRates)) {
+            const n = Number(v);
+            if (Number.isFinite(n)) rates[k] = n;
+            else console.warn(`[SmartRoom] config: dropped non-numeric moverRates.${k}:`, v);
+          }
+          c.moverRates = rates;
+        }
+        continue;
+      }
+      if (typeof c[key] === "string") {
+        const n = Number(c[key]);
+        if (Number.isFinite(n)) c[key] = n;
+        else { console.warn(`[SmartRoom] config: dropped non-numeric collection.${key}:`, c[key]); delete c[key]; }
+      }
+    }
+    out.collection = c;
+  }
+
+  // Coerce vat numeric fields
+  if (out.vat && typeof out.vat === "object") {
+    const v = { ...out.vat };
+    if (v.rate != null) { const n = Number(v.rate); if (Number.isFinite(n)) v.rate = n; else delete v.rate; }
+    if (v.enabled != null) v.enabled = Boolean(v.enabled);
+    if (v.applyToCollection != null) v.applyToCollection = Boolean(v.applyToCollection);
+    if (v.applyToStorage != null) v.applyToStorage = Boolean(v.applyToStorage);
+    out.vat = v;
+  }
+
+  // Validate array fields
+  if (out.allowedPostcodes != null && !Array.isArray(out.allowedPostcodes)) {
+    console.warn("[SmartRoom] config: dropped non-array allowedPostcodes");
+    delete out.allowedPostcodes;
+  }
+  if (out.extras != null && !Array.isArray(out.extras)) {
+    console.warn("[SmartRoom] config: dropped non-array extras");
+    delete out.extras;
+  }
+  if (out.items != null && !Array.isArray(out.items)) {
+    console.warn("[SmartRoom] config: dropped non-array items");
+    delete out.items;
+  }
+
+  return out;
+}
+
 function readLocalStorage() {
   try {
     const raw = localStorage.getItem(SITE_CONFIG_STORAGE_KEY);
@@ -54,16 +114,20 @@ export async function loadSiteConfig() {
     fromStorage = null;
   }
 
-  const fromWp =
+  const fromWp = sanitizeConfigLayer(
     typeof window !== "undefined" && window.__SMARTROOM_SITE_CONFIG__
       ? window.__SMARTROOM_SITE_CONFIG__
-      : null;
+      : null,
+  );
   let legacyWp = null;
   try {
-    legacyWp = mapLegacyWpConfig();
+    legacyWp = sanitizeConfigLayer(mapLegacyWpConfig());
   } catch {
     legacyWp = null;
   }
+
+  // Sanitize layers that come from untrusted sources
+  fromStorage = sanitizeConfigLayer(fromStorage);
 
   try {
     return mergeSiteConfigChain(fromFile, fromStorage, legacyWp, fromWp);

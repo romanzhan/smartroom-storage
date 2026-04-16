@@ -1,14 +1,15 @@
-export const CHECKOUT_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const CHECKOUT_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
 export const CHECKOUT_MSG = {
-  name: "Please enter your full name (at least 2 characters).",
-  phone: "Enter a valid phone number (at least 10 digits).",
+  name: "Please enter your full name (at least 2 letters).",
+  phone: "Enter a valid UK phone number (10–13 digits).",
   email: "Enter a valid email address.",
   terms: "Please accept the terms to continue.",
 };
 
 export function checkoutPhoneOk(value) {
-  return (value || "").replace(/\D/g, "").length >= 10;
+  const digits = (value || "").replace(/\D/g, "");
+  return digits.length >= 10 && digits.length <= 13;
 }
 
 /**
@@ -34,7 +35,7 @@ export function evaluateCheckoutFields(fields) {
   const email = (fields.contactEmail?.value ?? "").trim();
   const termsOk = Boolean(fields.termsCheckbox?.checked);
 
-  const nameOk = name.length >= 2;
+  const nameOk = name.length >= 2 && /[a-zA-Zа-яА-ЯёЁ]/.test(name);
   const phoneOk = checkoutPhoneOk(phone);
   const emailOk = CHECKOUT_EMAIL_RE.test(email);
 

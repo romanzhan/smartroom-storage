@@ -43,3 +43,18 @@ describe("places-cache resolved place", () => {
     expect(getCachedResolvedPlace("52.00000,-0.10000", "ChIJx")).toBeNull();
   });
 });
+
+describe("warehouseKeyFromCoords precision", () => {
+  it("produces key with 7 decimal places", () => {
+    const key = warehouseKeyFromCoords(51.1234567, -0.1234567);
+    expect(key).toBe("51.1234567,-0.1234567");
+  });
+});
+
+describe("different nearby coordinates produce different keys", () => {
+  it("coords 51.1234561 and 51.1234569 should NOT produce the same key", () => {
+    const key1 = warehouseKeyFromCoords(51.1234561, -0.1234567);
+    const key2 = warehouseKeyFromCoords(51.1234569, -0.1234567);
+    expect(key1).not.toBe(key2);
+  });
+});

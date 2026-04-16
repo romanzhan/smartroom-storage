@@ -153,6 +153,7 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
           { opacity: 0, y: -10 },
           { opacity: 1, y: 0, duration: 0.3 },
         );
+        showFloorField();
       } else {
         apartmentFields.style.display = "none";
         floorField.style.display = "none";
@@ -211,13 +212,6 @@ export function initAddress({ onChange, onPostcodeFieldInput }) {
       updateState("instructions", e.target.value),
     );
 
-  document
-    .querySelectorAll('input[name="lift"]')
-    .forEach((radio) =>
-      radio.addEventListener("change", (e) =>
-        updateState("lift", e.target.value),
-      ),
-    );
   // Movers are now auto-calculated based on volume in store.js
 
   document.querySelectorAll('input[name="facility"]').forEach((radio) => {

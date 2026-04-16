@@ -58,7 +58,7 @@ export function initCalculatorModules(dom, store, siteConfig) {
   store.modules.address = initAddress({
     onChange: () => {
       store.notify("address");
-      if (store.modules.date) store.modules.date.reRenderCalendar();
+      store.modules.date?.reRenderCalendar?.();
     },
   });
 

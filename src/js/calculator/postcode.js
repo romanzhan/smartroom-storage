@@ -121,6 +121,8 @@ export function initPostcode({
 
   /** @type {{ placeId: string, postcode: string } | null} */
   let resolvedSelection = null;
+  /** Monotonic counter to discard stale place resolutions. */
+  let resolveRequestId = 0;
   let mainSessionToken = newSessionToken();
   let editSessionToken = newSessionToken();
   let addressSessionToken = newSessionToken();
@@ -294,9 +296,11 @@ export function initPostcode({
     // clear the dropdown on the source field. For programmatic calls
     // (URL-param resolve on page load) it's omitted.
 
+    const thisRequestId = ++resolveRequestId;
+    function isStale() { return thisRequestId !== resolveRequestId; }
+
     const cached = getCachedResolvedPlace(warehouseKey, placeId);
     if (cached) {
-      rotateSessionToken(sessionRef);
       resolvedSelection = {
         placeId: cached.placeId || placeId,
         postcode: cached.postcode,
@@ -308,7 +312,9 @@ export function initPostcode({
         typeof cached.lng === "number"
       ) {
         distanceMiles = await drivingMilesOrFallback(cached.lat, cached.lng);
+        if (isStale()) return;
       }
+      rotateSessionToken(sessionRef);
       const payload = { ...cached, distanceMiles };
       savedPayload = payload;
       syncPostcodeEverywhere(cached.postcode);
@@ -344,6 +350,8 @@ export function initPostcode({
       return;
     }
 
+    if (isStale()) return;
+
     if (!detailsRes.ok) {
       mapsGuard.recordFailure(detailsRes.status);
       showMapsHelper(
@@ -371,8 +379,6 @@ export function initPostcode({
       return;
     }
 
-    rotateSessionToken(sessionRef);
-
     resolvedSelection = {
       placeId: resolved.placeId || placeId,
       postcode: resolved.postcode,
@@ -388,6 +394,10 @@ export function initPostcode({
     const distanceMiles = coordsOk
       ? await drivingMilesOrFallback(lat, lng)
       : null;
+
+    if (isStale()) return;
+
+    rotateSessionToken(sessionRef);
 
     const payload = {
       ...resolved,

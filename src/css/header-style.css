@@ -87,7 +87,10 @@
 .site-header__menu-link:hover,
 .site-header__menu-link:focus {
     color: var(--header-text-color);
-    outline: none;
+}
+.site-header__menu-link:focus-visible {
+    outline: 2px solid var(--header-text-color);
+    outline-offset: 2px;
 }
 
 .site-header__menu-link:hover::after,

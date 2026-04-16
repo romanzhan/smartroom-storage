@@ -1,21 +1,27 @@
 export function initDate({ store, onChange }) {
+  // UK (England & Wales) bank holidays — gov.uk/bank-holidays
+  // 2026: Boxing Day (26 Dec) is Saturday → substitute Monday 28 Dec
+  // 2027: Christmas (25 Dec) is Saturday → substitute Monday 27 Dec
+  //        Boxing Day (26 Dec) is Sunday → substitute Tuesday 28 Dec
   const ukHolidays = [
-    "2026-01-01",
-    "2026-04-03",
-    "2026-04-06",
-    "2026-05-04",
-    "2026-05-25",
-    "2026-08-31",
-    "2026-12-25",
-    "2026-12-28",
-    "2027-01-01",
-    "2027-03-26",
-    "2027-03-29",
-    "2027-05-03",
-    "2027-05-31",
-    "2027-08-30",
-    "2027-12-27",
-    "2027-12-28",
+    // 2026
+    "2026-01-01", // New Year's Day
+    "2026-04-03", // Good Friday
+    "2026-04-06", // Easter Monday
+    "2026-05-04", // Early May bank holiday
+    "2026-05-25", // Spring bank holiday
+    "2026-08-31", // Summer bank holiday
+    "2026-12-25", // Christmas Day (Friday)
+    "2026-12-28", // Boxing Day substitute (Monday)
+    // 2027
+    "2027-01-01", // New Year's Day
+    "2027-03-26", // Good Friday
+    "2027-03-29", // Easter Monday
+    "2027-05-03", // Early May bank holiday
+    "2027-05-31", // Spring bank holiday
+    "2027-08-30", // Summer bank holiday
+    "2027-12-27", // Christmas Day substitute (Monday)
+    "2027-12-28", // Boxing Day substitute (Tuesday)
   ];
 
   const today = new Date();
@@ -67,8 +73,7 @@ export function initDate({ store, onChange }) {
 
   function formatYYYYMMDD(date) {
     const d = new Date(date);
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    return d.toISOString().split("T")[0];
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   }
 
   function updateDisplay() {
@@ -119,7 +124,10 @@ export function initDate({ store, onChange }) {
       let cellPrice = basePrice;
       if (hasSurge) cellPrice *= 1.15;
 
-      const isSelected = cellDate.getTime() === state.selectedDate.getTime();
+      const isSelected =
+        cellDate.getFullYear() === state.selectedDate.getFullYear() &&
+        cellDate.getMonth() === state.selectedDate.getMonth() &&
+        cellDate.getDate() === state.selectedDate.getDate();
 
       const cell = document.createElement("div");
       cell.className = `cal-cell ${isPast ? "is-disabled" : ""} ${isSelected ? "is-selected" : ""} ${hasSurge ? "has-surge" : ""}`;

@@ -55,11 +55,15 @@ function loadStore() {
   }
 }
 
+let cacheWriteDisabled = false;
+
 function saveStore(data) {
+  if (cacheWriteDisabled) return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch {
-    /* quota */
+    console.warn("[SmartRoom] localStorage quota exceeded — place cache writes disabled for this session");
+    cacheWriteDisabled = true;
   }
 }
 
@@ -128,5 +132,5 @@ export function warehouseKeyFromCoords(lat, lng) {
   const a = Number(lat);
   const b = Number(lng);
   if (Number.isNaN(a) || Number.isNaN(b)) return "0,0";
-  return `${a.toFixed(5)},${b.toFixed(5)}`;
+  return `${a.toFixed(7)},${b.toFixed(7)}`;
 }
