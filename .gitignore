@@ -17,3 +17,6 @@ npm-debug.log*
 
 # AI Context
 ai-context.txt
+
+# Built archives
+*.zip
